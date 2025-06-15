@@ -460,6 +460,7 @@ pub fn analyze_performance(system: &IoTSystem) -> PerformanceMetrics {
 ---
 
 **参考文献：**
+
 - [形式理论整合框架](../Theory/Formal_Theory_Integration.md)
 - [控制论理论基础扩展](../Theory/Control_Theory_Foundation_Extended.md)
-- [时态逻辑控制理论](../Theory/Temporal_Logic_Control.md) 
+- [时态逻辑控制理论](../Theory/Temporal_Logic_Control.md)
