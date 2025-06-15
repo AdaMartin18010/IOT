@@ -75,6 +75,7 @@ IoT系统架构可分为以下层次：
 $$\sigma(d_i, t) = (s_i, c_i, m_i)$$
 
 其中：
+
 - $s_i \in \{online, offline, error\}$ 是连接状态
 - $c_i \in \mathbb{R}^n$ 是配置向量
 - $m_i \in \mathbb{R}^m$ 是测量数据向量
@@ -84,6 +85,7 @@ $$\sigma(d_i, t) = (s_i, c_i, m_i)$$
 $$e = (id, type, timestamp, data)$$
 
 其中：
+
 - $id$ 是唯一标识符
 - $type \in \{sensor, command, alert, status\}$ 是事件类型
 - $timestamp \in \mathbb{R}^+$ 是时间戳
@@ -120,6 +122,7 @@ $$\forall \sigma_1, \sigma_2 \in \Sigma, \forall e \in E: \delta(\sigma_1, e) = 
 $$f_N: \mathbb{R}^{|D_N|} \times \mathbb{R}^{|R_N|} \rightarrow \mathbb{R}^{|D_N|} \times \mathbb{R}^{|C_N|}$$
 
 其中：
+
 - 输入是设备数据和规则参数
 - 输出是设备控制指令和云端通信数据
 
@@ -725,4 +728,4 @@ $$T \geq m \cdot P_w \cdot (1 - \epsilon)$$
 2. **实践贡献**: 提供了可用的Rust实现和性能优化方案
 3. **方法贡献**: 提出了从理论到实践的完整方法论
 
-这些贡献为IoT行业的发展提供了重要的理论基础和技术支撑。 
+这些贡献为IoT行业的发展提供了重要的理论基础和技术支撑。
