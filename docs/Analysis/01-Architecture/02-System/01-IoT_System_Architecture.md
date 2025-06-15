@@ -803,6 +803,7 @@ impl CacheManager {
 ---
 
 **参考文献：**
+
 - [IoT架构指南](../industry_domains/iot/README.md)
 - [Rust IoT技术栈](../ProgrammingLanguage/rust/software/iot.md)
-- [微服务架构模式](../Software/Microservice/) 
+- [微服务架构模式](../Software/Microservice/)

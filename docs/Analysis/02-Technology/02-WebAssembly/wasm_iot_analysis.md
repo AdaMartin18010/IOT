@@ -86,6 +86,7 @@ WASM-IOT架构是一个五元组 $\mathcal{A} = (H, G, W, I, C)$，其中：
 - $C$ 是通信层
 
 **架构实现**：
+
 ```rust
 // WASM-IOT架构实现
 pub struct WasmIoTSystem {
@@ -181,6 +182,7 @@ WASM边缘计算是一个四元组 $\mathcal{E} = (N, P, S, D)$，其中：
 - $D$ 是分发器
 
 **实现架构**：
+
 ```rust
 // WASM边缘计算节点
 pub struct WasmEdgeNode {
@@ -276,6 +278,7 @@ WASM在IOT环境中具有性能优势。
 4. **启动时间**：快速的模块加载和初始化
 
 **性能测试**：
+
 ```rust
 // WASM性能测试框架
 pub struct WasmPerformanceTest {
@@ -350,6 +353,7 @@ WASM资源管理是一个四元组 $\mathcal{R} = (M, C, T, E)$，其中：
 - $E$ 是能量管理
 
 **资源管理实现**：
+
 ```rust
 // WASM资源管理器
 pub struct WasmResourceManager {
@@ -475,6 +479,7 @@ WASM提供强大的安全保证。
 4. **边界检查**：所有内存访问都有边界检查
 
 **安全实现**：
+
 ```rust
 // WASM安全管理器
 pub struct WasmSecurityManager {
@@ -580,6 +585,7 @@ impl SandboxManager {
 - $R$ 是回滚机制
 
 **更新实现**：
+
 ```rust
 // 安全更新管理器
 pub struct SecureUpdateManager {
@@ -650,6 +656,7 @@ impl SecureUpdateManager {
 ### 6.1 智能传感器数据处理
 
 **案例 6.1.1 (温度传感器数据处理)**
+
 ```rust
 // WASM温度传感器数据处理
 pub struct WasmTemperatureProcessor {
@@ -706,6 +713,7 @@ impl WasmTemperatureProcessor {
 ### 6.2 边缘计算节点
 
 **案例 6.2.1 (智能网关)**
+
 ```rust
 // WASM智能网关
 pub struct WasmSmartGateway {
@@ -811,4 +819,4 @@ WebAssembly在IOT领域展现出独特的优势：
 
 ---
 
-*本文档基于严格的数学分析和工程实践，为WebAssembly在IOT领域的应用提供了完整的理论指导和实践参考。* 
+*本文档基于严格的数学分析和工程实践，为WebAssembly在IOT领域的应用提供了完整的理论指导和实践参考。*

@@ -874,5 +874,6 @@ impl StatusMonitor {
 ---
 
 **参考文献：**
+
 - [IoT系统架构分析](../02-System/01-IoT_System_Architecture.md)
-- [通信协议分析](../../02-Technology/01-Protocol/01-Communication_Protocols.md) 
+- [通信协议分析](../../02-Technology/01-Protocol/01-Communication_Protocols.md)

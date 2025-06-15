@@ -76,6 +76,7 @@ IOT系统分层架构是一个四层模型 $\mathcal{L} = (L_1, L_2, L_3, L_4)$�
 - $L_4$：应用层（业务逻辑）
 
 **架构实现**：
+
 ```rust
 // IOT系统分层架构
 pub trait IoTLayer {
@@ -152,6 +153,7 @@ impl IoTLayer for NetworkLayer {
 - $S$ 是事件调度器
 
 **实现架构**：
+
 ```rust
 // 事件定义
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -230,6 +232,7 @@ Rust程序在编译时保证内存安全。
 4. **类型检查**：防止类型错误
 
 **实现示例**：
+
 ```rust
 // 内存安全的数据结构
 pub struct SafeBuffer<T> {
@@ -302,6 +305,7 @@ impl<T> ThreadSafeBuffer<T> {
 - $R$ 是运行时
 
 **异步实现**：
+
 ```rust
 // 异步IOT任务
 pub struct AsyncIoTTask {
@@ -398,6 +402,7 @@ pub async fn process_sensor_data_pipeline(
 $$\text{MemoryCopies}(operation) = 0$$
 
 **实现技术**：
+
 ```rust
 // 零拷贝数据传输
 use std::io::{self, Read, Write};
@@ -474,6 +479,7 @@ impl ZeroCopyNetwork {
 - $F$ 是释放器
 
 **实现**：
+
 ```rust
 // 内存池实现
 use std::sync::Arc;
@@ -546,6 +552,7 @@ impl Drop for PooledBuffer {
 - $T$ 是定时器
 
 **实现**：
+
 ```rust
 // 裸机IOT设备
 #![no_std]
@@ -631,6 +638,7 @@ impl HardwareAbstraction for STM32Hardware {
 - $S$ 是调度策略
 
 **实现**：
+
 ```rust
 // 实时任务调度器
 use std::collections::BinaryHeap;
@@ -723,6 +731,7 @@ impl RealTimeScheduler {
 ### 7.1 智能传感器网络
 
 **案例 7.1.1 (分布式温度监控)**
+
 ```rust
 // 分布式温度监控系统
 pub struct DistributedTemperatureMonitor {
@@ -792,6 +801,7 @@ impl DistributedTemperatureMonitor {
 ### 7.2 工业控制系统
 
 **案例 7.2.1 (生产线控制)**
+
 ```rust
 // 工业生产线控制系统
 pub struct ProductionLineController {
@@ -888,4 +898,4 @@ Rust在IOT领域展现出独特的优势：
 
 ---
 
-*本文档基于严格的数学分析和工程实践，为Rust在IOT领域的应用提供了完整的理论指导和实践参考。* 
+*本文档基于严格的数学分析和工程实践，为Rust在IOT领域的应用提供了完整的理论指导和实践参考。*
