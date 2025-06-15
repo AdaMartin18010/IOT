@@ -49,6 +49,7 @@ $$\mathcal{P}_{composite} = \bigoplus_{i=1}^n \mathcal{P}_i$$
 $$E(\mathcal{P}) = \alpha \cdot P(\mathcal{P}) + \beta \cdot S(\mathcal{P}) + \gamma \cdot M(\mathcal{P}) + \delta \cdot C(\mathcal{P})$$
 
 其中：
+
 - $P(\mathcal{P})$ 是性能评分
 - $S(\mathcal{P})$ 是安全评分
 - $M(\mathcal{P})$ 是维护性评分
@@ -571,24 +572,24 @@ impl ModelChecker {
             verification_engine: VerificationEngine::new(),
         }
     }
-    
+
     pub async fn verify_system(&self, system: &SystemModel, properties: &[Property]) -> Result<VerificationResult, VerificationError> {
         // 构建状态空间
         let states = self.state_space.build_states(system).await?;
-        
+
         // 构建转移关系
         let transitions = self.state_space.build_transitions(system).await?;
-        
+
         // 验证每个属性
         let mut results = Vec::new();
         for property in properties {
             let result = self.verify_property(&states, &transitions, property).await?;
             results.push(result);
         }
-        
+
         Ok(VerificationResult { results })
     }
-    
+
     async fn verify_property(&self, states: &[State], transitions: &[Transition], property: &Property) -> Result<PropertyResult, VerificationError> {
         match property.property_type {
             PropertyType::Safety => {
@@ -602,7 +603,7 @@ impl ModelChecker {
             },
         }
     }
-    
+
     async fn verify_safety_property(&self, states: &[State], transitions: &[Transition], property: &Property) -> Result<PropertyResult, VerificationError> {
         // 检查所有可达状态是否满足安全属性
         for state in states {
@@ -613,18 +614,18 @@ impl ModelChecker {
                 });
             }
         }
-        
+
         Ok(PropertyResult {
             satisfied: true,
             counterexample: None,
         })
     }
-    
+
     async fn verify_liveness_property(&self, states: &[State], transitions: &[Transition], property: &Property) -> Result<PropertyResult, VerificationError> {
         // 使用嵌套深度优先搜索检查活性属性
         self.verification_engine.check_liveness(states, transitions, property).await
     }
-    
+
     async fn verify_fairness_property(&self, states: &[State], transitions: &[Transition], property: &Property) -> Result<PropertyResult, VerificationError> {
         // 检查公平性属性
         self.verification_engine.check_fairness(states, transitions, property).await
@@ -643,31 +644,31 @@ impl StateSpace {
             transitions: Vec::new(),
         }
     }
-    
+
     pub async fn build_states(&mut self, system: &SystemModel) -> Result<Vec<State>, VerificationError> {
         // 从系统模型构建状态空间
         let mut states = Vec::new();
         let mut to_visit = vec![system.initial_state.clone()];
         let mut visited = HashSet::new();
-        
+
         while let Some(current_state) = to_visit.pop() {
             if visited.insert(current_state.clone()) {
                 states.push(current_state.clone());
-                
+
                 // 计算后继状态
                 let successors = system.compute_successors(&current_state).await?;
                 to_visit.extend(successors);
             }
         }
-        
+
         self.states = states.clone();
         Ok(states)
     }
-    
+
     pub async fn build_transitions(&mut self, system: &SystemModel) -> Result<Vec<Transition>, VerificationError> {
         // 构建状态转移关系
         let mut transitions = Vec::new();
-        
+
         for state in &self.states {
             let successors = system.compute_successors(state).await?;
             for successor in successors {
@@ -678,46 +679,46 @@ impl StateSpace {
                 });
             }
         }
-        
+
         self.transitions = transitions.clone();
         Ok(transitions)
     }
 }
 
-#[derive(Debug, Clone)]
+# [derive(Debug, Clone)]
 pub struct State {
     pub id: String,
     pub variables: HashMap<String, Value>,
 }
 
-#[derive(Debug, Clone)]
+# [derive(Debug, Clone)]
 pub struct Transition {
     pub from: State,
     pub to: State,
     pub action: String,
 }
 
-#[derive(Debug, Clone)]
+# [derive(Debug, Clone)]
 pub struct Property {
     pub name: String,
     pub property_type: PropertyType,
     pub formula: String,
 }
 
-#[derive(Debug, Clone)]
+# [derive(Debug, Clone)]
 pub enum PropertyType {
     Safety,
     Liveness,
     Fairness,
 }
 
-#[derive(Debug, Clone)]
+# [derive(Debug, Clone)]
 pub struct PropertyResult {
     pub satisfied: bool,
     pub counterexample: Option<Counterexample>,
 }
 
-#[derive(Debug, Clone)]
+# [derive(Debug, Clone)]
 pub struct Counterexample {
     pub states: Vec<State>,
     pub actions: Vec<String>,
@@ -765,48 +766,48 @@ impl MetaModelEngine {
             model_validator: ModelValidator::new(),
         }
     }
-    
+
     pub fn register_metamodel(&mut self, metamodel: MetaModel) {
         self.metamodels.insert(metamodel.id.clone(), metamodel);
     }
-    
+
     pub async fn generate_model(&self, metamodel_id: &MetaModelId, parameters: &ModelParameters) -> Result<Model, MetaModelError> {
         let metamodel = self.metamodels.get(metamodel_id)
             .ok_or(MetaModelError::MetaModelNotFound)?;
-        
+
         // 生成模型
         let model = self.model_generator.generate(metamodel, parameters).await?;
-        
+
         // 验证模型
         self.model_validator.validate(&model, metamodel).await?;
-        
+
         Ok(model)
     }
-    
+
     pub async fn transform_model(&self, source_model: &Model, target_metamodel: &MetaModel) -> Result<Model, MetaModelError> {
         // 模型转换
         let transformation_rules = self.get_transformation_rules(&source_model.metamodel, target_metamodel).await?;
-        
+
         let transformed_model = self.apply_transformations(source_model, &transformation_rules).await?;
-        
+
         // 验证转换后的模型
         self.model_validator.validate(&transformed_model, target_metamodel).await?;
-        
+
         Ok(transformed_model)
     }
-    
+
     async fn get_transformation_rules(&self, source: &MetaModel, target: &MetaModel) -> Result<Vec<TransformationRule>, MetaModelError> {
         // 获取转换规则
         Ok(Vec::new()) // 简化实现
     }
-    
+
     async fn apply_transformations(&self, model: &Model, rules: &[TransformationRule]) -> Result<Model, MetaModelError> {
         // 应用转换规则
         Ok(Model::new()) // 简化实现
     }
 }
 
-#[derive(Debug, Clone)]
+# [derive(Debug, Clone)]
 pub struct MetaModel {
     pub id: MetaModelId,
     pub name: String,
@@ -815,14 +816,14 @@ pub struct MetaModel {
     pub constraints: Vec<MetaConstraint>,
 }
 
-#[derive(Debug, Clone)]
+# [derive(Debug, Clone)]
 pub struct MetaElement {
     pub name: String,
     pub element_type: ElementType,
     pub attributes: Vec<MetaAttribute>,
 }
 
-#[derive(Debug, Clone)]
+# [derive(Debug, Clone)]
 pub struct MetaRelationship {
     pub name: String,
     pub source: String,
@@ -830,14 +831,14 @@ pub struct MetaRelationship {
     pub relationship_type: RelationshipType,
 }
 
-#[derive(Debug, Clone)]
+# [derive(Debug, Clone)]
 pub struct MetaConstraint {
     pub name: String,
     pub constraint_type: ConstraintType,
     pub expression: String,
 }
 
-#[derive(Debug, Clone)]
+# [derive(Debug, Clone)]
 pub struct Model {
     pub id: ModelId,
     pub metamodel: MetaModel,
@@ -884,63 +885,63 @@ impl EdgeComputingArchitecture {
             resource_manager: ResourceManager::new(),
         }
     }
-    
+
     pub async fn add_edge_node(&mut self, node: EdgeNode) {
         let node_id = node.id.clone();
         self.edge_nodes.insert(node_id, node);
-        
+
         // 更新负载均衡器
         self.load_balancer.add_node(&node_id).await;
     }
-    
+
     pub async fn process_request(&self, request: &Request) -> Result<Response, EdgeError> {
         // 选择最佳边缘节点
         let target_node = self.load_balancer.select_node(request).await?;
-        
+
         // 检查资源可用性
         if !self.resource_manager.has_sufficient_resources(&target_node, request).await? {
             return Err(EdgeError::InsufficientResources);
         }
-        
+
         // 处理请求
         let response = self.edge_nodes.get(&target_node)
             .ok_or(EdgeError::NodeNotFound)?
             .process_request(request).await?;
-        
+
         // 更新资源使用情况
         self.resource_manager.update_usage(&target_node, request).await?;
-        
+
         Ok(response)
     }
-    
+
     pub async fn optimize_deployment(&mut self) -> Result<(), EdgeError> {
         // 分析负载分布
         let load_distribution = self.load_balancer.get_load_distribution().await;
-        
+
         // 识别热点节点
         let hot_nodes = self.identify_hot_nodes(&load_distribution).await;
-        
+
         // 执行负载均衡
         for hot_node in hot_nodes {
             self.balance_load(&hot_node).await?;
         }
-        
+
         Ok(())
     }
-    
+
     async fn identify_hot_nodes(&self, distribution: &LoadDistribution) -> Vec<NodeId> {
         let mut hot_nodes = Vec::new();
         let threshold = 0.8; // 80%负载阈值
-        
+
         for (node_id, load) in &distribution.node_loads {
             if *load > threshold {
                 hot_nodes.push(node_id.clone());
             }
         }
-        
+
         hot_nodes
     }
-    
+
     async fn balance_load(&self, hot_node: &NodeId) -> Result<(), EdgeError> {
         // 实现负载均衡逻辑
         Ok(())
@@ -963,15 +964,15 @@ impl EdgeNode {
             services: Vec::new(),
         }
     }
-    
+
     pub async fn process_request(&self, request: &Request) -> Result<Response, EdgeError> {
         // 查找合适的服务
         let service = self.find_service(&request.service_type)?;
-        
+
         // 处理请求
         service.process(request).await
     }
-    
+
     fn find_service(&self, service_type: &str) -> Result<&Service, EdgeError> {
         self.services.iter()
             .find(|s| s.service_type == service_type)
@@ -991,28 +992,28 @@ impl LoadBalancer {
             load_distribution: LoadDistribution::new(),
         }
     }
-    
+
     pub async fn add_node(&mut self, node_id: &NodeId) {
         self.nodes.push(node_id.clone());
     }
-    
+
     pub async fn select_node(&self, request: &Request) -> Result<NodeId, EdgeError> {
         // 实现负载均衡算法
         // 这里使用轮询算法
         if self.nodes.is_empty() {
             return Err(EdgeError::NoNodesAvailable);
         }
-        
+
         let index = request.id.hash() % self.nodes.len();
         Ok(self.nodes[index].clone())
     }
-    
+
     pub async fn get_load_distribution(&self) -> LoadDistribution {
         self.load_distribution.clone()
     }
 }
 
-#[derive(Debug, Clone)]
+# [derive(Debug, Clone)]
 pub struct LoadDistribution {
     pub node_loads: HashMap<NodeId, f64>,
 }
@@ -1063,17 +1064,17 @@ impl ZeroTrustArchitecture {
             threat_detector: ThreatDetector::new(),
         }
     }
-    
+
     pub async fn authenticate_request(&self, request: &Request) -> Result<AuthenticationResult, SecurityError> {
         // 身份验证
         let identity = self.identity_provider.authenticate(&request.credentials).await?;
-        
+
         // 风险评估
         let risk_score = self.threat_detector.assess_risk(&request, &identity).await?;
-        
+
         // 策略检查
         let policy_result = self.policy_engine.evaluate_policy(&identity, &request, risk_score).await?;
-        
+
         if policy_result.allowed {
             Ok(AuthenticationResult {
                 identity,
@@ -1084,21 +1085,21 @@ impl ZeroTrustArchitecture {
             Err(SecurityError::AccessDenied)
         }
     }
-    
+
     pub async fn authorize_access(&self, request: &Request, auth_result: &AuthenticationResult) -> Result<AccessResult, SecurityError> {
         // 访问控制
         let access_result = self.access_controller.check_access(request, auth_result).await?;
-        
+
         if access_result.granted {
             // 记录访问日志
             self.log_access(request, auth_result, &access_result).await?;
-            
+
             Ok(access_result)
         } else {
             Err(SecurityError::AccessDenied)
         }
     }
-    
+
     async fn log_access(&self, request: &Request, auth: &AuthenticationResult, access: &AccessResult) -> Result<(), SecurityError> {
         // 记录访问日志
         Ok(())
@@ -1117,7 +1118,7 @@ impl IdentityProvider {
             authentication_methods: Vec::new(),
         }
     }
-    
+
     pub async fn authenticate(&self, credentials: &Credentials) -> Result<Identity, SecurityError> {
         // 尝试多种认证方法
         for method in &self.authentication_methods {
@@ -1125,7 +1126,7 @@ impl IdentityProvider {
                 return Ok(identity);
             }
         }
-        
+
         Err(SecurityError::AuthenticationFailed)
     }
 }
@@ -1153,29 +1154,29 @@ impl PolicyEngine {
             policies: Vec::new(),
         }
     }
-    
+
     pub async fn evaluate_policy(&self, identity: &Identity, request: &Request, risk_score: f64) -> Result<PolicyResult, SecurityError> {
         let mut result = PolicyResult {
             allowed: true,
             permissions: Vec::new(),
         };
-        
+
         for policy in &self.policies {
             let policy_result = policy.evaluate(identity, request, risk_score).await?;
-            
+
             if !policy_result.allowed {
                 result.allowed = false;
                 break;
             }
-            
+
             result.permissions.extend(policy_result.permissions);
         }
-        
+
         Ok(result)
     }
 }
 
-#[derive(Debug, Clone)]
+# [derive(Debug, Clone)]
 pub struct Policy {
     pub name: String,
     pub rules: Vec<PolicyRule>,
@@ -1187,21 +1188,21 @@ impl Policy {
             allowed: true,
             permissions: Vec::new(),
         };
-        
+
         for rule in &self.rules {
             let rule_result = rule.evaluate(identity, request, risk_score).await?;
-            
+
             if !rule_result.allowed {
                 result.allowed = false;
                 break;
             }
         }
-        
+
         Ok(result)
     }
 }
 
-#[derive(Debug, Clone)]
+# [derive(Debug, Clone)]
 pub struct PolicyRule {
     pub condition: String,
     pub action: PolicyAction,
@@ -1211,7 +1212,7 @@ impl PolicyRule {
     pub async fn evaluate(&self, identity: &Identity, request: &Request, risk_score: f64) -> Result<PolicyResult, SecurityError> {
         // 评估规则条件
         let condition_met = self.evaluate_condition(identity, request, risk_score).await?;
-        
+
         if condition_met {
             match self.action {
                 PolicyAction::Allow => Ok(PolicyResult {
@@ -1230,14 +1231,14 @@ impl PolicyRule {
             })
         }
     }
-    
+
     async fn evaluate_condition(&self, identity: &Identity, request: &Request, risk_score: f64) -> bool {
         // 实现条件评估逻辑
         true // 简化实现
     }
 }
 
-#[derive(Debug, Clone)]
+# [derive(Debug, Clone)]
 pub enum PolicyAction {
     Allow,
     Deny,
@@ -1264,4 +1265,4 @@ $$M(t) = \sum_{i=1}^n w_i \cdot s_i(t)$$
 5. **边缘计算架构模式**：实现了边缘节点和负载均衡
 6. **安全架构模式**：提供了零信任和安全监控机制
 
-该架构模式框架为IoT系统的设计、实现和验证提供了完整的模式库，确保系统的可靠性、安全性和可维护性。 
+该架构模式框架为IoT系统的设计、实现和验证提供了完整的模式库，确保系统的可靠性、安全性和可维护性。

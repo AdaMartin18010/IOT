@@ -41,6 +41,7 @@ IoT业务模型是一个六元组 $\mathcal{B} = (\mathcal{E}, \mathcal{R}, \mat
 $$V(\mathcal{B}) = \sum_{i=1}^n w_i \cdot v_i$$
 
 其中：
+
 - $w_i$ 是权重系数
 - $v_i$ 是价值指标
 
@@ -554,6 +555,7 @@ impl Relationship {
 $$Q(D) = \alpha \cdot A(D) + \beta \cdot C(D) + \gamma \cdot T(D) + \delta \cdot V(D)$$
 
 其中：
+
 - $A(D)$ 是准确性
 - $C(D)$ 是完整性
 - $T(D)$ 是及时性
@@ -921,4 +923,4 @@ $$\max V(\mathcal{B}) = \max(\text{Revenue} - \text{Cost} - \text{Risk})$$
 6. **规则引擎理论**：实现了业务规则和规则优化
 7. **业务价值分析**：提供了ROI、NPV等价值分析方法
 
-该理论框架为IoT业务系统的设计、实现和优化提供了完整的理论基础，确保系统的业务价值和可持续性。 
+该理论框架为IoT业务系统的设计、实现和优化提供了完整的理论基础，确保系统的业务价值和可持续性。

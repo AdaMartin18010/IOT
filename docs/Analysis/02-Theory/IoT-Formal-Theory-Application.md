@@ -101,6 +101,7 @@ IoT线性类型系统：
 $$\mathcal{T}_{IoT} = (\mathcal{V}, \mathcal{C}, \mathcal{R}, \mathcal{I})$$
 
 其中：
+
 - $\mathcal{V}$ 是类型变量集合
 - $\mathcal{C}$ 是类型构造器集合
 - $\mathcal{R}$ 是类型规则集合
@@ -1004,4 +1005,4 @@ $$F(\mathcal{S}) = \min_{f \in \mathcal{F}} |f| \text{ s.t. } \mathcal{S} \setmi
 4. **时态逻辑应用**：提供了LTL和CTL在IoT中的模型检查
 5. **分布式理论应用**：实现了分布式一致性和容错机制
 
-该应用框架为IoT系统的形式化设计、验证和分析提供了完整的理论基础，确保系统的正确性、安全性和可靠性。 
+该应用框架为IoT系统的形式化设计、验证和分析提供了完整的理论基础，确保系统的正确性、安全性和可靠性。

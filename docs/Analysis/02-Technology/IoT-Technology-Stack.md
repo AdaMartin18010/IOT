@@ -30,6 +30,7 @@ IoT技术栈是一个五元组 $\mathcal{T} = (\mathcal{L}, \mathcal{F}, \mathca
 $$E(\mathcal{T}) = \alpha \cdot P(\mathcal{T}) + \beta \cdot S(\mathcal{T}) + \gamma \cdot D(\mathcal{T}) + \delta \cdot M(\mathcal{T})$$
 
 其中：
+
 - $P(\mathcal{T})$ 是性能评分
 - $S(\mathcal{T})$ 是安全评分
 - $D(\mathcal{T})$ 是开发效率评分
@@ -56,6 +57,7 @@ Rust内存安全模型：
 $$\forall p \in \text{Pointer}: \text{Valid}(p) \land \text{Unique}(p) \Rightarrow \text{Safe}(p)$$
 
 其中：
+
 - $\text{Valid}(p)$ 表示指针有效
 - $\text{Unique}(p)$ 表示指针唯一
 - $\text{Safe}(p)$ 表示指针安全
@@ -606,6 +608,7 @@ func (op *OptimizedProcessor) processChunk(data, buffer []byte) []byte {
 $$P = \alpha \cdot T + \beta \cdot M + \gamma \cdot C + \delta \cdot E$$
 
 其中：
+
 - $T$ 是吞吐量
 - $M$ 是内存使用
 - $C$ 是CPU使用
@@ -1314,4 +1317,4 @@ impl SystemMonitor {
 6. **安全方案**：提供了TLS和JWT等安全实现方案
 7. **部署运维**：提供了容器化和监控的部署运维方案
 
-该技术栈框架为IoT系统的开发、部署和维护提供了全面的技术支撑，确保系统的性能、安全和可维护性。 
+该技术栈框架为IoT系统的开发、部署和维护提供了全面的技术支撑，确保系统的性能、安全和可维护性。
