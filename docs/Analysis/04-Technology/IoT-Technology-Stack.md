@@ -31,6 +31,7 @@ IoT技术栈是一个五元组 $\mathcal{TS} = (\mathcal{L}, \mathcal{F}, \mathc
 $$\mathcal{EVAL} = (P, S, E, D, M)$$
 
 其中：
+
 - $P$ 是性能指标 (Performance)
 - $S$ 是安全指标 (Security)
 - $E$ 是效率指标 (Efficiency)
@@ -60,6 +61,7 @@ Rust的内存安全模型基于所有权系统，定义为：
 $$\mathcal{OWN} = (\mathcal{R}, \mathcal{B}, \mathcal{L})$$
 
 其中：
+
 - $\mathcal{R}$ 是资源集合
 - $\mathcal{B}$ 是借用规则集合
 - $\mathcal{L}$ 是生命周期集合
@@ -69,11 +71,12 @@ Rust的所有权系统在编译时保证内存安全，即：
 $$\forall r \in \mathcal{R}, \exists! o \in \mathcal{O} : \text{owns}(o, r)$$
 
 **证明：** 通过类型系统验证：
+
 1. **唯一所有权**：每个资源只能有一个所有者
 2. **借用检查**：借用必须遵循借用规则
 3. **生命周期检查**：引用不能超过被引用对象的生命周期
 
-**算法 2.1 (Rust所有权检查算法)**
+**算法 2.1 (Rust所有权检查算法)**:
 
 ```rust
 pub struct OwnershipChecker {
@@ -142,11 +145,12 @@ Rust异步模型基于Future trait，定义为：
 $$\mathcal{ASYNC} = (\mathcal{F}, \mathcal{E}, \mathcal{P})$$
 
 其中：
+
 - $\mathcal{F}$ 是Future集合
 - $\mathcal{E}$ 是执行器集合
 - $\mathcal{P}$ 是轮询策略集合
 
-**算法 2.2 (异步任务调度算法)**
+**算法 2.2 (异步任务调度算法)**:
 
 ```rust
 pub struct AsyncScheduler {
@@ -224,11 +228,12 @@ Rust嵌入式模型基于no_std特性，定义为：
 $$\mathcal{EMB} = (\mathcal{H}, \mathcal{I}, \mathcal{D})$$
 
 其中：
+
 - $\mathcal{H}$ 是硬件抽象层集合
 - $\mathcal{I}$ 是中断处理集合
 - $\mathcal{D}$ 是设备驱动集合
 
-**算法 2.3 (嵌入式中断处理算法)**
+**算法 2.3 (嵌入式中断处理算法)**:
 
 ```rust
 pub struct EmbeddedSystem {
@@ -298,6 +303,7 @@ Go并发模型基于goroutine和channel，定义为：
 $$\mathcal{CONC} = (\mathcal{G}, \mathcal{C}, \mathcal{S})$$
 
 其中：
+
 - $\mathcal{G}$ 是goroutine集合
 - $\mathcal{C}$ 是channel集合
 - $\mathcal{S}$ 是调度器集合
@@ -307,6 +313,7 @@ Go的channel机制保证并发安全，即：
 $$\forall c \in \mathcal{C}, \forall g_1, g_2 \in \mathcal{G} : \text{safe}(g_1, g_2, c)$$
 
 **证明：** 通过channel语义：
+
 1. **同步通信**：channel提供同步点
 2. **类型安全**：编译时类型检查
 3. **内存安全**：运行时内存管理
@@ -384,6 +391,7 @@ Go垃圾回收模型基于三色标记算法，定义为：
 $$\mathcal{GC} = (\mathcal{W}, \mathcal{G}, \mathcal{B})$$
 
 其中：
+
 - $\mathcal{W}$ 是白色对象集合（未访问）
 - $\mathcal{G}$ 是灰色对象集合（已访问但子对象未访问）
 - $\mathcal{B}$ 是黑色对象集合（已访问且子对象已访问）
@@ -476,6 +484,7 @@ Go网络模型基于非阻塞I/O，定义为：
 $$\mathcal{NET} = (\mathcal{C}, \mathcal{L}, \mathcal{P})$$
 
 其中：
+
 - $\mathcal{C}$ 是连接集合
 - $\mathcal{L}$ 是监听器集合
 - $\mathcal{P}$ 是协议集合
@@ -598,6 +607,7 @@ func (s *NetworkServer) writeToClient(client *Client) {
 $$P = \alpha \cdot T + \beta \cdot M + \gamma \cdot E$$
 
 其中：
+
 - $T$ 是吞吐量
 - $M$ 是内存使用
 - $E$ 是能耗
@@ -672,6 +682,7 @@ impl PerformanceBenchmark {
 $$S = \sum_{i=1}^{n} w_i \cdot s_i$$
 
 其中：
+
 - $s_i$ 是第 $i$ 个安全指标
 - $w_i$ 是第 $i$ 个指标的权重
 
@@ -691,6 +702,7 @@ $$S = \sum_{i=1}^{n} w_i \cdot s_i$$
 $$D = \frac{F}{T \cdot C}$$
 
 其中：
+
 - $F$ 是功能完整性
 - $T$ 是开发时间
 - $C$ 是代码复杂度
@@ -713,6 +725,7 @@ $$D = \frac{F}{T \cdot C}$$
 $$\mathcal{MSA} = (\mathcal{S}, \mathcal{C}, \mathcal{G})$$
 
 其中：
+
 - $\mathcal{S}$ 是服务集合
 - $\mathcal{C}$ 是通信集合
 - $\mathcal{G}$ 是网关集合
@@ -767,6 +780,7 @@ impl MicroserviceRegistry {
 $$\mathcal{EDA} = (\mathcal{E}, \mathcal{H}, \mathcal{B})$$
 
 其中：
+
 - $\mathcal{E}$ 是事件集合
 - $\mathcal{H}$ 是处理器集合
 - $\mathcal{B}$ 是事件总线集合
@@ -820,6 +834,7 @@ impl EventBus {
 $$\mathcal{MO} = (\mathcal{P}, \mathcal{R}, \mathcal{C})$$
 
 其中：
+
 - $\mathcal{P}$ 是池化策略集合
 - $\mathcal{R}$ 是重用策略集合
 - $\mathcal{C}$ 是压缩策略集合
@@ -865,6 +880,7 @@ impl<T> ObjectPool<T> {
 $$\mathcal{CO} = (\mathcal{T}, \mathcal{S}, \mathcal{L})$$
 
 其中：
+
 - $\mathcal{T}$ 是线程池策略集合
 - $\mathcal{S}$ 是调度策略集合
 - $\mathcal{L}$ 是锁策略集合
@@ -917,6 +933,7 @@ impl WorkStealingScheduler {
 $$\mathcal{EC} = (\mathcal{K}, \mathcal{A}, \mathcal{P})$$
 
 其中：
+
 - $\mathcal{K}$ 是密钥管理集合
 - $\mathcal{A}$ 是认证集合
 - $\mathcal{P}$ 是协议集合
@@ -973,6 +990,7 @@ impl TLSServer {
 $$\mathcal{AUTH} = (\mathcal{U}, \mathcal{C}, \mathcal{T})$$
 
 其中：
+
 - $\mathcal{U}$ 是用户集合
 - $\mathcal{C}$ 是凭证集合
 - $\mathcal{T}$ 是令牌集合
@@ -1046,6 +1064,7 @@ impl JWTAuthenticator {
 $$\mathcal{CONT} = (\mathcal{I}, \mathcal{C}, \mathcal{O})$$
 
 其中：
+
 - $\mathcal{I}$ 是镜像集合
 - $\mathcal{C}$ 是容器集合
 - $\mathcal{O}$ 是编排集合
@@ -1111,6 +1130,7 @@ impl ContainerOrchestrator {
 $$\mathcal{MON} = (\mathcal{M}, \mathcal{A}, \mathcal{D})$$
 
 其中：
+
 - $\mathcal{M}$ 是指标集合
 - $\mathcal{A}$ 是告警集合
 - $\mathcal{D}$ 是仪表板集合
@@ -1369,4 +1389,4 @@ IoT技术栈的发展趋势：
 2. "The Go Programming Language" by Alan A. A. Donovan and Brian W. Kernighan
 3. "Building Microservices" by Sam Newman
 4. "Event-Driven Architecture" by Hugh Taylor
-5. "IoT Security" by Cesar Cerrudo and Lucas Apa 
+5. "IoT Security" by Cesar Cerrudo and Lucas Apa

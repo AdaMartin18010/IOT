@@ -61,7 +61,7 @@ $$S = \langle x_1, x_2, ..., x_n \rangle$$
 
 其中 $x_i \in \mathbb{R}^d$ 是数据点。
 
-**算法 2.1 (滑动窗口平均)**
+**算法 2.1 (滑动窗口平均)**:
 
 ```rust
 pub struct SlidingWindowAverage {
@@ -122,7 +122,7 @@ $$R = \frac{|C|}{|O|}$$
 
 其中 $|C|$ 是压缩后大小，$|O|$ 是原始大小。
 
-**算法 2.2 (增量压缩)**
+**算法 2.2 (增量压缩)**:
 
 ```rust
 pub struct IncrementalCompressor {
@@ -184,7 +184,7 @@ IoT网络路由图 $G = (V, E, W)$，其中：
 - $E$ 是边集合
 - $W: E \rightarrow \mathbb{R}^+$ 是权重函数
 
-**算法 3.1 (Dijkstra路由算法)**
+**算法 3.1 (Dijkstra路由算法)**:
 
 ```rust
 use std::collections::{BinaryHeap, HashMap};

@@ -149,7 +149,7 @@ $$L_1 = (\mathcal{S}, \mathcal{A}, \mathcal{P}, \mathcal{I})$$
 - $\mathcal{P}$ 是处理单元集合
 - $\mathcal{I}$ 是接口集合
 
-**算法 3.1 (数据采集算法)**
+**算法 3.1 (数据采集算法)**:
 
 ```rust
 pub struct PerceptionLayer {
@@ -221,7 +221,7 @@ $$L_2 = (\mathcal{P}, \mathcal{R}, \mathcal{Q}, \mathcal{S})$$
 - $\mathcal{Q}$ 是队列集合
 - $\mathcal{S}$ 是安全集合
 
-**算法 3.2 (自适应路由算法)**
+**算法 3.2 (自适应路由算法)**:
 
 ```rust
 pub struct NetworkLayer {
@@ -309,7 +309,7 @@ impl NetworkLayer {
 
 ### 4.2 共识算法
 
-**算法 4.1 (IoT共识算法)**
+**算法 4.1 (IoT共识算法)**:
 
 ```rust
 pub struct IoTConsensus {
@@ -414,7 +414,7 @@ $$f: \mathcal{T} \times \mathcal{E} \rightarrow \mathbb{R}^+$$
 
 表示将任务 $t \in \mathcal{T}$ 卸载到边缘节点 $e \in \mathcal{E}$ 的成本。
 
-**算法 5.1 (边缘计算调度算法)**
+**算法 5.1 (边缘计算调度算法)**:
 
 ```rust
 pub struct EdgeComputing {
@@ -499,7 +499,7 @@ IoT系统应满足以下安全属性：
 4. **认证性 (Authentication)**：实体身份得到验证
 5. **不可否认性 (Non-repudiation)**：实体不能否认其行为
 
-**算法 6.1 (多层安全防护算法)**
+**算法 6.1 (多层安全防护算法)**:
 
 ```rust
 pub struct SecurityArchitecture {
@@ -590,7 +590,7 @@ $$P = f(T, L, E, R) = \alpha \cdot T + \beta \cdot \frac{1}{L} + \gamma \cdot \f
 
 其中 $\alpha, \beta, \gamma, \delta$ 是权重系数。
 
-**算法 7.1 (性能优化算法)**
+**算法 7.1 (性能优化算法)**:
 
 ```rust
 pub struct PerformanceOptimizer {
@@ -678,7 +678,7 @@ IoT系统应满足的时态逻辑属性：
 2. **活性 (Liveness)**：$\Diamond good$ - 好状态最终会发生
 3. **公平性 (Fairness)**：$\Box \Diamond enabled \rightarrow \Diamond executed$ - 如果某个动作总是被启用，则它最终会被执行
 
-**算法 8.1 (模型检查算法)**
+**算法 8.1 (模型检查算法)**:
 
 ```rust
 pub struct ModelChecker {
@@ -1116,7 +1116,7 @@ IoT架构理论的发展方向：
 
 ---
 
-**参考文献**
+**参考文献**:
 
 1. Levis, P., et al. "TinyOS: An operating system for sensor networks." Ambient intelligence, 2004.
 2. Atzori, L., Iera, A., & Morabito, G. "The internet of things: A survey." Computer networks, 2010.
