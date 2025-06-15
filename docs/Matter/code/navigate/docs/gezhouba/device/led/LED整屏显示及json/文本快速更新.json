@@ -1,0 +1,109 @@
+{
+	"info": {
+		"_postman_id": "1a63ae00-8372-4617-9ef8-32b3c5870995",
+		"name": "文本快速更新",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "切换节目2",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"url": "http://172.60.223.43/api/vsns/sources/lan/vsns/2.vsn/activated"
+			},
+			"response": []
+		},
+		{
+			"name": "注意安全",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json;charset=utf-8",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"Programs\": {\r\n        \"Program\": {\r\n            \"Pages\": [\r\n                {\r\n                    \"Width\": \"320\",\r\n                    \"Height\": \"160\",\r\n                    \"Regions\": [\r\n                        {\r\n                            \"Layer\": 1,\r\n                            \"Rect\": {\r\n                                \"X\": \"0\",\r\n                                \"Y\": \"0\",\r\n                                \"Width\": 320,\r\n                                \"Height\": 160\r\n                            },\r\n                            \"Items\": [\r\n                                {\r\n                                    \"Type\": \"4\",\r\n                                    \"Text\": \"注意安全\",\r\n                                    \"TextColor\": \"#FFF0F5\",\r\n                                    \"IsScroll\": 0,\r\n                                    \"Speed\": 15,\r\n                                    \"CenteralAlign\":1,\r\n                                    \"LogFont\": {\r\n                                        \"lfHeight\": 96,\r\n                                        \"lfWeight\": \"96\",\r\n                                        \"lfItalic\": \"0\",\r\n                                        \"lfUnderline\": \"0\",\r\n                                        \"lfFaceName\": \"宋体\"\r\n                                    }\r\n                                }\r\n                            ]\r\n                        }\r\n                    ]\r\n                }\r\n            ]\r\n        }\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://172.60.223.43/api/program/3.vsn"
+			},
+			"response": []
+		},
+		{
+			"name": "速度",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json;charset=utf-8",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"Programs\": {\r\n        \"Program\": {\r\n            \"Pages\": [\r\n                {\r\n                    \"Width\": \"320\",\r\n                    \"Height\": \"160\",\r\n                    \"Regions\": [\r\n                        {\r\n                            \"Layer\": 1,\r\n                            \"Rect\": {\r\n                                \"X\": \"0\",\r\n                                \"Y\": \"0\",\r\n                                \"Width\": 320,\r\n                                \"Height\": 160\r\n                            },\r\n                            \"Items\": [\r\n                                {\r\n                                    \"Type\": \"4\",\r\n                                    \"Text\": \"0.9M/S\",\r\n                                    \"TextColor\": \"#FFF0F5\",\r\n                                    \"IsScroll\": 0,\r\n                                    \"Speed\": 15,\r\n                                    \"CenteralAlign\":1,\r\n                                    \"LogFont\": {\r\n                                        \"lfHeight\": 86,\r\n                                        \"lfWeight\": \"86\",\r\n                                        \"lfItalic\": \"0\",\r\n                                        \"lfUnderline\": \"0\",\r\n                                        \"lfFaceName\": \"宋体\"\r\n                                    }\r\n                                }\r\n                            ]\r\n                        }\r\n                    ]\r\n                }\r\n            ]\r\n        }\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://172.60.223.43/api/program/1.vsn"
+			},
+			"response": []
+		},
+		{
+			"name": "显示超速",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json;charset=utf-8",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"Programs\": {\r\n        \"Program\": {\r\n            \"Pages\": [\r\n                {\r\n                    \"Width\": \"320\",\r\n                    \"Height\": \"160\",\r\n                    \"Regions\": [\r\n                        {\r\n                            \"Layer\": 1,\r\n                            \"Rect\": {\r\n                                \"X\": \"0\",\r\n                                \"Y\": \"0\",\r\n                                \"Width\": 320,\r\n                                \"Height\": 160\r\n                            },\r\n                            \"Items\": [\r\n                                {\r\n                                    \"Type\": \"4\",\r\n                                    \"Text\": \"超速\",\r\n                                    \"TextColor\": \"#FFF0F5\",\r\n                                    \"IsScroll\": 0,\r\n                                    \"Speed\": 15,\r\n                                    \"CenteralAlign\":1,\r\n                                    \"LogFont\": {\r\n                                        \"lfHeight\": 96,\r\n                                        \"lfWeight\": \"96\",\r\n                                        \"lfItalic\": \"0\",\r\n                                        \"lfUnderline\": \"0\",\r\n                                        \"lfFaceName\": \"宋体\"\r\n                                    }\r\n                                }\r\n                            ]\r\n                        }\r\n                    ]\r\n                }\r\n            ]\r\n        }\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://172.60.223.43/api/program/2.vsn"
+			},
+			"response": []
+		},
+		{
+			"name": "更新单行文本",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json;charset=UTF-8",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"update\":[\r\n        {\r\n            \"who\":{\"X\":0, \"Y\":0},\r\n            \"text\":\"1 M/S\"\r\n        }\r\n    ]\r\n}"
+				},
+				"url": "http://172.60.223.43/api/program/1.vsn"
+			},
+			"response": []
+		}
+	]
+}

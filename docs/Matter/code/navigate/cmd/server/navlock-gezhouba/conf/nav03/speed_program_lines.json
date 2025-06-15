@@ -1,0 +1,20 @@
+{
+  "update": [
+    {
+      "nav_server_tag": "middle_up",
+      "who": {
+        "x": "0",
+        "y": "0"
+      },
+      "text": "0.0"
+    },
+    {
+      "nav_server_tag": "middle_down",
+      "who": {
+        "x": "0",
+        "y": "80"
+      },
+      "text": " "
+    }
+  ]
+}

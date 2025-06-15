@@ -1,0 +1,36 @@
+{
+  "update": [
+    {
+      "nav_server_tag": "left_up",
+      "who": {
+        "x": "0",
+        "y": "0"
+      },
+      "text": "0.0"
+    },
+    {
+      "nav_server_tag": "right_up",
+      "who": {
+        "x": "160",
+        "y": "0"
+      },
+      "text": "0.0"
+    },
+    {
+      "nav_server_tag": "left_down",
+      "who": {
+        "x": "0",
+        "y": "80"
+      },
+      "text": " "
+    },
+    {
+      "nav_server_tag": "right_down",
+      "who": {
+        "x": "160",
+        "y": "80"
+      },
+      "text": " "
+    }
+  ]
+}

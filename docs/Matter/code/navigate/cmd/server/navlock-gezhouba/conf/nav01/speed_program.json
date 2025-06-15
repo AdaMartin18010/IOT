@@ -1,0 +1,92 @@
+{
+  "Programs": {
+    "Program": {
+      "Information": {
+        "Width": "288",
+        "Height": "160"
+      },
+      "Pages": [
+        {
+          "Regions": [
+            {
+              "Layer": 1,
+              "Rect": {
+                "X": "0",
+                "Y": "0",
+                "Width": "128",
+                "Height": "80"
+              },
+              "Items": [
+                {
+                  "Type": "4",
+                  "Text": " ",
+                  "LogFont": {
+                    "lfHeight": "90",
+                    "lfWidth": "90"
+                  }
+                }
+              ]
+            },
+            {
+              "Layer": 2,
+              "Rect": {
+                "X": "160",
+                "Y": "0",
+                "Width": "128",
+                "Height": "80"
+              },
+              "Items": [
+                {
+                  "Type": "4",
+                  "Text": " ",
+                  "LogFont": {
+                    "lfHeight": "90",
+                    "lfWidth": "90"
+                  }
+                }
+              ]
+            },
+            {
+              "Layer": 3,
+              "Rect": {
+                "X": "0",
+                "Y": "80",
+                "Width": "128",
+                "Height": "80"
+              },
+              "Items": [
+                {
+                  "Type": "4",
+                  "Text": " ",
+                  "LogFont": {
+                    "lfHeight": "60",
+                    "lfWidth": "60"
+                  }
+                }
+              ]
+            },
+            {
+              "Layer": 4,
+              "Rect": {
+                "X": "160",
+                "Y": "80",
+                "Width": "128",
+                "Height": "80"
+              },
+              "Items": [
+                {
+                  "Type": "4",
+                  "Text": " ",
+                  "LogFont": {
+                    "lfHeight": "60",
+                    "lfWidth": "60"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

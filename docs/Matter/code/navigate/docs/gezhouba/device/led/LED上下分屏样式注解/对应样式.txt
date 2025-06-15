@@ -1,0 +1,66 @@
+{
+    "Programs": {
+        "Program": {
+            "Pages": [
+                {
+                    "Width": "288",
+                    "Height": "160",
+                    "Regions": [
+                        {
+                            "Layer": 1,
+                            "Rect": {
+                                "X": "0",
+                                "Y": "0",
+                                "Width": 288,
+                                "Height": 80
+                            },
+                            "Items": [
+                                {
+                                    "Type": "4",
+                                    "Text": "0.9M/S",
+                                    "TextColor": "#FFF0F5",
+                                    "IsScroll": 0,
+                                    "Speed": 15,
+                                    "CenteralAlign":1,
+                                    "LogFont": {
+                                        "lfHeight": 48,
+                                        "lfWeight": "48",
+                                        "lfItalic": "0",
+                                        "lfUnderline": "0",
+                                        "lfFaceName": "宋体"
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "Layer": 1,
+                            "Rect": {
+                                "X": "0",
+                                "Y": "80",
+                                "Width": 288,
+                                "Height": 80
+                            },
+                            "Items": [
+                                {
+                                    "Type": "4",
+                                    "Text": "超速",
+                                    "TextColor": "#FFF0F5",
+                                    "IsScroll": 0,
+                                    "Speed": 15,
+                                    "CenteralAlign":1,
+                                    "LogFont": {
+                                        "lfHeight": 48,
+                                        "lfWeight": "48",
+                                        "lfItalic": "0",
+                                        "lfUnderline": "0",
+                                        "lfFaceName": "宋体"
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    }
+}

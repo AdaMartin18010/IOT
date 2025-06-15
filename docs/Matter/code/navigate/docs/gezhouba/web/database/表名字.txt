@@ -1,0 +1,16 @@
+﻿*nav_animation	动画的流水表(每个闸一条记录）
+*nav_animation_history    （动画流水表的历史记录，表结构和nav_animation一致，所有的动画的帧都保存在此表中）
+nav_led_setup	LED配置表（此表与超速的显示相关）
+
+*nav_overspeed_warn	超速表
+nav_shipspeed_setup	超速配置表 （此表与超速的距离和速度相关）
+nav_speed_data	超速数据
+
+nav_speed_statis	超速统计表
+nav_stopline_statis	禁停统计表
+*nav_stopline_warn	禁停表
+
+
+带*号的先弄 ，统计是下一步
+nav_animation --- 只更新最新的update
+nav_animation_history ---- 插入数据

@@ -1,0 +1,40 @@
+{
+  "Programs": {
+    "Program": {
+      "Pages": [
+        {
+          "Width": "288",
+          "Height": "160",
+          "Regions": [
+            {
+              "Layer": 1,
+              "Rect": {
+                "X": "0",
+                "Y": "0",
+                "Width": "288",
+                "Height": "160"
+              },
+              "Items": [
+                {
+                  "Type": "4",
+                  "Text": "注意安全",
+                  "TextColor": "#FFF0F5",
+                  "IsScroll": 1,
+                  "Speed": 60,
+                  "CenteralAlign": 1,
+                  "LogFont": {
+                    "lfHeight": "160",
+                    "lfWeight": "160",
+                    "lfItalic": "0",
+                    "lfUnderline": "0",
+                    "lfFaceName": "宋体"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

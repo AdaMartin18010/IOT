@@ -1,0 +1,1658 @@
+--- # 船闸配置 ------------------------- begin ---------------------------------
+# 配置文件提示:
+#    yaml配置格式中":"要紧接关键字后,不可用空格隔开.
+#    层次关系是按列对齐的 否则一定会无法解析
+#    每个独立的配置项都有enable 属性 为true的情况下就是生效 生效的意义就是启动服务 包括自动测试
+#          也就是三个船闸的服务可以对应一个服务程序 也可以配置三个服务每个配置分别对应一个船闸的
+#     enable_autotest 启动自动测试 分层次测试-测试数据的入库-启用sqlite的配置---生产环境需要关闭
+#     注意:
+#     ---- 在启用enable 的情况下  enable_autotest的配置项才生效
+#     ---- 每个配置节项启用enable 的情况下子节的配置项enable 才生效
+# 葛洲坝船闸的基础属性和其IP设备服务访问的配置
+navigationlock-config:
+  # 一号船闸的配置 ------------------------- begin ---------------------------------
+  navigationlock01:
+    #船闸配置启用 true | false 启用的情况下程序自动创建服务器 否则不创建忽略掉
+    enable: true
+    #启动自动测试 分层次测试-测试数据入库-确定是关闭生产数据库mysql的配置,启用sqlite的配置 --- 生产环境需要关闭
+    enable_autotest: true
+    #是否开启 调试日志开关
+    enable_debug: true
+    #是否开启 动画数据收集
+    enable_animation: false
+
+    #船闸名称 与平台命名规则一致
+    name: "葛洲坝1#"
+    #船闸编号 会根据id生成对应的闸次标识入库
+    identifier: 1
+    #通航状态判断的 有效时间间隔 单位秒
+    nav_state_interval: 5
+    #船闸类型 1 单船单行 2 双船并行
+    navl_type: 2
+    #传感器的物理部署类型 1: 上下游 左右单边部署 2: 上下游 左右双边部署
+    sensors_layout: 2
+    #船闸长度  米 float32
+    length: 280.00
+    #船闸宽度 米 float32
+    width: 34.00
+    #雷达的探测 有效距离 启动雷达时 探测到的目标 距离大于该值 会被过滤掉 米
+    detection_distance_max: 300.0
+    #目标加速度的识别 临界加速度 加速度绝对值大于该值会被过滤掉 绝对值m/s 
+    target_acceleration_max: 1.5
+    #探测目标的最大速度值 绝对值大于该值会被过滤掉 绝对值m/s float32
+    detection_speed_max: 2.0
+    #雷达最大运行时间 分钟 24*60 = 1440 24小时
+    radar_max_runtime: 1440
+    #雷达达到最大运行时间后 冷却时间间隔 分钟
+    radar_cooling_interval: 10
+    #船闸调度类型 1:基础测试-联通性和基本的功能 2:基础的通用调度功能 3:修改的优化调度功能
+    schedule_type: 3
+    #船舶测速配置 --------------------- begin ------------------------------
+    shipspeed_setup:
+      #playscreen_setup 播放屏设置
+      playscreen_setup:
+        enable: false
+        #启动自动测试 在navigationlock01 启动自动测试的情况下有效
+        enable_autotest: true
+        enable_debug: true
+        #启动时 清空节目 重新创建并发布节目 否则 默认只在节目中切换 修改节目效果和初始化文本需要设置为true
+        enable_clear_and_publish_program: true
+        #退出时 激活并检查切换到 默认的节目
+        enable_exit_active_default_program: true
+        #enable_autotest 启用的情况下 会自动创建目录
+        autotest_director: "./playscreen/navl01/"
+        #默认节目的配置模板
+        default_program_name: "normal"
+        default_program_cnf: "./conf/nav01/default_program.json"
+        #默认节目的文本行更新配置模板 -- "nav_server_tag":"middle"
+        default_program_lines_cnf: "./conf/nav01/default_program_lines.json"
+        #显速节目的配置模板
+        speed_program_name: "speed"
+        #正常速度情况下的显示文本
+        normal_speed_text: " "
+        #超速情况下的显示文本
+        over_speed_text: "超速"
+        speed_program_cnf: "./conf/nav01/speed_program.json"
+        #显速节目的文本行更新配置模板 --  "nav_server_tag":"left_up","right_up","left_down","right_down"
+        speed_program_lines_cnf: "./conf/nav01/speed_program_lines.json"
+
+        #名称 规范[类型-物理区域]
+        name: "[playscreen-下游左]"
+        #设备标识tag
+        tag: "playscreen01"
+        #http 连接配置相关 --- begin---
+        url: "http://172.60.223.23:80"
+        #链接或者读取超时 单位-毫秒
+        connect-read-timeout: 3000
+        #如果为持续的任务 则设置其工作的时间间隔 单位-毫秒
+        do-timeinterval: 1500
+        #模板配置
+        #playscreen_setup 播放屏设置 --- end---
+
+      up_setup:
+        left_setup:
+          #开关量配置
+          relay_setup:
+            enable: true
+            #启动自动测试 在navigationlock 启动自动测试的情况下有效
+            enable_autotest: true
+            enable_debug: true
+            #驱动的名称
+            drive-name: "[开关量-上游左]"
+            #设备标识tagname
+            device-tag: "172.60.223.10"
+            #tcp 连接配置相关 --- begin---
+            #ip地址和端口
+            ip-address: "172.60.223.10"
+            #端口
+            ip-port: 502
+            #链接或者读取超时 单位-毫秒 程序启动时的第一次判定
+            connect-read-timeout: 200
+            #正常链接收发数据 无任何操作的空闲超时 -- 超时会断开重连 单位-秒  为0则忽略
+            idle-timeout: 0
+            #连接断开后 等待时间间隔reconnect -- 链接断开后重连的时间间隔 单位-秒  >=0
+            #如果为0表示按照程序默认的算法或配置执行
+            reconnect-retry-timeinterval: 2
+            #tcp 连接配置相关 --- end---
+
+            #modbus slave-id
+            slave-id: 1
+            #每次读取modbus的时间间隔 单位-毫秒 与modbus波特率和设备反应时间有关
+            read-timeinterval: 500
+            #每次写入modbus的时间间隔 单位-毫秒 与modbus波特率和设备反应时间有关
+            write-timeinterval: 500
+            #云台开关量 对应的id
+            tripodhead-id: 7
+            #雷达开关量 对应的id
+            radar-id: 8
+
+          #云台配置
+          tripodhead_setup:
+            enable: true
+            #启动自动测试 在navigationlock01 启动自动测试的情况下有效
+            enable_autotest: true
+            #驱动的名称
+            drive-name: "[云台-上游左]"
+            #设备标识tagname
+            device-tag: "172.60.223.11"
+            #tcp 连接配置相关 --- begin---
+            #ip地址和端口
+            ip-address: "172.60.223.11"
+            #端口
+            ip-port: 4196
+            #链接或者读取超时 单位-毫秒 程序启动时的第一次判定
+            connect-read-timeout: 300
+            #正常链接收发数据 无任何操作的空闲超时 -- 超时会断开重连 单位-秒  为0则忽略
+            idle-timeout: 0
+            #连接断开后 等待时间间隔reconnect -- 链接断开后重连的时间间隔 单位-秒  >=0
+            #如果为0表示按照程序默认的算法或配置执行
+            reconnect-retry-timeinterval: 1
+            #tcp 连接配置相关 --- end---
+
+            #modbus slave-id
+            slave-id: 1
+            #每次读取modbus的时间间隔 单位-毫秒 与modbus波特率和设备反应时间有关
+            read-timeinterval: 500
+            #每次写入modbus的时间间隔 单位-毫秒 与modbus波特率和设备反应时间有关
+            write-timeinterval: 500
+
+            #水平角度 以云台本体参考(0度就是360度) 向左转27度 就是顺时针转动360-27=333
+            horizontal-angle: 333.0
+            #垂直角度 以云台本体参考(0度就是360度)
+            vertical-angle: 0.0
+
+          #雷达配置
+          radar_setup:
+            enable: true
+            #启动自动测试 在navigationlock01 启动自动测试的情况下有效
+            enable_autotest: true
+            #驱动的名称
+            drive-name: "[雷达-上游左]"
+            #设备标识tagname
+            device-tag: "172.60.223.12"
+            #tcp 连接配置相关 --- begin---
+            #ip地址和端口
+            ip-address: "172.60.223.12"
+            #端口
+            ip-port: 4196
+            #链接或者读取超时 单位-毫秒 程序启动时的第一次判定
+            connect-read-timeout: 300
+            #正常链接收发数据 无任何操作的空闲超时 -- 超时会断开重连 单位-秒  为0则忽略
+            idle-timeout: 0
+            #连接断开后 等待时间间隔reconnect -- 链接断开后重连的时间间隔 单位-秒  >=0
+            #如果为0表示按照程序默认的算法或配置执行
+            reconnect-retry-timeinterval: 1
+            #tcp 连接配置相关 --- end---
+
+            #modbus slave-id
+            slave-id: 1
+            #每次读取modbus的时间间隔 单位-毫秒 与modbus波特率和设备反应时间有关
+            read-timeinterval: 500
+            #每次写入modbus的时间间隔 单位-毫秒 与modbus波特率和设备反应时间有关
+            write-timeinterval: 500
+
+        right_setup:
+          #开关量配置
+          relay_setup:
+            enable: true
+            #启动自动测试 在navigationlock01 启动自动测试的情况下有效
+            enable_autotest: true
+            #驱动的名称
+            drive-name: "[开关量-上游右]"
+            #设备标识tagname
+            device-tag: "172.60.223.15"
+            #tcp 连接配置相关 --- begin---
+            #ip地址和端口
+            ip-address: "172.60.223.15"
+            #端口
+            ip-port: 502
+            #链接或者读取超时 单位-毫秒 程序启动时的第一次判定
+            connect-read-timeout: 300
+            #正常链接收发数据 无任何操作的空闲超时 -- 超时会断开重连 单位-秒  为0则忽略
+            idle-timeout: 0
+            #连接断开后 等待时间间隔reconnect -- 链接断开后重连的时间间隔 单位-秒  >=0
+            #如果为0表示按照程序默认的算法或配置执行
+            reconnect-retry-timeinterval: 1
+            #tcp 连接配置相关 --- end---
+
+            #modbus slave-id
+            slave-id: 1
+            #每次读取modbus的时间间隔 单位-毫秒 与modbus波特率和设备反应时间有关
+            read-timeinterval: 50
+            #每次写入modbus的时间间隔 单位-毫秒 与modbus波特率和设备反应时间有关
+            write-timeinterval: 50
+            #云台开关量 对应的id
+            tripodhead-id: 7
+            #雷达开关量 对应的id
+            radar-id: 8
+
+          #云台配置
+          tripodhead_setup:
+            enable: true
+            #启动自动测试 在navigationlock01 启动自动测试的情况下有效
+            enable_autotest: true
+            #驱动的名称
+            drive-name: "[云台-上游右]"
+            #设备标识tagname
+            device-tag: "172.60.221.16"
+            #tcp 连接配置相关 --- begin---
+            #ip地址和端口
+            ip-address: "172.60.221.16"
+            #端口
+            ip-port: 4196
+            #链接或者读取超时 单位-毫秒 程序启动时的第一次判定
+            connect-read-timeout: 300
+            #正常链接收发数据 无任何操作的空闲超时 -- 超时会断开重连 单位-秒  为0则忽略
+            idle-timeout: 0
+            #连接断开后 等待时间间隔reconnect -- 链接断开后重连的时间间隔 单位-秒  >=0
+            #如果为0表示按照程序默认的算法或配置执行
+            reconnect-retry-timeinterval: 1
+            #tcp 连接配置相关 --- end---
+
+            #modbus slave-id
+            slave-id: 1
+            #每次读取modbus的时间间隔 单位-毫秒 与modbus波特率和设备反应时间有关
+            read-timeinterval: 50
+            #每次写入modbus的时间间隔 单位-毫秒 与modbus波特率和设备反应时间有关
+            write-timeinterval: 50
+
+            #水平角度 以云台本体参考(0度就是360度) 向右转27度 就是顺时针转动27
+            horizontal-angle: 27.0
+            #垂直角度 以云台本体参考(0度就是360度)
+            vertical-angle: 0.0
+
+          #雷达配置
+          radar_setup:
+            enable: true
+            #启动自动测试 在navigationlock01 启动自动测试的情况下有效
+            enable_autotest: true
+            #驱动的名称
+            drive-name: "[雷达-上游右]"
+            #设备标识tagname
+            device-tag: "172.60.223.17"
+            #tcp 连接配置相关 --- begin---
+            #ip地址和端口
+            ip-address: "172.60.223.17"
+            #端口
+            ip-port: 4196
+            #链接或者读取超时 单位-毫秒 程序启动时的第一次判定
+            connect-read-timeout: 300
+            #正常链接收发数据 无任何操作的空闲超时 -- 超时会断开重连 单位-秒  为0则忽略
+            idle-timeout: 0
+            #连接断开后 等待时间间隔reconnect -- 链接断开后重连的时间间隔 单位-秒  >=0
+            #如果为0表示按照程序默认的算法或配置执行
+            reconnect-retry-timeinterval: 1
+            #tcp 连接配置相关 --- end---
+
+            #modbus slave-id
+            slave-id: 1
+            #每次读取modbus的时间间隔 单位-毫秒 与modbus波特率和设备反应时间有关
+            read-timeinterval: 50
+            #每次写入modbus的时间间隔 单位-毫秒 与modbus波特率和设备反应时间有关
+            write-timeinterval: 50
+
+      down_setup:
+        left_setup:
+          #开关量配置
+          relay_setup:
+            enable: true
+            #启动自动测试 在navigationlock01 启动自动测试的情况下有效
+            enable_autotest: true
+            #驱动的名称
+            drive-name: "[开关量-下游左]"
+            #设备标识tagname
+            device-tag: "172.60.223.20"
+            #tcp 连接配置相关 --- begin---
+            #ip地址和端口
+            ip-address: "172.60.223.20"
+            #端口
+            ip-port: 502
+            #链接或者读取超时 单位-毫秒 程序启动时的第一次判定
+            connect-read-timeout: 300
+            #正常链接收发数据 无任何操作的空闲超时 -- 超时会断开重连 单位-秒  为0则忽略
+            idle-timeout: 0
+            #连接断开后 等待时间间隔reconnect -- 链接断开后重连的时间间隔 单位-秒  >=0
+            #如果为0表示按照程序默认的算法或配置执行
+            reconnect-retry-timeinterval: 1
+            #tcp 连接配置相关 --- end---
+
+            #modbus slave-id
+            slave-id: 1
+            #每次读取modbus的时间间隔 单位-毫秒 与modbus波特率和设备反应时间有关
+            read-timeinterval: 50
+            #每次写入modbus的时间间隔 单位-毫秒 与modbus波特率和设备反应时间有关
+            write-timeinterval: 50
+
+            #云台开关量 对应的id
+            tripodhead-id: 7
+            #雷达开关量 对应的id
+            radar-id: 8
+
+          #云台配置
+          tripodhead_setup:
+            enable: true
+            #启动自动测试 在navigationlock01 启动自动测试的情况下有效
+            enable_autotest: true
+            #驱动的名称
+            drive-name: "[云台-下游左]"
+            #设备标识tagname
+            device-tag: "172.60.223.21"
+
+            #tcp 连接配置相关 --- begin---
+            #ip地址和端口
+            ip-address: "172.60.223.21"
+            #端口
+            ip-port: 4196
+            #链接或者读取超时 单位-毫秒 程序启动时的第一次判定
+            connect-read-timeout: 300
+            #正常链接收发数据 无任何操作的空闲超时 -- 超时会断开重连 单位-秒  为0则忽略
+            idle-timeout: 0
+            #连接断开后 等待时间间隔reconnect -- 链接断开后重连的时间间隔 单位-秒  >=0
+            #如果为0表示按照程序默认的算法或配置执行
+            reconnect-retry-timeinterval: 1
+            #tcp 连接配置相关 --- end---
+
+            #modbus slave-id
+            slave-id: 1
+            #每次读取modbus的时间间隔 单位-毫秒 与modbus波特率和设备反应时间有关
+            read-timeinterval: 50
+            #每次写入modbus的时间间隔 单位-毫秒 与modbus波特率和设备反应时间有关
+            write-timeinterval: 50
+            #水平角度 以云台本体参考(0度就是360度) 向左转16度 就是顺时针转动360-16=344
+            horizontal-angle: 344.0
+            #垂直角度 以云台本体参考(0度就是360度)
+            vertical-angle: 0.0
+
+          #雷达配置
+          radar_setup:
+            enable: true
+            #启动自动测试 在navigationlock01 启动自动测试的情况下有效
+            enable_autotest: true
+            #驱动的名称
+            drive-name: "[雷达-下游左]"
+            #设备标识tagname
+            device-tag: "172.60.223.22"
+            #tcp 连接配置相关 --- begin---
+            #ip地址和端口
+            ip-address: "172.60.223.22"
+            #端口
+            ip-port: 4196
+            #链接或者读取超时 单位-毫秒 程序启动时的第一次判定
+            connect-read-timeout: 300
+            #正常链接收发数据 无任何操作的空闲超时 -- 超时会断开重连 单位-秒  为0则忽略
+            idle-timeout: 0
+            #连接断开后 等待时间间隔reconnect -- 链接断开后重连的时间间隔 单位-秒  >=0
+            #如果为0表示按照程序默认的算法或配置执行
+            reconnect-retry-timeinterval: 1
+            #tcp 连接配置相关 --- end---
+
+            #modbus slave-id
+            slave-id: 1
+            #每次读取modbus的时间间隔 单位-毫秒 与modbus波特率和设备反应时间有关
+            read-timeinterval: 50
+            #每次写入modbus的时间间隔 单位-毫秒 与modbus波特率和设备反应时间有关
+            write-timeinterval: 50
+
+        right_setup:
+          #开关量配置
+          relay_setup:
+            enable: true
+            #启动自动测试 在navigationlock01 启动自动测试的情况下有效
+            enable_autotest: true
+            #驱动的名称
+            drive-name: "[开关量-下游右]"
+            #设备标识tagname
+            device-tag: "172.60.223.25"
+            #tcp 连接配置相关 --- begin---
+            #ip地址和端口
+            ip-address: "172.60.223.25"
+            #端口
+            ip-port: 502
+            #链接或者读取超时 单位-毫秒 程序启动时的第一次判定
+            connect-read-timeout: 300
+            #正常链接收发数据 无任何操作的空闲超时 -- 超时会断开重连 单位-秒  为0则忽略
+            idle-timeout: 0
+            #连接断开后 等待时间间隔reconnect -- 链接断开后重连的时间间隔 单位-秒  >=0
+            #如果为0表示按照程序默认的算法或配置执行
+            reconnect-retry-timeinterval: 1
+            #tcp 连接配置相关 --- end---
+
+            #modbus slave-id
+            slave-id: 1
+            #每次读取modbus的时间间隔 单位-毫秒 与modbus波特率和设备反应时间有关
+            read-timeinterval: 50
+            #每次写入modbus的时间间隔 单位-毫秒 与modbus波特率和设备反应时间有关
+            write-timeinterval: 50
+
+            #云台开关量 对应的id
+            tripodhead-id: 7
+            #雷达开关量 对应的id
+            radar-id: 8
+
+          #云台配置
+          tripodhead_setup:
+            enable: true
+            #启动自动测试 在navigationlock01 启动自动测试的情况下有效
+            enable_autotest: true
+            #驱动的名称
+            drive-name: "[云台-下游左]"
+            #设备标识tagname
+            device-tag: "172.60.223.26"
+            #tcp 连接配置相关 --- begin---
+            #ip地址和端口
+            ip-address: "172.60.223.26"
+            #端口
+            ip-port: 4196
+            #链接或者读取超时 单位-毫秒 程序启动时的第一次判定
+            connect-read-timeout: 300
+            #正常链接收发数据 无任何操作的空闲超时 -- 超时会断开重连 单位-秒  为0则忽略
+            idle-timeout: 0
+            #连接断开后 等待时间间隔reconnect -- 链接断开后重连的时间间隔 单位-秒  >=0
+            #如果为0表示按照程序默认的算法或配置执行
+            reconnect-retry-timeinterval: 1
+            #tcp 连接配置相关 --- end---
+
+            #modbus slave-id
+            slave-id: 1
+            #每次读取modbus的时间间隔 单位-毫秒 与modbus波特率和设备反应时间有关
+            read-timeinterval: 50
+            #每次写入modbus的时间间隔 单位-毫秒 与modbus波特率和设备反应时间有关
+            write-timeinterval: 50
+
+            #水平角度 以云台本体参考(0度就是360度) 向右转16度 就是顺时针转动16
+            horizontal-angle: 16.0
+            #垂直角度 以云台本体参考(0度就是360度)
+            vertical-angle: 0.0
+
+          #雷达配置
+          radar_setup:
+            enable: true
+            #启动自动测试 在navigationlock01 启动自动测试的情况下有效
+            enable_autotest: true
+            #驱动的名称
+            drive-name: "[雷达-下游右]"
+            #设备标识tagname
+            device-tag: "172.60.223.27"
+            #tcp 连接配置相关 --- begin---
+            #ip地址和端口
+            ip-address: "172.60.223.27"
+            #端口
+            ip-port: 4196
+            #链接或者读取超时 单位-毫秒 程序启动时的第一次判定
+            connect-read-timeout: 300
+            #正常链接收发数据 无任何操作的空闲超时 -- 超时会断开重连 单位-秒  为0则忽略
+            idle-timeout: 0
+            #连接断开后 等待时间间隔reconnect -- 链接断开后重连的时间间隔 单位-秒  >=0
+            #如果为0表示按照程序默认的算法或配置执行
+            reconnect-retry-timeinterval: 1
+            #tcp 连接配置相关 --- end---
+
+            #modbus slave-id
+            slave-id: 1
+            #每次读取modbus的时间间隔 单位-毫秒 与modbus波特率和设备反应时间有关
+            read-timeinterval: 50
+            #每次写入modbus的时间间隔 单位-毫秒 与modbus波特率和设备反应时间有关
+            write-timeinterval: 50
+    #船舶测速配置 --------------------- end ------------------------------
+
+    #船闸状态 监测 配置 -------------------- begin ----------------------------
+    navlstatus_setup:
+      enable: true
+      #启动自动测试 在navigationlock01 启动自动测试的情况下有效
+      enable_autotest: true
+      #是否开启 调试日志开关
+      enable_debug: true
+      #名称
+      name: "[监测]"
+      #标识tag
+      tag: "172.60.200.100"
+      #http 连接配置相关 --- begin---
+      url: "http://127.0.0.1:9990/WebService1.asmx/getData"
+      #链接或者读取超时 单位-毫秒
+      connect-read-timeout: 300
+      #如果为持续的任务 则设置其工作的时间间隔 单位-毫秒
+      do-timeinterval: 100
+      #http 连接配置相关 --- end---
+
+    #监测http 配置 -------------------- end ----------------------------
+
+    #禁停线http 配置 ------------------ begin -------------------------------
+    stopline_setup:
+      enable: true
+      #启动自动测试 在navigationlock01 启动自动测试的情况下有效
+      enable_autotest: true
+      #上游 配置
+      up_http:
+        enable: true
+        #启动自动测试 在navigationlock01 启动自动测试的情况下有效
+        enable_autotest: true
+        #是否开启 调试日志开关
+        enable_debug: true
+        #名称
+        name: "[禁停线Http-上游左]"
+        #标识tag
+        tag: "172.60.222.15"
+        #http 连接配置相关 --- begin---
+        #url: "http://httpbin.org/get"
+        url: "http://172.60.222.15:8881/SmartShip/m/jtx/data"
+        #链接或者读取超时 单位-毫秒
+        connect-read-timeout: 300
+        #如果为持续的任务 则设置其工作的时间间隔 单位-毫秒
+        do-timeinterval: 50
+        #http 连接配置相关 --- end---
+
+      #下游 配置
+      down_http:
+        enable: true
+        #启动自动测试 在navigationlock01 启动自动测试的情况下有效
+        enable_autotest: true
+        #是否开启 调试日志开关
+        enable_debug: true
+        #名称
+        name: "[禁停线Http-下游左]"
+        #标识tag
+        tag: "172.60.222.35"
+        #http 连接配置相关 --- begin---
+        #url: "http://httpbin.org/get"
+        url: "http://172.60.222.35:8881/SmartShip/m/jtx/data"
+        #链接或者读取超时 单位-毫秒
+        connect-read-timeout: 300
+        #如果为持续的任务 则设置其工作的时间间隔 单位-毫秒
+        do-timeinterval: 50
+        #http 连接配置相关 --- end---
+
+    #禁停线http 配置 ------------------ end -------------------------------
+
+    #platform http 配置 -------------------- begin ----------------------------
+    platform_setup:
+      enable: true
+      #启动自动测试 在navigationlock01 启动自动测试的情况下有效
+      enable_autotest: true
+      #名称
+      name: "[平台Http]"
+      #标识tag
+      tag: "172.60.200.100"
+      #http 连接配置相关 --- begin---
+      url: "http://172.60.200.100:8000/api"
+      #链接或者读取超时 单位-毫秒
+      connect-read-timeout: 300
+      #如果为持续的任务 则设置其工作的时间间隔 单位-毫秒
+      do-timeinterval: 30
+      #http 连接配置相关 --- end---
+
+    #platform http 配置 -------------------- end ----------------------------
+
+  # 一号船闸的配置 ------------------------- end ---------------------------------
+
+  # 二号船闸的配置 ------------------------- begin ---------------------------------
+  navigationlock02:
+    #船闸配置启用 true | false 启用的情况下程序自动创建服务器 否则不创建忽略掉
+    enable: false
+    #启动自动测试 分层次测试-测试数据入库-确定是关闭生产数据库mysql的配置,启用sqlite的配置 --- 生产环境需要关闭
+    enable_autotest: true
+    #是否开启 调试日志开关
+    enable_debug: true
+    #是否开启 动画数据收集
+    enable_animation: false
+
+    #船闸名称
+    name: "葛洲坝2#"
+    #船闸编号
+    identifier: 2
+    #通航状态判断的 有效时间间隔 单位秒
+    nav_state_interval: 5
+    #船闸类型 1 单船单行 2 双船并行
+    navl_type: 2
+    #传感器的物理部署类型 1: 上下游 左右单边部署 2: 上下游 左右双边部署
+    sensors_layout: 2
+    #船闸长度  米 float32
+    length: 280.00
+    #船闸宽度 米 float32
+    width: 34.00
+    #雷达的探测 有效距离 启动雷达时 探测到的目标 距离大于该值 会被过滤掉 米
+    detection_distance_max: 300.0
+    #目标加速度的识别 临界加速度 加速度绝对值大于该值会被过滤掉 绝对值m/s 
+    target_acceleration_max: 1.5
+    #探测目标的最大速度值 绝对值大于该值会被过滤掉 绝对值m/s float32
+    detection_speed_max: 2.0
+    #雷达最大运行时间 分钟 24*60 = 1440 24小时
+    radar_max_runtime: 1440
+    #雷达达到最大运行时间后 冷却时间间隔 分钟
+    radar_cooling_interval: 10
+    #船闸调度类型 1:基础测试-联通性和基本的功能 2:基础的通用调度功能 3:修改的优化调度功能
+    schedule_type: 3
+
+    #船舶测速配置 ------------------------ begin -----------------------------------
+    shipspeed_setup:
+      #playscreen_setup 播放屏设置
+      playscreen_setup:
+        enable: false
+        #启动自动测试 在navigationlock 启动自动测试的情况下有效
+        enable_autotest: true
+        enable_debug: true
+
+        #启动时 清空节目 重新创建并发布节目 否则 默认只在节目中切换 修改节目效果和初始化文本需要设置为true
+        enable_clear_and_publish_program: true
+        #退出时 激活并检查切换到 默认的节目
+        enable_exit_active_default_program: true
+        #enable_autotest 启用的情况下 会自动创建目录
+        autotest_director: "./playscreen/navl02/"
+        #默认节目的配置模板
+        default_program_name: "normal"
+        default_program_cnf: "./conf/nav02/default_program.json"
+        #默认节目的文本行更新配置模板 -- "nav_server_tag":"middle"
+        default_program_lines_cnf: "./conf/nav02/default_program_lines.json"
+        #显速节目的配置模板
+        speed_program_name: "speed"
+        #正常速度情况下的显示文本
+        normal_speed_text: " "
+        #超速情况下的显示文本
+        over_speed_text: "超速"
+        speed_program_cnf: "./conf/nav02/speed_program.json"
+        #显速节目的文本行更新配置模板 --  "nav_server_tag":"left_up","right_up","left_down","right_down"
+        speed_program_lines_cnf: "./conf/nav02/speed_program_lines.json"
+
+        #名称
+        name: "[playscreen-下游左]"
+        #标识tag
+        tag: "172.60.223.43"
+        #http 连接配置相关 --- begin---
+        #url
+        url: "http://172.60.223.43:80"
+        #链接或者读取超时 单位-毫秒
+        connect-read-timeout: 300
+        #如果为持续的任务 则设置其工作的时间间隔 单位-毫秒
+        do-timeinterval: 50
+        #http 连接配置相关 --- end---
+        #playscreen_setup 播放屏设置 --- end---
+
+      up_setup:
+        left_setup:
+          #开关量配置
+          relay_setup:
+            enable: true
+            #启动自动测试 在navigationlock 启动自动测试的情况下有效
+            enable_autotest: true
+            #驱动的名称
+            drive-name: "[开关量-上游左]"
+            #设备标识tagname
+            device-tag: "172.60.223.30"
+            #tcp 连接配置相关 --- begin---
+            #ip地址和端口
+            ip-address: "172.60.223.30"
+            #端口
+            ip-port: 502
+            #链接或者读取超时 单位-毫秒 程序启动时的第一次判定
+            connect-read-timeout: 300
+            #正常链接收发数据 无任何操作的空闲超时 -- 超时会断开重连 单位-秒  为0则忽略
+            idle-timeout: 0
+            #连接断开后 等待时间间隔reconnect -- 链接断开后重连的时间间隔 单位-秒  >=0
+            #如果为0表示按照程序默认的算法或配置执行
+            reconnect-retry-timeinterval: 1
+            #tcp 连接配置相关 --- end---
+
+            #modbus slave-id
+            slave-id: 1
+            #每次读取modbus的时间间隔 单位-毫秒 与modbus波特率和设备反应时间有关
+            read-timeinterval: 50
+            #每次写入modbus的时间间隔 单位-毫秒 与modbus波特率和设备反应时间有关
+            write-timeinterval: 50
+
+            #云台开关量 对应的id
+            tripodhead-id: 7
+            #雷达开关量 对应的id
+            radar-id: 8
+
+          #云台配置
+          tripodhead_setup:
+            enable: true
+            #启动自动测试 在navigationlock 启动自动测试的情况下有效
+            enable_autotest: true
+            #驱动的名称
+            drive-name: "[云台-上游左]"
+            #设备标识tagname
+            device-tag: "172.60.223.31"
+            #tcp 连接配置相关 --- begin---
+            #ip地址和端口
+            ip-address: "172.60.223.31"
+            #端口
+            ip-port: 4196
+            #链接或者读取超时 单位-毫秒 程序启动时的第一次判定
+            connect-read-timeout: 300
+            #正常链接收发数据 无任何操作的空闲超时 -- 超时会断开重连 单位-秒  为0则忽略
+            idle-timeout: 0
+            #连接断开后 等待时间间隔reconnect -- 链接断开后重连的时间间隔 单位-秒  >=0
+            #如果为0表示按照程序默认的算法或配置执行
+            reconnect-retry-timeinterval: 1
+            #tcp 连接配置相关 --- end---
+
+            #modbus slave-id
+            slave-id: 1
+            #每次读取modbus的时间间隔 单位-毫秒 与modbus波特率和设备反应时间有关
+            read-timeinterval: 50
+            #每次写入modbus的时间间隔 单位-毫秒 与modbus波特率和设备反应时间有关
+            write-timeinterval: 50
+            #水平角度 以云台本体参考(0度就是360度) 向左转27度 就是顺时针转动360-27=333
+            horizontal-angle: 333.0
+            #垂直角度 以云台本体参考(0度就是360度)
+            vertical-angle: 0.0
+
+          #雷达配置
+          radar_setup:
+            enable: true
+            #启动自动测试 在navigationlock 启动自动测试的情况下有效
+            enable_autotest: true
+            #驱动的名称
+            drive-name: "[雷达-上游左]"
+            #设备标识tagname
+            device-tag: "172.60.223.32"
+            #tcp 连接配置相关 --- begin---
+            #ip地址和端口
+            ip-address: "172.60.223.32"
+            #端口
+            ip-port: 4196
+            #链接或者读取超时 单位-毫秒 程序启动时的第一次判定
+            connect-read-timeout: 300
+            #正常链接收发数据 无任何操作的空闲超时 -- 超时会断开重连 单位-秒  为0则忽略
+            idle-timeout: 0
+            #连接断开后 等待时间间隔reconnect -- 链接断开后重连的时间间隔 单位-秒  >=0
+            #如果为0表示按照程序默认的算法或配置执行
+            reconnect-retry-timeinterval: 1
+            #tcp 连接配置相关 --- end---
+
+            #modbus slave-id
+            slave-id: 1
+            #每次读取modbus的时间间隔 单位-毫秒 与modbus波特率和设备反应时间有关
+            read-timeinterval: 50
+            #每次写入modbus的时间间隔 单位-毫秒 与modbus波特率和设备反应时间有关
+            write-timeinterval: 50
+
+        right_setup:
+          #开关量配置
+          relay_setup:
+            enable: true
+            #启动自动测试 在navigationlock 启动自动测试的情况下有效
+            enable_autotest: true
+            #驱动的名称
+            drive-name: "[开关量-上游右]"
+            #设备标识tagname
+            device-tag: "172.60.223.35"
+            #tcp 连接配置相关 --- begin---
+            #ip地址和端口
+            ip-address: "172.60.223.35"
+            #端口
+            ip-port: 502
+            #链接或者读取超时 单位-毫秒 程序启动时的第一次判定
+            connect-read-timeout: 300
+            #正常链接收发数据 无任何操作的空闲超时 -- 超时会断开重连 单位-秒  为0则忽略
+            idle-timeout: 0
+            #连接断开后 等待时间间隔reconnect -- 链接断开后重连的时间间隔 单位-秒  >=0
+            #如果为0表示按照程序默认的算法或配置执行
+            reconnect-retry-timeinterval: 1
+            #tcp 连接配置相关 --- end---
+
+            #modbus slave-id
+            slave-id: 1
+            #每次读取modbus的时间间隔 单位-毫秒 与modbus波特率和设备反应时间有关
+            read-timeinterval: 50
+            #每次写入modbus的时间间隔 单位-毫秒 与modbus波特率和设备反应时间有关
+            write-timeinterval: 50
+
+            #云台开关量 对应的id
+            tripodhead-id: 7
+            #雷达开关量 对应的id
+            radar-id: 8
+
+          #云台配置
+          tripodhead_setup:
+            enable: true
+            #启动自动测试 在navigationlock 启动自动测试的情况下有效
+            enable_autotest: true
+            #驱动的名称
+            drive-name: "[云台-上游右]"
+            #设备标识tagname
+            device-tag: "172.60.223.36"
+            #tcp 连接配置相关 --- begin---
+            #ip地址和端口
+            ip-address: "172.60.223.36"
+            #端口
+            ip-port: 4196
+            #链接或者读取超时 单位-毫秒 程序启动时的第一次判定
+            connect-read-timeout: 300
+            #正常链接收发数据 无任何操作的空闲超时 -- 超时会断开重连 单位-秒  为0则忽略
+            idle-timeout: 0
+            #连接断开后 等待时间间隔reconnect -- 链接断开后重连的时间间隔 单位-秒  >=0
+            #如果为0表示按照程序默认的算法或配置执行
+            reconnect-retry-timeinterval: 1
+            #tcp 连接配置相关 --- end---
+
+            #modbus slave-id
+            slave-id: 1
+            #每次读取modbus的时间间隔 单位-毫秒 与modbus波特率和设备反应时间有关
+            read-timeinterval: 50
+            #每次写入modbus的时间间隔 单位-毫秒 与modbus波特率和设备反应时间有关
+            write-timeinterval: 50
+
+            #水平角度 以云台本体参考(0度就是360度) 向右转27度 就是顺时针转动27
+            horizontal-angle: 27.0
+            #垂直角度 以云台本体参考(0度就是360度) 0-360顺时针
+            vertical-angle: 0.0
+
+          #雷达配置
+          radar_setup:
+            enable: true
+            #启动自动测试 在navigationlock 启动自动测试的情况下有效
+            enable_autotest: true
+            #驱动的名称
+            drive-name: "[雷达-上游右]"
+            #设备标识tagname
+            device-tag: "172.60.223.37"
+            #tcp 连接配置相关 --- begin---
+            #ip地址和端口
+            ip-address: "172.60.223.37"
+            #端口
+            ip-port: 4196
+            #链接或者读取超时 单位-毫秒 程序启动时的第一次判定
+            connect-read-timeout: 300
+            #正常链接收发数据 无任何操作的空闲超时 -- 超时会断开重连 单位-秒  为0则忽略
+            idle-timeout: 0
+            #连接断开后 等待时间间隔reconnect -- 链接断开后重连的时间间隔 单位-秒  >=0
+            #如果为0表示按照程序默认的算法或配置执行
+            reconnect-retry-timeinterval: 1
+            #tcp 连接配置相关 --- end---
+
+            #modbus slave-id
+            slave-id: 1
+            #每次读取modbus的时间间隔 单位-毫秒 与modbus波特率和设备反应时间有关
+            read-timeinterval: 50
+            #每次写入modbus的时间间隔 单位-毫秒 与modbus波特率和设备反应时间有关
+            write-timeinterval: 50
+
+      down_setup:
+        left_setup:
+          #开关量配置
+          relay_setup:
+            enable: true
+            #启动自动测试 在navigationlock01 启动自动测试的情况下有效
+            enable_autotest: true
+            #驱动的名称
+            drive-name: "[开关量-下游左]"
+            #设备标识tagname
+            device-tag: "172.60.223.40"
+            #tcp 连接配置相关 --- begin---
+            #ip地址和端口
+            ip-address: "172.60.223.40"
+            #端口
+            ip-port: 502
+            #链接或者读取超时 单位-毫秒 程序启动时的第一次判定
+            connect-read-timeout: 300
+            #正常链接收发数据 无任何操作的空闲超时 -- 超时会断开重连 单位-秒  为0则忽略
+            idle-timeout: 0
+            #连接断开后 等待时间间隔reconnect -- 链接断开后重连的时间间隔 单位-秒  >=0
+            #如果为0表示按照程序默认的算法或配置执行
+            reconnect-retry-timeinterval: 1
+            #tcp 连接配置相关 --- end---
+
+            #modbus slave-id
+            slave-id: 1
+            #每次读取modbus的时间间隔 单位-毫秒 与modbus波特率和设备反应时间有关
+            read-timeinterval: 50
+            #每次写入modbus的时间间隔 单位-毫秒 与modbus波特率和设备反应时间有关
+            write-timeinterval: 50
+
+            #云台开关量 对应的id
+            tripodhead-id: 7
+            #雷达开关量 对应的id
+            radar-id: 8
+
+          #云台配置
+          tripodhead_setup:
+            enable: true
+            #启动自动测试 在navigationlock01 启动自动测试的情况下有效
+            enable_autotest: true
+            #驱动的名称
+            drive-name: "[云台-下游左]"
+            #设备标识tagname
+            device-tag: "172.60.223.41"
+            #tcp 连接配置相关 --- begin---
+            #ip地址和端口
+            ip-address: "172.60.223.41"
+            #端口
+            ip-port: 4196
+            #链接或者读取超时 单位-毫秒 程序启动时的第一次判定
+            connect-read-timeout: 300
+            #正常链接收发数据 无任何操作的空闲超时 -- 超时会断开重连 单位-秒  为0则忽略
+            idle-timeout: 0
+            #连接断开后 等待时间间隔reconnect -- 链接断开后重连的时间间隔 单位-秒  >=0
+            #如果为0表示按照程序默认的算法或配置执行
+            reconnect-retry-timeinterval: 1
+            #tcp 连接配置相关 --- end---
+
+            #modbus slave-id
+            slave-id: 1
+            #每次读取modbus的时间间隔 单位-毫秒 与modbus波特率和设备反应时间有关
+            read-timeinterval: 50
+            #每次写入modbus的时间间隔 单位-毫秒 与modbus波特率和设备反应时间有关
+            write-timeinterval: 50
+
+            #水平角度 以云台本体参考(0度就是360度) 向左转16度 就是顺时针转动360-16=344
+            horizontal-angle: 344.0
+            #垂直角度 以云台本体参考(0度就是360度)
+            vertical-angle: 0.0
+
+          #雷达配置
+          radar_setup:
+            enable: true
+            #启动自动测试 在navigationlock01 启动自动测试的情况下有效
+            enable_autotest: true
+            #驱动的名称
+            drive-name: "[雷达-下游左]"
+            #设备标识tagname
+            device-tag: "172.60.223.42"
+            #tcp 连接配置相关 --- begin---
+            #ip地址和端口
+            ip-address: "172.60.223.42"
+            #端口
+            ip-port: 4196
+            #链接或者读取超时 单位-毫秒 程序启动时的第一次判定
+            connect-read-timeout: 300
+            #正常链接收发数据 无任何操作的空闲超时 -- 超时会断开重连 单位-秒  为0则忽略
+            idle-timeout: 0
+            #连接断开后 等待时间间隔reconnect -- 链接断开后重连的时间间隔 单位-秒  >=0
+            #如果为0表示按照程序默认的算法或配置执行
+            reconnect-retry-timeinterval: 1
+            #tcp 连接配置相关 --- end---
+
+            #modbus slave-id
+            slave-id: 1
+            #每次读取modbus的时间间隔 单位-毫秒 与modbus波特率和设备反应时间有关
+            read-timeinterval: 50
+            #每次写入modbus的时间间隔 单位-毫秒 与modbus波特率和设备反应时间有关
+            write-timeinterval: 50
+
+        right_setup:
+          #开关量配置
+          relay_setup:
+            enable: true
+            #启动自动测试 在navigationlock01 启动自动测试的情况下有效
+            enable_autotest: true
+            #驱动的名称
+            drive-name: "[开关量-下游右]"
+            #设备标识tagname
+            device-tag: "172.60.223.45"
+            #tcp 连接配置相关 --- begin---
+            #ip地址和端口
+            ip-address: "172.60.223.45"
+            #端口
+            ip-port: 502
+            #链接或者读取超时 单位-毫秒 程序启动时的第一次判定
+            connect-read-timeout: 300
+            #正常链接收发数据 无任何操作的空闲超时 -- 超时会断开重连 单位-秒  为0则忽略
+            idle-timeout: 0
+            #连接断开后 等待时间间隔reconnect -- 链接断开后重连的时间间隔 单位-秒  >=0
+            #如果为0表示按照程序默认的算法或配置执行
+            reconnect-retry-timeinterval: 1
+            #tcp 连接配置相关 --- end---
+
+            #modbus slave-id
+            slave-id: 1
+            #每次读取modbus的时间间隔 单位-毫秒 与modbus波特率和设备反应时间有关
+            read-timeinterval: 50
+            #每次写入modbus的时间间隔 单位-毫秒 与modbus波特率和设备反应时间有关
+            write-timeinterval: 50
+            #云台开关量 对应的id
+            tripodhead-id: 7
+            #雷达开关量 对应的id
+            radar-id: 8
+
+          #云台配置
+          tripodhead_setup:
+            enable: true
+            #启动自动测试 在navigationlock01 启动自动测试的情况下有效
+            enable_autotest: true
+            #驱动的名称
+            drive-name: "[云台-下游右]"
+            #设备标识tagname
+            device-tag: "172.60.223.46"
+            #tcp 连接配置相关 --- begin---
+            #ip地址和端口
+            ip-address: "172.60.223.46"
+            #端口
+            ip-port: 4196
+            #链接或者读取超时 单位-毫秒 程序启动时的第一次判定
+            connect-read-timeout: 300
+            #正常链接收发数据 无任何操作的空闲超时 -- 超时会断开重连 单位-秒  为0则忽略
+            idle-timeout: 0
+            #连接断开后 等待时间间隔reconnect -- 链接断开后重连的时间间隔 单位-秒  >=0
+            #如果为0表示按照程序默认的算法或配置执行
+            reconnect-retry-timeinterval: 1
+            #tcp 连接配置相关 --- end---
+
+            #modbus slave-id
+            slave-id: 1
+            #每次读取modbus的时间间隔 单位-毫秒 与modbus波特率和设备反应时间有关
+            read-timeinterval: 50
+            #每次写入modbus的时间间隔 单位-毫秒 与modbus波特率和设备反应时间有关
+            write-timeinterval: 50
+
+            #水平角度 以云台本体参考(0度就是360度) 向右转16度 就是顺时针转动16
+            horizontal-angle: 16.0
+            #垂直角度 以云台本体参考(0度就是360度)
+            vertical-angle: 0.0
+
+          #雷达配置
+          radar_setup:
+            enable: true
+            #启动自动测试 在navigationlock01 启动自动测试的情况下有效
+            enable_autotest: true
+            #驱动的名称
+            drive-name: "[雷达-下游右]"
+            #设备标识tagname
+            device-tag: "172.60.223.47"
+            #tcp 连接配置相关 --- begin---
+            #ip地址和端口
+            ip-address: "172.60.223.47"
+            #端口
+            ip-port: 4196
+            #链接或者读取超时 单位-毫秒 程序启动时的第一次判定
+            connect-read-timeout: 300
+            #正常链接收发数据 无任何操作的空闲超时 -- 超时会断开重连 单位-秒  为0则忽略
+            idle-timeout: 0
+            #连接断开后 等待时间间隔reconnect -- 链接断开后重连的时间间隔 单位-秒  >=0
+            #如果为0表示按照程序默认的算法或配置执行
+            reconnect-retry-timeinterval: 1
+            #tcp 连接配置相关 --- end---
+
+            #modbus slave-id
+            slave-id: 1
+            #每次读取modbus的时间间隔 单位-毫秒 与modbus波特率和设备反应时间有关
+            read-timeinterval: 50
+            #每次写入modbus的时间间隔 单位-毫秒 与modbus波特率和设备反应时间有关
+            write-timeinterval: 50
+
+    #监测PLC 配置
+    #船舶测速配置 ------------------------ end -----------------------------------
+
+    #船闸状态 监测 配置 -------------------------- begin -------------------------------
+    navlstatus_setup:
+      enable: true
+      #启动自动测试 在navigationlock02 启动自动测试的情况下有效
+      enable_autotest: true
+      #名称
+      name: "[监测Http]"
+      #标识tagname
+      tag: "172.60.200.100"
+      #http 连接配置相关 --- begin---
+      #url: "http://httpbin.org/post"
+      #url: "http://172.60.200.100:9990/WebService1.asmx/getData"
+      url: "http://127.0.0.1:9990/WebService1.asmx/getData"
+      #链接或者读取超时 单位-毫秒
+      connect-read-timeout: 300
+      #如果为持续的任务 则设置其工作的时间间隔 单位-毫秒
+      do-timeinterval: 50
+      #http 连接配置相关 --- end---
+    #监测 配置 -------------------------- end ------------------------------------
+
+    #禁停线 配置  ----------------------- begin ----------------------------------
+    stopline_setup:
+      enable: true
+      #启动自动测试 在navigationlock01 启动自动测试的情况下有效
+      enable_autotest: true
+      #上游 配置
+      up_http:
+        enable: true
+        #启动自动测试 在navigationlock02 启动自动测试的情况下有效
+        enable_autotest: true
+        #名称
+        name: "[禁停线Http-上游左]"
+        #标识tagname
+        tag: "172.60.222.65"
+        #http 连接配置相关 --- begin---
+        #url: "http://httpbin.org/get"
+        url: "http://172.60.222.65:8881/SmartShip/m/jtx/data"
+        #链接或者读取超时 单位-毫秒
+        connect-read-timeout: 300
+        #如果为持续的任务 则设置其工作的时间间隔 单位-毫秒
+        do-timeinterval: 50
+        #http 连接配置相关 --- end---
+
+      #下游 配置
+      down_http:
+        enable: true
+        #启动自动测试 在navigationlock02 启动自动测试的情况下有效
+        enable_autotest: true
+        #名称
+        name: "[禁停线Http-下游左]"
+        #标识tagname
+        tag: "172.60.222.85"
+        #http 连接配置相关 --- begin---
+        #url: "http://httpbin.org/get"
+        url: "http://172.60.222.85:8881/SmartShip/m/jtx/data"
+        #链接或者读取超时 单位-毫秒
+        connect-read-timeout: 300
+        #如果为持续的任务 则设置其工作的时间间隔 单位-毫秒
+        do-timeinterval: 50
+        #http 连接配置相关 --- end---
+
+    #禁停线 配置  ----------------------- end ----------------------------------
+
+    #platform http 配置 -------------------- begin ----------------------------
+    platform_setup:
+      enable: true
+      #启动自动测试 在navigationlock01 启动自动测试的情况下有效
+      enable_autotest: true
+      #名称
+      name: "[平台Http]"
+      #标识tagname
+      tag: "172.60.200.100"
+      #http 连接配置相关 --- begin---
+      url: "http://172.60.200.100:8000/api"
+      #链接或者读取超时 单位-毫秒
+      connect-read-timeout: 300
+      #如果为持续的任务 则设置其工作的时间间隔 单位-毫秒
+      do-timeinterval: 30
+      #http 连接配置相关 --- end---
+    #platform http 配置 -------------------- end ----------------------------
+
+  # 二号船闸的配置 ------------------------- end ---------------------------------
+
+  # 三号船闸的配置 ------------------------- begin ---------------------------------
+  navigationlock03:
+    #船闸配置启用 true | false 启用的情况下程序自动创建服务器 否则不创建忽略掉
+    enable: false
+    #启动自动测试 分层次测试-测试数据入库-确定是关闭生产数据库mysql的配置,启用sqlite的配置 --- 生产环境需要关闭
+    enable_autotest: true
+    #是否开启 调试日志开关
+    enable_debug: true
+    #是否开启 动画数据收集
+    enable_animation: false
+
+    #船闸名称
+    name: "葛洲坝3#"
+    #船闸编号 给程序使用对应数据库中的类型
+    identifier: 3
+    #通航状态判断的 有效时间间隔 单位秒
+    nav_state_interval: 5
+    #船闸类型 1 单船单行 2 双船并行
+    navl_type: 1
+    #传感器的物理部署类型 1: 上下游 左右单边部署 2: 上下游 左右双边部署
+    sensors_layout: 1
+    #船闸长度 米
+    length: 120.0
+    #船闸宽度 米
+    width: 18.0
+    #雷达的探测 有效距离 启动雷达时 探测到的目标 距离大于该值 会被过滤掉 米
+    detection_distance_max: 140.0
+    #目标加速度的识别 临界加速度 加速度绝对值大于该值会被过滤掉 绝对值m/s 
+    target_acceleration_max: 1.5
+    #探测目标的最大速度值 绝对值大于该值会被过滤掉 绝对值m/s float32
+    detection_speed_max: 2.0
+    #雷达最大运行时间 分钟 24*60 = 1440 24小时
+    radar_max_runtime: 1440
+    #雷达达到最大运行时间后 冷却时间间隔 分钟
+    radar_cooling_interval: 10
+    #船闸调度类型 1:基础测试-联通性和基本的功能 2:基础的通用调度功能 3:修改的优化调度功能
+    schedule_type: 3
+
+    #船舶测速配置
+    shipspeed_setup:
+      #playscreen 播放屏设置
+      playscreen_setup:
+        enable: true
+        #启动自动测试 在navigationlock 启动自动测试的情况下有效
+        enable_autotest: true
+        enable_debug: true
+        #enable_autotest 启用的情况下 会自动创建目录
+        autotest_director: "./playscreen/navl03/"
+        
+        #启动时 清空节目 重新创建并发布节目 否则 默认只在节目中切换 修改节目的效果和初始化文本 需要设置为true
+        enable_clear_and_publish_program: true
+        #退出时 激活并检查切换到 默认的节目
+        enable_exit_active_default_program: true
+
+        #默认节目的配置模板
+        default_program_name: "normal"
+        default_program_cnf: "./conf/nav03/default_program.json"
+        #默认节目的文本行更新配置模板 -- "nav_server_tag":"middle"
+        default_program_lines_cnf: "./conf/nav03/default_program_lines.json"
+        #显速节目的配置模板
+        speed_program_name: "speed"
+        #正常速度情况下的显示文本
+        normal_speed_text: " "
+        #超速情况下的显示文本
+        over_speed_text: "超速"
+        speed_program_cnf: "./conf/nav03/speed_program.json"
+        #显速节目的文本行更新配置模板 --  "nav_server_tag":"middle_up","middle_down"
+        speed_program_lines_cnf: "./conf/nav03/speed_program_lines.json"
+
+        #名称
+        name: "[playscreen-下游右]"
+        #标识tagname
+        tag: "172.60.223.63"
+        #http 连接配置相关 --- begin---
+        #url: "http://httpbin.org/get"
+        url: "http://172.60.223.63:80"
+        #链接或者读取超时 单位-毫秒
+        connect-read-timeout: 3000
+        #如果为持续的任务 则设置其工作的时间间隔 单位-毫秒
+        do-timeinterval: 1000
+        #http 连接配置相关 --- end---
+
+      #上游设置相关
+      up_setup:
+        right_setup:
+          #开关量配置
+          relay_setup:
+            enable: true
+            #启动自动测试 在navigationlock01 启动自动测试的情况下有效
+            enable_autotest: true
+            #驱动的名称
+            drive-name: "[开关量-上游右]"
+            #设备标识tagname
+            device-tag: "172.60.223.50"
+            #tcp 连接配置相关 --- begin---
+            #ip地址和端口
+            ip-address: "172.60.223.50"
+            #端口
+            ip-port: 502
+            #链接或者读取超时 单位-毫秒 程序启动时的第一次判定
+            connect-read-timeout: 300
+            #正常链接收发数据 无任何操作的空闲超时 -- 超时会断开重连 单位-秒  为0则忽略
+            idle-timeout: 0
+            #连接断开后 等待时间间隔reconnect -- 链接断开后重连的时间间隔 单位-秒  >=0
+            #如果为0表示按照程序默认的算法或配置执行
+            reconnect-retry-timeinterval: 1
+            #tcp 连接配置相关 --- end---
+
+            #modbus slave-id
+            slave-id: 1
+            #每次读取modbus的时间间隔 单位-毫秒 与modbus波特率和设备反应时间有关
+            read-timeinterval: 50
+            #每次写入modbus的时间间隔 单位-毫秒 与modbus波特率和设备反应时间有关
+            write-timeinterval: 50
+
+            #云台开关量 对应的id
+            tripodhead-id: 7
+            #雷达开关量 对应的id
+            radar-id: 8
+
+          #云台配置
+          tripodhead_setup:
+            enable: true
+            #启动自动测试 在navigationlock01 启动自动测试的情况下有效
+            enable_autotest: true
+            #驱动的名称
+            drive-name: "[云台-上游右]"
+            #设备标识tagname
+            device-tag: "172.60.223.51"
+            #tcp 连接配置相关 --- begin---
+            #ip地址和端口
+            ip-address: "172.60.223.51"
+            #端口
+            ip-port: 4196
+            #链接或者读取超时 单位-毫秒 程序启动时的第一次判定
+            connect-read-timeout: 300
+            #正常链接收发数据 无任何操作的空闲超时 -- 超时会断开重连 单位-秒  为0则忽略
+            idle-timeout: 0
+            #连接断开后 等待时间间隔reconnect -- 链接断开后重连的时间间隔 单位-秒  >=0
+            #如果为0表示按照程序默认的算法或配置执行
+            reconnect-retry-timeinterval: 1
+            #tcp 连接配置相关 --- end---
+
+            #modbus slave-id
+            slave-id: 1
+            #每次读取modbus的时间间隔 单位-毫秒 与modbus波特率和设备反应时间有关
+            read-timeinterval: 50
+            #每次写入modbus的时间间隔 单位-毫秒 与modbus波特率和设备反应时间有关
+            write-timeinterval: 50
+            #水平角度 以云台本体参考(0度就是360度) 向右转16度 就是顺时针转动16
+            horizontal-angle: 16.0
+            #垂直角度 以云台本体参考(0度就是360度)
+            vertical-angle: 0.0
+
+          #雷达配置
+          radar_setup:
+            enable: true
+            #启动自动测试 在navigationlock01 启动自动测试的情况下有效
+            enable_autotest: true
+            #驱动的名称
+            drive-name: "[雷达-上游右]"
+            #设备标识tagname
+            device-tag: "172.60.223.52"
+            #tcp 连接配置相关 --- begin---
+            #ip地址和端口
+            ip-address: "172.60.223.52"
+            #端口
+            ip-port: 4196
+            #链接或者读取超时 单位-毫秒 程序启动时的第一次判定
+            connect-read-timeout: 300
+            #正常链接收发数据 无任何操作的空闲超时 -- 超时会断开重连 单位-秒  为0则忽略
+            idle-timeout: 0
+            #连接断开后 等待时间间隔reconnect -- 链接断开后重连的时间间隔 单位-秒  >=0
+            #如果为0表示按照程序默认的算法或配置执行
+            reconnect-retry-timeinterval: 1
+            #tcp 连接配置相关 --- end---
+
+            #modbus slave-id
+            slave-id: 1
+            #每次读取modbus的时间间隔 单位-毫秒 与modbus波特率和设备反应时间有关
+            read-timeinterval: 50
+            #每次写入modbus的时间间隔 单位-毫秒 与modbus波特率和设备反应时间有关
+            write-timeinterval: 50
+
+      #下游设置相关
+      down_setup:
+        left_setup:
+          #开关量配置
+          relay_setup:
+            enable: true
+            #启动自动测试 在navigationlock01 启动自动测试的情况下有效
+            enable_autotest: true
+            #驱动的名称
+            drive-name: "[开关量-下游左]"
+            #设备标识tagname
+            device-tag: "172.60.223.60"
+            #tcp 连接配置相关 --- begin---
+            #ip地址和端口
+            ip-address: "172.60.223.60"
+            #端口
+            ip-port: 502
+            #链接或者读取超时 单位-毫秒 程序启动时的第一次判定
+            connect-read-timeout: 300
+            #正常链接收发数据 无任何操作的空闲超时 -- 超时会断开重连 单位-秒  为0则忽略
+            idle-timeout: 0
+            #连接断开后 等待时间间隔reconnect -- 链接断开后重连的时间间隔 单位-秒  >=0
+            #如果为0表示按照程序默认的算法或配置执行
+            reconnect-retry-timeinterval: 1
+            #tcp 连接配置相关 --- end---
+
+            #modbus slave-id
+            slave-id: 1
+            #每次读取modbus的时间间隔 单位-毫秒 与modbus波特率和设备反应时间有关
+            read-timeinterval: 50
+            #每次写入modbus的时间间隔 单位-毫秒 与modbus波特率和设备反应时间有关
+            write-timeinterval: 50
+
+            #云台开关量 对应的id
+            tripodhead-id: 7
+            #雷达开关量 对应的id
+            radar-id: 8
+
+          #云台配置
+          tripodhead_setup:
+            enable: true
+            #启动自动测试 在navigationlock01 启动自动测试的情况下有效
+            enable_autotest: true
+            #驱动的名称
+            drive-name: "[云台-下游左]"
+            #设备标识tagname
+            device-tag: "172.60.223.61"
+            #tcp 连接配置相关 --- begin---
+            #ip地址和端口
+            ip-address: "172.60.223.61"
+            #端口
+            ip-port: 4196
+            #链接或者读取超时 单位-毫秒 程序启动时的第一次判定
+            connect-read-timeout: 300
+            #正常链接收发数据 无任何操作的空闲超时 -- 超时会断开重连 单位-秒  为0则忽略
+            idle-timeout: 0
+            #连接断开后 等待时间间隔reconnect -- 链接断开后重连的时间间隔 单位-秒  >=0
+            #如果为0表示按照程序默认的算法或配置执行
+            reconnect-retry-timeinterval: 1
+            #tcp 连接配置相关 --- end---
+
+            #modbus slave-id
+            slave-id: 1
+            #每次读取modbus的时间间隔 单位-毫秒 与modbus波特率和设备反应时间有关
+            read-timeinterval: 50
+            #每次写入modbus的时间间隔 单位-毫秒 与modbus波特率和设备反应时间有关
+            write-timeinterval: 50
+
+            #水平角度 以云台本体参考(0度就是360度)
+            horizontal-angle: 0.0
+            #垂直角度 以云台本体参考(0度就是360度)
+            vertical-angle: 0.0
+
+          #雷达配置
+          radar_setup:
+            enable: true
+            #启动自动测试 在navigationlock01 启动自动测试的情况下有效
+            enable_autotest: true
+            #驱动的名称
+            drive-name: "[雷达-下游左]"
+            #设备标识tagname
+            device-tag: "172.60.223.62"
+            #tcp 连接配置相关 --- begin---
+            #ip地址和端口
+            ip-address: "172.60.223.62"
+            #端口
+            ip-port: 4196
+            #链接或者读取超时 单位-毫秒 程序启动时的第一次判定
+            connect-read-timeout: 300
+            #正常链接收发数据 无任何操作的空闲超时 -- 超时会断开重连 单位-秒  为0则忽略
+            idle-timeout: 0
+            #连接断开后 等待时间间隔reconnect -- 链接断开后重连的时间间隔 单位-秒  >=0
+            #如果为0表示按照程序默认的算法或配置执行
+            reconnect-retry-timeinterval: 1
+            #tcp 连接配置相关 --- end---
+
+            #modbus slave-id
+            slave-id: 1
+            #每次读取modbus的时间间隔 单位-毫秒 与modbus波特率和设备反应时间有关
+            read-timeinterval: 50
+            #每次写入modbus的时间间隔 单位-毫秒 与modbus波特率和设备反应时间有关
+            write-timeinterval: 50
+    #监测配置
+    navlstatus_setup:
+      enable: true
+      #启动自动测试 在navigationlock03 启动自动测试的情况下有效
+      enable_autotest: true
+      #名称
+      name: "[监测Http]"
+      #标识tagname
+      tag: "172.60.200.100"
+      #http 连接配置相关 --- begin---
+      #url: "http://httpbin.org/get"
+      #url: "http://172.60.200.100:9990/WebService1.asmx/getData"
+      url: "http://127.0.0.1:9990/WebService1.asmx/getData"
+      #链接或者读取超时 单位-毫秒
+      connect-read-timeout: 300
+      #如果为持续的任务 则设置其工作的时间间隔 单位-毫秒
+      do-timeinterval: 100
+      #http 连接配置相关 --- end---
+
+    #禁停线配置
+    stopline_setup:
+      enable: true
+      #启动自动测试 在navigationlock01 启动自动测试的情况下有效
+      enable_autotest: true
+      #上游 配置
+      up_http:
+        enable: true
+        #启动自动测试 在navigationlock03 启动自动测试的情况下有效
+        enable_autotest: true
+        #名称
+        name: "[禁停线Http-上游左]"
+        #标识tagname
+        tag: "172.60.222.115"
+        #http 连接配置相关 --- begin---
+        #url: "http://httpbin.org/get"
+        url: "http://172.60.222.115:8881/SmartShip/m/jtx/data"
+        #链接或者读取超时 单位-毫秒
+        connect-read-timeout: 300
+        #如果为持续的任务 则设置其工作的时间间隔 单位-毫秒
+        do-timeinterval: 50
+        #http 连接配置相关 --- end---
+
+      #下游 配置
+      down_http:
+        enable: true
+        #启动自动测试 在navigationlock03 启动自动测试的情况下有效
+        enable_autotest: true
+        #名称
+        name: "[禁停线Http-下游左]"
+        #标识tagname
+        tag: "172.60.222.135"
+        #http 连接配置相关 --- begin---
+        #url: "http://httpbin.org/get"
+        url: "http://172.60.222.135:8881/SmartShip/m/jtx/data"
+        #链接或者读取超时 单位-毫秒
+        connect-read-timeout: 300
+        #如果为持续的任务 则设置其工作的时间间隔 单位-毫秒
+        do-timeinterval: 50
+        #http 连接配置相关 --- end---
+
+    #platform http 配置 -------------------- begin ----------------------------
+    platform_setup:
+      enable: false
+      #启动自动测试 在navigationlock01 启动自动测试的情况下有效
+      enable_autotest: false
+      #名称
+      name: "[平台Http]"
+      #标识tagname
+      tag: "172.60.200.100"
+      #http 连接配置相关 --- begin---
+      #url: "http://httpbin.org/post"
+      url: "http://172.60.200.100:8000/api"
+      #链接或者读取超时 单位-毫秒
+      connect-read-timeout: 300
+      #如果为持续的任务 则设置其工作的时间间隔 单位-毫秒
+      do-timeinterval: 30
+      #http 连接配置相关 --- end---
+    #platform http 配置 -------------------- end ----------------------------
+
+  # 三号船闸的配置 ------------------------- end ---------------------------------
+# 船闸配置 -------------------------  end ----------------------------------
+
+# 数据库配置 sqlite 和 mysql 可以同时配置有效 sqlite 只存测试状态数据 ------ 生产环境打开mysql版本8+
+# database configuration -------------------------- begin -----------------------------------
+database-config:
+  sqlite:
+    #配置有效  只在本地单机测试中配置方便单机收集测试数据 对应的各个组件只有在enable_autotest=true的情况下才会写入本地库
+    enable: true
+    #自动创建本程序需要的数据库表 如果表不存在的情况下
+    auto-migrate: true
+    #数据库文件文件地址 指定文件名
+    filepath: "./localdb.db"
+    #sqlite3额外配置 可以创建内存映射文件-file:filepath?mode=memory&cache=shared&mode=wal
+    extra-config: "?mode=memory&cache=shared&mode=wal"
+  mysql8:
+    #配置有效
+    enable: true
+    #开启mysql自动化用例测试 需要开启sqlite 用例测试和系统追踪记录会写到sqlite数据库文件中
+    enable-testcase: false
+    #自动创建本程序需要的数据库表 如果表不存在的情况下
+    auto-migrate: true
+    #mysql网络地址
+    ip-address: "127.0.0.1"
+    #mysql网络地址端口
+    ip-port: "3306"
+    #mysql额外配置
+    extra-config: "charset=utf8mb4&parseTime=True&loc=Local"
+    #mysql数据库用户名
+    username: "root"
+    #mysql数据库用户密码
+    password: "d123456b"
+    #mysql连接的数据库名称
+    db-name: "navigation"
+    #如果设置少于CPU数 程序会自动设置 忽略掉配置项的值
+    #mysql链接池最多空闲的连接数 >=1  如果该值<=0则程序自动根据系统情况自动设置
+    max-idle-conns: 0
+    #mysql链接池最多打开的连接数 >=1 (max-open-conns>=max-idle-conns) 如果该值<=0则程序自动根据系统情况自动设置
+    max-open-conns: 0
+    #连接池中连接的重用之前最大生存(包括活跃和空闲)时间间隔-超过的话会被关闭 单位 分钟 默认=0 如果该值<=0则连接在运行期间不关闭
+    conn-max-lifetime: 0
+    #连接池中连接的重用之前最大空闲的间隔时间-超过的话会被关闭 单位 分钟 默认=0 如果该值<=0则连接在运行期间不关闭
+    conn-max-idletime: 0
+  mysql8-web:
+    #配置有效
+    enable: true
+    #开启mysql自动化用例测试 需要开启sqlite 用例测试和系统追踪记录会写到sqlite数据库文件中
+    enable-testcase: false
+    #自动创建本程序需要的数据库表 如果表不存在的情况下
+    auto-migrate: true
+    #mysql网络地址
+    ip-address: "127.0.0.1"
+    #mysql网络地址端口
+    ip-port: "3306"
+    #mysql额外配置
+    extra-config: "charset=utf8mb4&parseTime=True&loc=Local"
+    #mysql数据库用户名
+    username: "root"
+    #mysql数据库用户密码
+    password: "d123456b"
+    #mysql连接的数据库名称
+    db-name: "gvaweb"
+    #如果设置少于CPU数 程序会自动设置 忽略掉配置项的值
+    #mysql链接池最多空闲的连接数 >=1  如果该值<=0则程序自动根据系统情况自动设置
+    max-idle-conns: 0
+    #mysql链接池最多打开的连接数 >=1 (max-open-conns>=max-idle-conns) 如果该值<=0则程序自动根据系统情况自动设置
+    max-open-conns: 0
+    #连接池中连接的重用之前最大生存(包括活跃和空闲)时间间隔-超过的话会被关闭 单位 分钟 默认=0 如果该值<=0则连接在运行期间不关闭
+    conn-max-lifetime: 0
+    #连接池中连接的重用之前最大空闲的间隔时间-超过的话会被关闭 单位 分钟 默认=0 如果该值<=0则连接在运行期间不关闭
+    conn-max-idletime: 0
+  db-property:
+    #设置数据库的一些组件配置项目
+    #开启sql的日志记录 见日志配置项
+    log-enable: true
+    #sql日志分流模式  silent=1  error=2  warn=3  info=4 数值大于日志配置的level就会输出
+    # 如: info > log-property日志配置的error 则程序中数据库操作记录, 小于panic都会输出到程序的默认日志中
+    log-mode: "silent"
+    #慢sql阈值 毫秒 -- 小于200则被重置为默认200ms
+    slow-sql-threshold: 1000
+    #跳过sql调用函数的查找
+    skip-caller-lookup: true
+    #忽略没有记录的常规错误
+    ignore-record-not-found-error: true
+# database configuration -------------------------- end -------------------------------------
+
+# 服务的日志属性配置 ---- 格式输出 过滤 轮回滚动保证存储空间
+# logger configuration ---------------------- begin ----------------------------------
+log_property:
+  # 可使用 "debug" 0, "info" 1, "warn" 2, "error" 3,  "panic" 4, "fatal" 5,
+  # 日志输出过滤 生产环境下>="info" ----- 大于等于level的会保存,反之会被过滤掉. 默认程序支持到error, 设置的级别 > error的无效
+  level: "debug"
+  # console: 控制台格式, json: json格式输出 json格式有助于自动化分析
+  format: "json"
+  # 日志输出目录 不存在则创建
+  director: "./logs"
+
+  # ------------- 运行调试相关 -- begin ------------
+  # 是否记录调用函数caller 便于调试查错 true | false
+  caller-enable: true
+  # 按行输出或者按指定json特定格式输出-多行 ---- 单行输出便于检索 多行输出便于人工阅读
+  show-line: true
+  # 文件切割后的文件名前缀
+  prefix: "navigate"
+  # 输出堆栈信息的tagname
+  stacktrace-key: "st"
+  # ------------- 运行调试相关 -- end ------------
+
+  # 日志输出显示格式指定  禁用 保持默认
+  # LowercaseLevelEncoder:小写, LowercaseColorLevelEncoder:小写带颜色,
+  # CapitalLevelEncoder: 大写, CapitalColorLevelEncoder: 大写带颜色,
+  encode-level: "LowercaseLevelEncoder"
+  # 是否同时输出到console控制台 true | false
+  log-in-console: true
+
+  # 日志切割和循环滚动保留存储空间- (存储容量megabytes = maxsize *(1- 压缩率) * maxbackups)
+  # 比如: 在 maxsize: 2048M 情况下 测试 实际压缩后大概 10M左右 < 2048*7% ~=100M
+  #      2048 * 7% * 1000 ~~ 100000M 保留10G左右即可
+  # gzip压缩会影响CPU,内存和IO.实际测试cpu占3-5% 内存利用率3% 2048M时间大概15秒 48核CPU. 文本压缩率平均93%+
+  rotated-property:
+    #日志文件名称 切分压缩的文件名称按时间格式来命名
+    filename: "./navigate.log"
+    #日志文件size大于该值启动压缩 - 默认 100 megabytes >100   ps:该值少于1024 须增大maxbackups 建议 2048
+    #512*7% ~~ 35M左右
+    maxsize: 512
+    #最多保留切割后日志时间跨度的天数 大于这个跨度的会删除掉时间上最老的 默认值 >10  建议365
+    maxage: 7
+    #最多保留切割后的日志文件的数量 新切割的文件覆盖掉时间上最老的文件 重启一定会切割运行中不一定会 取决于策略 默认值 > 1 建议1024
+    # 一天24小时 日志刷新 最多1小时2个压缩文件 > 7*2*24 = 336
+    maxbackups: 500
+    #是否启用gzip压缩 true | false  - disabled by default 务必打开
+    compress: true
+    # 是否启用系统时间格式 默认UTC -ISO8601,来命名备份文件. true|false
+    localtime: true
+# logger configuration ---------------------- end ------------------------------------

@@ -1,0 +1,54 @@
+{
+  "Programs": {
+    "Program": {
+      "Information": {
+        "Width": "160",
+        "Height": "160"
+      },
+      "Pages": [
+        {
+          "Regions": [
+            {
+              "Layer": 1,
+              "Rect": {
+                "X": "0",
+                "Y": "0",
+                "Width": "160",
+                "Height": "80"
+              },
+              "Items": [
+                {
+                  "Type": "4",
+                  "Text": " ",
+                  "LogFont": {
+                    "lfHeight": "90",
+                    "lfWidth": "90"
+                  }
+                }
+              ]
+            },
+            {
+              "Layer": 2,
+              "Rect": {
+                "X": "0",
+                "Y": "80",
+                "Width": "160",
+                "Height": "80"
+              },
+              "Items": [
+                {
+                  "Type": "4",
+                  "Text": " ",
+                  "LogFont": {
+                    "lfHeight": "60",
+                    "lfWidth": "60"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  }
+}
