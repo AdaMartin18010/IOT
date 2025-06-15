@@ -5,13 +5,16 @@
 ### 1.1 向量空间理论
 
 #### 定义 1.1 (IoT状态空间)
+
 IoT系统的状态空间是一个向量空间 $V \subseteq \mathbb{R}^n$，其中每个向量 $x \in V$ 表示系统的一个状态。
 
 #### 定义 1.2 (状态转移矩阵)
+
 状态转移矩阵 $A \in \mathbb{R}^{n \times n}$ 满足：
 $$x(k+1) = Ax(k) + Bu(k)$$
 
 #### 定理 1.1 (系统稳定性)
+
 系统稳定的充分必要条件是矩阵 $A$ 的所有特征值的模都小于1：
 $$|\lambda_i(A)| < 1, \quad \forall i = 1, 2, \ldots, n$$
 
@@ -198,16 +201,19 @@ pub struct SystemPerformance {
 ### 2.1 随机过程理论
 
 #### 定义 2.1 (传感器噪声模型)
+
 传感器噪声是一个随机过程 $\{N(t)\}_{t \geq 0}$，通常假设为高斯白噪声：
 $$N(t) \sim \mathcal{N}(0, \sigma^2)$$
 
 #### 定义 2.2 (信号检测)
+
 信号检测问题是在噪声中检测有用信号：
 $$Y(t) = S(t) + N(t)$$
 
 其中 $S(t)$ 是信号，$N(t)$ 是噪声。
 
 #### 定理 2.1 (最优检测器)
+
 在高斯噪声下，最优检测器是匹配滤波器。
 
 ### 2.2 Rust概率统计实现
@@ -426,6 +432,7 @@ impl Clone for KalmanFilter {
 ### 3.1 凸优化理论
 
 #### 定义 3.1 (凸优化问题)
+
 凸优化问题具有形式：
 $$\min_{x \in \mathcal{X}} f(x)$$
 $$\text{subject to } g_i(x) \leq 0, \quad i = 1, 2, \ldots, m$$
@@ -434,6 +441,7 @@ $$\text{subject to } h_j(x) = 0, \quad j = 1, 2, \ldots, p$$
 其中 $f$ 是凸函数，$g_i$ 是凸函数，$h_j$ 是仿射函数。
 
 #### 定理 3.1 (KKT条件)
+
 对于凸优化问题，KKT条件是全局最优解的充分必要条件。
 
 ### 3.2 Rust优化算法实现
@@ -752,6 +760,7 @@ pub struct ResourceAllocationResult {
 ---
 
 **参考文献**：
+
 1. [Linear Algebra](https://en.wikipedia.org/wiki/Linear_algebra)
 2. [Probability Theory](https://en.wikipedia.org/wiki/Probability_theory)
-3. [Optimization Theory](https://en.wikipedia.org/wiki/Optimization_theory) 
+3. [Optimization Theory](https://en.wikipedia.org/wiki/Optimization_theory)

@@ -5,26 +5,32 @@
 ### 1.1 基本定义
 
 #### 定义 1.1 (数据压缩)
+
 数据压缩是一个函数 $C: \Sigma^* \rightarrow \Sigma^*$，其中：
+
 - $\Sigma$ 是字母表
 - $\Sigma^*$ 是所有可能字符串的集合
 - 对于输入 $x \in \Sigma^*$，$C(x)$ 是压缩后的数据
 
 #### 定义 1.2 (压缩率)
+
 压缩率定义为：
 $$\text{Compression Ratio} = \frac{|C(x)|}{|x|} \times 100\%$$
 
 #### 定义 1.3 (压缩效率)
+
 压缩效率定义为：
 $$\text{Efficiency} = \frac{\text{Compression Time}}{\text{Decompression Time}}$$
 
 ### 1.2 信息论基础
 
 #### 定理 1.1 (香农熵)
+
 对于概率分布 $P = (p_1, p_2, \ldots, p_n)$，香农熵定义为：
 $$H(P) = -\sum_{i=1}^{n} p_i \log_2 p_i$$
 
 #### 定理 1.2 (压缩下界)
+
 对于任何无损压缩算法，平均压缩长度满足：
 $$L \geq H(P)$$
 
@@ -35,10 +41,12 @@ $$L \geq H(P)$$
 ### 2.1 差分压缩理论
 
 #### 定义 2.1 (差分序列)
+
 对于时间序列 $X = (x_1, x_2, \ldots, x_n)$，差分序列定义为：
 $$\Delta X = (x_2 - x_1, x_3 - x_2, \ldots, x_n - x_{n-1})$$
 
 #### 定理 2.1 (差分压缩效率)
+
 对于具有时间相关性的数据，差分压缩的压缩率满足：
 $$\text{Compression Ratio} \leq \frac{\sigma_{\Delta}}{\sigma_X} \times 100\%$$
 
@@ -201,12 +209,14 @@ pub struct CompressionStatistics {
 ### 3.1 时间序列特征
 
 #### 定义 3.1 (时间序列)
+
 时间序列是一个有序对序列：
 $$T = \{(t_1, x_1), (t_2, x_2), \ldots, (t_n, x_n)\}$$
 
 其中 $t_i < t_{i+1}$ 对所有 $i$ 成立。
 
 #### 定义 3.2 (时间序列压缩)
+
 时间序列压缩是一个函数：
 $$C_T: \mathcal{T} \rightarrow \mathcal{T}_C$$
 
@@ -215,6 +225,7 @@ $$C_T: \mathcal{T} \rightarrow \mathcal{T}_C$$
 ### 3.2 线性插值压缩
 
 #### 定理 3.1 (线性插值误差)
+
 对于线性插值压缩，最大误差满足：
 $$\text{Max Error} \leq \frac{h^2}{8} \max_{t \in [t_i, t_{i+1}]} |f''(t)|$$
 
@@ -405,22 +416,26 @@ impl TimeSeriesCompressor {
 ### 4.1 传感器数据特征
 
 #### 定义 4.1 (传感器数据)
+
 传感器数据是一个四元组：
 $$S = (t, v, q, m)$$
 
 其中：
+
 - $t$ 是时间戳
 - $v$ 是测量值
 - $q$ 是数据质量
 - $m$ 是元数据
 
 #### 定义 4.2 (数据质量)
+
 数据质量定义为：
 $$Q = \alpha \cdot \text{Accuracy} + \beta \cdot \text{Precision} + \gamma \cdot \text{Reliability}$$
 
 ### 4.2 自适应压缩算法
 
 #### 定理 4.1 (自适应压缩最优性)
+
 对于传感器数据，自适应压缩算法的压缩率满足：
 $$\text{Compression Ratio} \geq \frac{H(P_{\text{optimal}})}{H(P_{\text{actual}})}$$
 
@@ -717,16 +732,19 @@ impl AdaptiveCompressor {
 ### 5.1 性能指标
 
 #### 定义 5.1 (压缩性能)
+
 压缩性能是一个三元组：
 $$P = (\text{Compression Ratio}, \text{Compression Speed}, \text{Decompression Speed})$$
 
 #### 定义 5.2 (内存效率)
+
 内存效率定义为：
 $$\text{Memory Efficiency} = \frac{\text{Peak Memory Usage}}{\text{Data Size}}$$
 
 ### 5.2 优化策略
 
 #### 定理 5.1 (压缩优化)
+
 对于给定的数据特征，最优压缩策略满足：
 $$\text{Optimal Strategy} = \arg\min_{S \in \mathcal{S}} \alpha \cdot \text{Size}(S) + \beta \cdot \text{Time}(S) + \gamma \cdot \text{Memory}(S)$$
 
@@ -864,6 +882,7 @@ impl std::fmt::Display for CompressionPerformanceReport {
 ---
 
 **参考文献**：
+
 1. [Data Compression Techniques](https://en.wikipedia.org/wiki/Data_compression)
 2. [Time Series Compression](https://ieeexplore.ieee.org/document/1234567)
-3. [Sensor Data Compression](https://www.ietf.org/rfc/rfc7228.txt) 
+3. [Sensor Data Compression](https://www.ietf.org/rfc/rfc7228.txt)

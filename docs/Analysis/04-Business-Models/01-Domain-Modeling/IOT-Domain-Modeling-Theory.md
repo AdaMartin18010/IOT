@@ -108,6 +108,7 @@ $$\forall sd \in \mathcal{SensorData}: \text{Quality}(sd) \geq \text{Threshold}(
 
 **定理 3.1 (规则执行正确性)**  
 如果规则引擎 $\mathcal{RE}$ 满足：
+
 1. $\forall r \in R: \text{Consistent}(r)$ (规则一致性)
 2. $\forall e \in E: \mathcal{M}(e, R) \neq \emptyset$ (规则匹配)
 3. $\forall r_1, r_2 \in R: \mathcal{P}(r_1, r_2) + \mathcal{P}(r_2, r_1) = 1$ (优先级完全)
@@ -506,4 +507,4 @@ impl DomainModelValidator {
 5. **Rust实现**：给出了具体的领域模型实现代码
 6. **模型验证**：提供了领域模型的一致性验证方法
 
-这些理论为IOT系统的领域建模和业务逻辑实现提供了坚实的理论基础。 
+这些理论为IOT系统的领域建模和业务逻辑实现提供了坚实的理论基础。

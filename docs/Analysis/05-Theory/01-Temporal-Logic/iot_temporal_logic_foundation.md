@@ -23,6 +23,7 @@
 $$\phi ::= p \mid \neg \phi \mid \phi_1 \land \phi_2 \mid \phi_1 \lor \phi_2 \mid \phi_1 \rightarrow \phi_2 \mid \bigcirc \phi \mid \phi_1 \mathcal{U} \phi_2 \mid \diamond \phi \mid \square \phi$$
 
 其中：
+
 - $p$ 是原子命题
 - $\bigcirc$ 是下一个操作符
 - $\mathcal{U}$ 是直到操作符
@@ -157,6 +158,7 @@ IOT时态性质包括：
 ### 4.2 时间约束验证
 
 **算法 4.2.1 (时间约束检查)**
+
 ```rust
 // 时间约束检查算法
 pub struct TimeConstraintChecker {
@@ -199,6 +201,7 @@ impl TimeConstraintChecker {
 IOT模型检查是验证IOT系统是否满足时态性质的过程。
 
 **算法 5.1.1 (LTL模型检查)**
+
 ```rust
 // LTL模型检查算法
 pub struct LTLModelChecker {
@@ -255,10 +258,12 @@ impl LTLModelChecker {
 考虑智能家居的温度控制系统：
 
 **时态性质**：
+
 - $\square(\text{temp\_high} \rightarrow \diamond_{[0,5]} \text{ac\_on})$（温度高时5分钟内开启空调）
 - $\square(\text{temp\_normal} \rightarrow \diamond_{[0,10]} \text{ac\_off})$（温度正常时10分钟内关闭空调）
 
 **验证结果**：
+
 ```rust
 // 温度控制系统验证
 pub struct TemperatureControlSystem {
@@ -292,10 +297,12 @@ impl TemperatureControlSystem {
 工业物联网生产线监控系统：
 
 **时态性质**：
+
 - $\square(\text{alarm} \rightarrow \diamond_{[0,1]} \text{shutdown})$（报警1秒内停机）
 - $\square \diamond_{[0,60]} \text{status\_report}`（每分钟报告状态）
 
 **实现验证**：
+
 ```rust
 // 生产线监控系统
 pub struct ProductionLineMonitor {
@@ -352,6 +359,7 @@ impl ProductionLineMonitor {
 5. **实际应用**：智能家居和工业物联网案例
 
 时态逻辑为IOT系统提供了强大的形式化工具，能够：
+
 - 精确描述时间相关性质
 - 自动验证系统正确性
 - 发现潜在的设计缺陷
@@ -361,4 +369,4 @@ impl ProductionLineMonitor {
 
 ---
 
-*本文档基于严格的数学证明和形式化方法，为IOT系统的时态逻辑分析提供了完整的理论基础和实践指导。* 
+*本文档基于严格的数学证明和形式化方法，为IOT系统的时态逻辑分析提供了完整的理论基础和实践指导。*

@@ -49,6 +49,7 @@ $$\mathcal{R}(x) = 1 - \frac{|\mathcal{E}(x)|}{|x|}$$
 
 **定理 2.1 (差分压缩正确性)**  
 如果差分压缩算法满足：
+
 1. $\forall s_1, s_2 \in S: \mathcal{H}(s_1, s_2) = s_2 - s_1$ (差分计算)
 2. $\forall d \in D, \forall s \in S: \mathcal{G}(d, s) = s + d$ (差分恢复)
 3. $\forall s_1, s_2 \in S: \mathcal{G}(\mathcal{H}(s_1, s_2), s_1) = s_2$ (完整性)
@@ -56,6 +57,7 @@ $$\mathcal{R}(x) = 1 - \frac{|\mathcal{E}(x)|}{|x|}$$
 则差分压缩是正确的。
 
 **证明**：
+
 - 差分计算确保数据差异的准确计算
 - 差分恢复确保原始数据的完整恢复
 - 完整性确保压缩解压缩的一致性
@@ -650,4 +652,4 @@ $$\mathcal{C}^* = \arg\max_{\mathcal{C}} \alpha \cdot R(\mathcal{C}) + \beta \cd
 5. **Rust实现**：给出了具体的算法实现代码
 6. **性能分析**：建立了算法性能的数学模型
 
-这些理论为IOT数据压缩算法的设计、实现和优化提供了坚实的理论基础。 
+这些理论为IOT数据压缩算法的设计、实现和优化提供了坚实的理论基础。

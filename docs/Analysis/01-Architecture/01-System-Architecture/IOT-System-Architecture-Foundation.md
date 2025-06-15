@@ -43,6 +43,7 @@ IOT分层架构是一个五层结构 $\mathcal{L} = (L_1, L_2, L_3, L_4, L_5, \m
 
 **定理 1.1 (分层架构正确性)**  
 如果分层架构 $\mathcal{L}$ 满足：
+
 1. $\forall i \neq j: L_i \cap L_j = \emptyset$ (层间分离)
 2. $\forall l \in L_i, l' \in L_j, i < j: \mathcal{R}(l, l') \neq \emptyset$ (层间通信)
 3. $\forall l \in L_i: \text{Complete}(l)$ (层内完整性)
@@ -50,6 +51,7 @@ IOT分层架构是一个五层结构 $\mathcal{L} = (L_1, L_2, L_3, L_4, L_5, \m
 则 $\mathcal{L}$ 是正确的分层架构。
 
 **证明**：
+
 - 层间分离确保各层职责明确，避免功能重叠
 - 层间通信保证系统整体协调工作
 - 层内完整性确保每层功能完备
@@ -101,6 +103,7 @@ $$\forall d \in D_e: \text{Latency}(d, \mathcal{E}) < \text{Latency}(d, \text{Cl
 
 **定理 3.1 (事件处理正确性)**  
 如果事件系统 $\mathcal{ES}$ 满足：
+
 1. $\forall e \in E: H(e) \neq \emptyset$ (事件有处理器)
 2. $\forall h \in \text{Handler}: \text{Deterministic}(h)$ (处理器确定性)
 3. $\forall e_1, e_2 \in E: \mathcal{P}(e_1, e_2) + \mathcal{P}(e_2, e_1) = 1$ (优先级完全)
@@ -324,4 +327,4 @@ impl ResourceOptimizer {
 4. **实现验证**：提供了Rust实现的架构验证方法
 5. **性能分析**：建立了系统性能的数学模型
 
-这些理论为IOT系统的设计、实现和优化提供了坚实的理论基础。 
+这些理论为IOT系统的设计、实现和优化提供了坚实的理论基础。

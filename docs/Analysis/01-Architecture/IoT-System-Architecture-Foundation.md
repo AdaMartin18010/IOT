@@ -5,7 +5,9 @@
 ### 1.1 基本概念定义
 
 #### 定义 1.1 (IoT系统)
+
 一个IoT系统是一个五元组 $\mathcal{S} = (D, N, P, C, F)$，其中：
+
 - $D$ 是设备集合，$D = \{d_1, d_2, \ldots, d_n\}$
 - $N$ 是网络拓扑，$N = (V, E)$ 其中 $V$ 是节点集合，$E$ 是边集合
 - $P$ 是协议集合，$P = \{p_1, p_2, \ldots, p_m\}$
@@ -13,26 +15,32 @@
 - $F$ 是功能映射，$F: D \times P \rightarrow C$
 
 #### 定义 1.2 (设备状态)
+
 设备 $d \in D$ 的状态是一个三元组 $s_d = (v_d, t_d, m_d)$，其中：
+
 - $v_d$ 是设备值域，$v_d \in \mathbb{R}^n$
 - $t_d$ 是时间戳，$t_d \in \mathbb{T}$
 - $m_d$ 是元数据，$m_d \in \mathcal{M}$
 
 #### 定义 1.3 (系统状态)
+
 IoT系统的全局状态是：
 $$\sigma = \{(d, s_d) \mid d \in D, s_d \text{ 是设备 } d \text{ 的状态}\}$$
 
 ### 1.2 架构公理
 
 #### 公理 1.1 (分层性)
+
 IoT系统必须遵循分层架构原则：
 $$\forall l_i, l_j \in L: i < j \Rightarrow \text{depends}(l_i, l_j)$$
 
 #### 公理 1.2 (可扩展性)
+
 系统必须支持动态扩展：
 $$\forall d \in D, \exists \mathcal{S}' = \mathcal{S} \cup \{d\}: \mathcal{S}' \text{ 是有效的IoT系统}$$
 
 #### 公理 1.3 (容错性)
+
 系统必须具有容错能力：
 $$\forall f \in F, \exists f' \in F: f \neq f' \land \text{equivalent}(f, f')$$
 
@@ -41,7 +49,9 @@ $$\forall f \in F, \exists f' \in F: f \neq f' \land \text{equivalent}(f, f')$$
 ### 2.1 边缘节点形式化模型
 
 #### 定义 2.1 (边缘节点)
+
 边缘节点是一个六元组 $\mathcal{E} = (I, O, P, S, R, T)$，其中：
+
 - $I$ 是输入接口集合
 - $O$ 是输出接口集合  
 - $P$ 是处理单元集合
@@ -50,10 +60,12 @@ $$\forall f \in F, \exists f' \in F: f \neq f' \land \text{equivalent}(f, f')$$
 - $T$ 是时间约束
 
 #### 定理 2.1 (边缘计算优化)
+
 对于边缘节点 $\mathcal{E}$，存在最优资源分配：
 $$\arg\min_{r \in R} \sum_{i=1}^{n} w_i \cdot \text{latency}_i(r)$$
 
 **证明**：
+
 1. 资源约束 $R$ 是凸集
 2. 延迟函数 $\text{latency}_i$ 是凸函数
 3. 权重 $w_i > 0$
@@ -220,18 +232,22 @@ impl EdgeNode {
 ### 3.1 事件系统形式化定义
 
 #### 定义 3.1 (事件)
+
 事件是一个四元组 $e = (t, s, d, p)$，其中：
+
 - $t$ 是时间戳，$t \in \mathbb{T}$
 - $s$ 是源设备，$s \in D$
 - $d$ 是事件数据，$d \in \mathcal{D}$
 - $p$ 是优先级，$p \in \mathbb{N}$
 
 #### 定义 3.2 (事件流)
+
 事件流是一个有序序列：
 $$E = \langle e_1, e_2, \ldots, e_n \rangle$$
 其中 $\forall i < j: t_i \leq t_j$
 
 #### 定义 3.3 (事件处理器)
+
 事件处理器是一个函数：
 $$h: \mathcal{E} \times \mathcal{S} \rightarrow \mathcal{S} \times \mathcal{A}$$
 其中 $\mathcal{E}$ 是事件集合，$\mathcal{S}$ 是状态集合，$\mathcal{A}$ 是动作集合
@@ -408,25 +424,30 @@ impl EventHandler for SensorDataHandler {
 ### 4.1 性能指标定义
 
 #### 定义 4.1 (延迟)
+
 系统延迟定义为：
 $$\text{Latency} = \frac{1}{n} \sum_{i=1}^{n} (t_{i,\text{response}} - t_{i,\text{request}})$$
 
 #### 定义 4.2 (吞吐量)
+
 系统吞吐量定义为：
 $$\text{Throughput} = \frac{\text{Number of processed events}}{\text{Time period}}$$
 
 #### 定义 4.3 (资源利用率)
+
 资源利用率定义为：
 $$\text{Utilization} = \frac{\text{Used resources}}{\text{Total resources}} \times 100\%$$
 
 ### 4.2 性能优化策略
 
 #### 定理 4.1 (负载均衡优化)
+
 对于 $n$ 个处理单元，最优负载分配为：
 $$w_i = \frac{c_i}{\sum_{j=1}^{n} c_j} \cdot W$$
 其中 $c_i$ 是单元 $i$ 的处理能力，$W$ 是总负载。
 
 **证明**：
+
 1. 目标函数：$\min \max_{i} \frac{l_i}{c_i}$
 2. 约束条件：$\sum_{i=1}^{n} l_i = W$
 3. 拉格朗日乘数法求解
@@ -564,6 +585,7 @@ impl std::fmt::Display for PerformanceReport {
 ---
 
 **参考文献**：
+
 1. [IoT Architecture Patterns](https://docs.microsoft.com/en-us/azure/architecture/patterns/)
 2. [Edge Computing Architecture](https://www.ietf.org/rfc/rfc7228.txt)
-3. [Event-Driven Architecture](https://martinfowler.com/articles/201701-event-driven.html) 
+3. [Event-Driven Architecture](https://martinfowler.com/articles/201701-event-driven.html)

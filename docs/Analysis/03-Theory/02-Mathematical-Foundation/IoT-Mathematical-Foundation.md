@@ -9,6 +9,7 @@ IoT系统可以表示为一个七元组：
 $$\mathcal{I} = (D, N, C, P, S, A, T)$$
 
 其中：
+
 - $D$ 是设备集合 (Device Set)
 - $N$ 是网络拓扑 (Network Topology)
 - $C$ 是通信协议 (Communication Protocol)
@@ -21,6 +22,7 @@ $$\mathcal{I} = (D, N, C, P, S, A, T)$$
 如果IoT系统满足数学模型的约束条件，则系统是完备的。
 
 **证明：** 通过系统完备性分析：
+
 1. **设备完备性**：所有设备都在设备集合中
 2. **网络完备性**：网络拓扑连接所有设备
 3. **协议完备性**：通信协议覆盖所有通信需求
@@ -61,11 +63,13 @@ IoT设备集合是一个三元组：
 $$\mathcal{D} = (D, \mathcal{R}, \mathcal{F})$$
 
 其中：
+
 - $D$ 是设备元素集合
 - $\mathcal{R}$ 是设备间关系集合
 - $\mathcal{F}$ 是设备功能集合
 
 **集合运算在IoT中的应用**：
+
 1. **并集**：$\mathcal{D}_1 \cup \mathcal{D}_2$ 表示设备合并
 2. **交集**：$\mathcal{D}_1 \cap \mathcal{D}_2$ 表示共同设备
 3. **差集**：$\mathcal{D}_1 \setminus \mathcal{D}_2$ 表示设备移除
@@ -112,6 +116,7 @@ IoT设备群是一个四元组：
 $$\mathcal{G} = (G, \circ, e, \cdot^{-1})$$
 
 其中：
+
 - $G$ 是设备集合
 - $\circ$ 是设备协作运算
 - $e$ 是单位设备
@@ -121,6 +126,7 @@ $$\mathcal{G} = (G, \circ, e, \cdot^{-1})$$
 如果IoT设备群满足群公理，则设备协作是有效的。
 
 **证明：** 通过群公理验证：
+
 1. **封闭性**：$\forall a, b \in G : a \circ b \in G$
 2. **结合性**：$\forall a, b, c \in G : (a \circ b) \circ c = a \circ (b \circ c)$
 3. **单位元**：$\exists e \in G : \forall a \in G : e \circ a = a \circ e = a$
@@ -165,6 +171,7 @@ IoT数据环是一个六元组：
 $$\mathcal{R} = (R, +, \cdot, 0, 1, \cdot^{-1})$$
 
 其中：
+
 - $R$ 是数据集合
 - $+$ 是数据加法运算
 - $\cdot$ 是数据乘法运算
@@ -173,6 +180,7 @@ $$\mathcal{R} = (R, +, \cdot, 0, 1, \cdot^{-1})$$
 - $\cdot^{-1}$ 是乘法逆元运算
 
 **环运算在IoT中的应用**：
+
 1. **数据聚合**：$d_1 + d_2$ 表示数据合并
 2. **数据变换**：$d_1 \cdot d_2$ 表示数据转换
 3. **数据过滤**：$d \cdot 0 = 0$ 表示数据清除
@@ -211,6 +219,7 @@ IoT状态向量空间是一个四元组：
 $$\mathcal{V} = (V, \mathbb{F}, +, \cdot)$$
 
 其中：
+
 - $V$ 是状态向量集合
 - $\mathbb{F}$ 是标量域
 - $+$ 是向量加法
@@ -221,6 +230,7 @@ IoT系统状态变化是线性的，当且仅当：
 $$\mathbf{s}(t + \Delta t) = A \cdot \mathbf{s}(t) + B \cdot \mathbf{u}(t)$$
 
 其中：
+
 - $\mathbf{s}(t)$ 是状态向量
 - $\mathbf{u}(t)$ 是输入向量
 - $A$ 是状态转移矩阵
@@ -294,20 +304,20 @@ impl IoTNetworkMatrix {
         // 检查网络连通性
         let n = self.adjacency_matrix.rows();
         let mut reachable = Matrix::identity(n);
-        
+
         for _ in 0..n {
             reachable = reachable.multiply(&self.adjacency_matrix);
         }
-        
+
         // 检查是否所有元素都为true
         reachable.iter().all(|&x| x)
     }
-    
+
     pub fn compute_shortest_paths(&self) -> Matrix<f64> {
         // Floyd-Warshall算法
         let n = self.adjacency_matrix.rows();
         let mut distance = Matrix::new(n, n, f64::INFINITY);
-        
+
         // 初始化距离矩阵
         for i in 0..n {
             for j in 0..n {
@@ -317,7 +327,7 @@ impl IoTNetworkMatrix {
             }
             distance.set(i, i, 0.0);
         }
-        
+
         // Floyd-Warshall算法
         for k in 0..n {
             for i in 0..n {
@@ -329,7 +339,7 @@ impl IoTNetworkMatrix {
                 }
             }
         }
-        
+
         distance
     }
 }
@@ -376,30 +386,30 @@ impl MarkovChain {
     pub fn next_state(&self, current_state: &SystemState) -> SystemState {
         let current_index = self.get_state_index(current_state);
         let probabilities = self.transition_matrix.row(current_index);
-        
+
         // 根据概率分布选择下一个状态
         let random_value = rand::random::<f64>();
         let mut cumulative_prob = 0.0;
-        
+
         for (i, &prob) in probabilities.iter().enumerate() {
             cumulative_prob += prob;
             if random_value <= cumulative_prob {
                 return self.states[i].clone();
             }
         }
-        
+
         self.states.last().unwrap().clone()
     }
-    
+
     pub fn steady_state_distribution(&self) -> Vec<f64> {
         // 计算稳态分布
         let n = self.states.len();
         let mut distribution = vec![1.0 / n as f64; n];
-        
+
         for _ in 0..1000 {
             distribution = self.transition_matrix.multiply_vector(&distribution);
         }
-        
+
         distribution
     }
 }
@@ -440,17 +450,17 @@ impl PoissonProcess {
     pub fn generate_events(&mut self, time_span: f64) -> Vec<f64> {
         let mut events = Vec::new();
         let mut current_time = 0.0;
-        
+
         while current_time < time_span {
             // 指数分布生成下一个事件时间
             let interval = -1.0 / self.intensity * (1.0 - rand::random::<f64>()).ln();
             current_time += interval;
-            
+
             if current_time < time_span {
                 events.push(current_time);
             }
         }
-        
+
         events
     }
 }
@@ -465,15 +475,15 @@ pub struct BrownianMotion {
 impl BrownianMotion {
     pub fn simulate(&self, time_points: &[f64]) -> Vec<f64> {
         let mut values = vec![self.initial_value];
-        
+
         for i in 1..time_points.len() {
             let dt = time_points[i] - time_points[i-1];
             let dw = (dt).sqrt() * rand::random::<f64>();
-            
+
             let new_value = values[i-1] + self.drift * dt + self.volatility * dw;
             values.push(new_value);
         }
-        
+
         values
     }
 }
@@ -509,16 +519,16 @@ impl IoTNetworkGraph {
     pub fn degree(&self, device: &Device) -> usize {
         self.adjacency_list.get(device).map_or(0, |neighbors| neighbors.len())
     }
-    
+
     pub fn find_path(&self, start: &Device, end: &Device) -> Option<Vec<Device>> {
         // BFS算法找路径
         let mut queue = VecDeque::new();
         let mut visited = HashSet::new();
         let mut parent = HashMap::new();
-        
+
         queue.push_back(start.clone());
         visited.insert(start.clone());
-        
+
         while let Some(current) = queue.pop_front() {
             if &current == end {
                 // 重建路径
@@ -532,7 +542,7 @@ impl IoTNetworkGraph {
                 path.reverse();
                 return Some(path);
             }
-            
+
             if let Some(neighbors) = self.adjacency_list.get(&current) {
                 for neighbor in neighbors {
                     if !visited.contains(neighbor) {
@@ -543,14 +553,14 @@ impl IoTNetworkGraph {
                 }
             }
         }
-        
+
         None
     }
-    
+
     pub fn connected_components(&self) -> Vec<HashSet<Device>> {
         let mut components = Vec::new();
         let mut visited = HashSet::new();
-        
+
         for device in &self.vertices {
             if !visited.contains(device) {
                 let mut component = HashSet::new();
@@ -558,14 +568,14 @@ impl IoTNetworkGraph {
                 components.push(component);
             }
         }
-        
+
         components
     }
-    
+
     fn dfs(&self, device: &Device, visited: &mut HashSet<Device>, component: &mut HashSet<Device>) {
         visited.insert(device.clone());
         component.insert(device.clone());
-        
+
         if let Some(neighbors) = self.adjacency_list.get(device) {
             for neighbor in neighbors {
                 if !visited.contains(neighbor) {
@@ -610,25 +620,25 @@ pub struct IoTNetworkFlow {
 impl IoTNetworkFlow {
     pub fn max_flow(&mut self) -> f64 {
         let mut max_flow = 0.0;
-        
+
         while let Some(path) = self.find_augmenting_path() {
             let bottleneck = self.find_bottleneck(&path);
             self.augment_flow(&path, bottleneck);
             max_flow += bottleneck;
         }
-        
+
         max_flow
     }
-    
+
     fn find_augmenting_path(&self) -> Option<Vec<Device>> {
         // BFS找增广路径
         let mut queue = VecDeque::new();
         let mut visited = HashSet::new();
         let mut parent = HashMap::new();
-        
+
         queue.push_back(self.source.clone());
         visited.insert(self.source.clone());
-        
+
         while let Some(current) = queue.pop_front() {
             if current == self.sink {
                 // 重建路径
@@ -642,7 +652,7 @@ impl IoTNetworkFlow {
                 path.reverse();
                 return Some(path);
             }
-            
+
             // 检查所有邻居
             for neighbor in self.get_neighbors(&current) {
                 if !visited.contains(&neighbor) && self.has_residual_capacity(&current, &neighbor) {
@@ -652,27 +662,27 @@ impl IoTNetworkFlow {
                 }
             }
         }
-        
+
         None
     }
-    
+
     fn find_bottleneck(&self, path: &[Device]) -> f64 {
         let mut bottleneck = f64::INFINITY;
-        
+
         for i in 0..path.len() - 1 {
             let edge = Edge::new(path[i].clone(), path[i+1].clone());
             let residual_capacity = self.get_residual_capacity(&edge);
             bottleneck = bottleneck.min(residual_capacity);
         }
-        
+
         bottleneck
     }
-    
+
     fn augment_flow(&mut self, path: &[Device], flow_value: f64) {
         for i in 0..path.len() - 1 {
             let edge = Edge::new(path[i].clone(), path[i+1].clone());
             let reverse_edge = Edge::new(path[i+1].clone(), path[i].clone());
-            
+
             *self.flow.entry(edge).or_insert(0.0) += flow_value;
             *self.flow.entry(reverse_edge).or_insert(0.0) -= flow_value;
         }
@@ -717,7 +727,7 @@ impl IoTResourceOptimizer {
     pub fn solve(&self) -> Option<Vec<f64>> {
         // 使用单纯形法求解
         let mut tableau = self.create_tableau();
-        
+
         while let Some(pivot_column) = self.find_pivot_column(&tableau) {
             if let Some(pivot_row) = self.find_pivot_row(&tableau, pivot_column) {
                 self.pivot(&mut tableau, pivot_row, pivot_column);
@@ -725,21 +735,21 @@ impl IoTResourceOptimizer {
                 return None; // 无界解
             }
         }
-        
+
         Some(self.extract_solution(&tableau))
     }
-    
+
     fn create_tableau(&self) -> Matrix<f64> {
         let n_vars = self.objective_coefficients.len();
         let n_constraints = self.constraint_matrix.rows();
         let mut tableau = Matrix::new(n_constraints + 1, n_vars + n_constraints + 1, 0.0);
-        
+
         // 目标函数行
         for j in 0..n_vars {
             tableau.set(0, j, -self.objective_coefficients[j]);
         }
         tableau.set(0, n_vars + n_constraints, 0.0);
-        
+
         // 约束条件
         for i in 0..n_constraints {
             for j in 0..n_vars {
@@ -750,15 +760,15 @@ impl IoTResourceOptimizer {
             // 右端常数
             tableau.set(i + 1, n_vars + n_constraints, self.constraint_vector[i]);
         }
-        
+
         tableau
     }
-    
+
     fn find_pivot_column(&self, tableau: &Matrix<f64>) -> Option<usize> {
         let n_vars = self.objective_coefficients.len();
         let mut min_value = 0.0;
         let mut pivot_column = None;
-        
+
         for j in 0..n_vars {
             let value = tableau.get(0, j);
             if value < min_value {
@@ -766,15 +776,15 @@ impl IoTResourceOptimizer {
                 pivot_column = Some(j);
             }
         }
-        
+
         pivot_column
     }
-    
+
     fn find_pivot_row(&self, tableau: &Matrix<f64>, pivot_column: usize) -> Option<usize> {
         let n_constraints = self.constraint_matrix.rows();
         let mut min_ratio = f64::INFINITY;
         let mut pivot_row = None;
-        
+
         for i in 1..=n_constraints {
             let pivot_element = tableau.get(i, pivot_column);
             if pivot_element > 0.0 {
@@ -785,18 +795,18 @@ impl IoTResourceOptimizer {
                 }
             }
         }
-        
+
         pivot_row
     }
-    
+
     fn pivot(&self, tableau: &mut Matrix<f64>, pivot_row: usize, pivot_column: usize) {
         let pivot_element = tableau.get(pivot_row, pivot_column);
-        
+
         // 归一化主元行
         for j in 0..tableau.cols() {
             tableau.set(pivot_row, j, tableau.get(pivot_row, j) / pivot_element);
         }
-        
+
         // 消元
         for i in 0..tableau.rows() {
             if i != pivot_row {
@@ -808,11 +818,11 @@ impl IoTResourceOptimizer {
             }
         }
     }
-    
+
     fn extract_solution(&self, tableau: &Matrix<f64>) -> Vec<f64> {
         let n_vars = self.objective_coefficients.len();
         let mut solution = vec![0.0; n_vars];
-        
+
         for j in 0..n_vars {
             let mut basic_variable = false;
             for i in 1..tableau.rows() {
@@ -836,7 +846,7 @@ impl IoTResourceOptimizer {
                 solution[j] = 0.0;
             }
         }
-        
+
         solution
     }
 }
@@ -874,12 +884,12 @@ impl IoTPathOptimizer {
         let n = self.graph.vertices.len();
         let mut dp = Matrix::new(n, n, f64::INFINITY);
         let mut next = Matrix::new(n, n, None);
-        
+
         // 初始化
         for i in 0..n {
             dp.set(i, i, 0.0);
         }
-        
+
         // Floyd-Warshall算法
         for k in 0..n {
             for i in 0..n {
@@ -892,11 +902,11 @@ impl IoTPathOptimizer {
                 }
             }
         }
-        
+
         // 重建路径
         let start_idx = self.get_device_index(start);
         let end_idx = self.get_device_index(end);
-        
+
         if dp.get(start_idx, end_idx) == f64::INFINITY {
             None
         } else {
@@ -905,21 +915,21 @@ impl IoTPathOptimizer {
             Some((path, cost))
         }
     }
-    
+
     fn reconstruct_path(&self, next: &Matrix<Option<usize>>, start: usize, end: usize) -> Vec<Device> {
         if next.get(start, end).is_none() {
             let devices: Vec<Device> = self.graph.vertices.iter().cloned().collect();
             return vec![devices[start].clone(), devices[end].clone()];
         }
-        
+
         let k = next.get(start, end).unwrap();
         let mut path = self.reconstruct_path(next, start, k);
         path.pop(); // 移除重复的中间点
         path.extend(self.reconstruct_path(next, k, end));
-        
+
         path
     }
-    
+
     fn get_device_index(&self, device: &Device) -> usize {
         let devices: Vec<Device> = self.graph.vertices.iter().cloned().collect();
         devices.iter().position(|d| d == device).unwrap()
@@ -958,4 +968,4 @@ impl IoTPathOptimizer {
 
 ---
 
-*本文档建立了IoT系统的完整数学基础，为IoT系统的设计、分析和优化提供了坚实的数学支撑。* 
+*本文档建立了IoT系统的完整数学基础，为IoT系统的设计、分析和优化提供了坚实的数学支撑。*

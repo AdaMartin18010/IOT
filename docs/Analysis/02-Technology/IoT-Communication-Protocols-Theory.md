@@ -5,6 +5,7 @@
 ### 1.1 协议层次结构
 
 #### 定义 1.1 (协议栈)
+
 IoT协议栈是一个七层结构 $\mathcal{P} = (L_1, L_2, L_3, L_4, L_5, L_6, L_7)$，其中：
 
 - $L_1$ - 物理层 (Physical Layer)
@@ -16,7 +17,9 @@ IoT协议栈是一个七层结构 $\mathcal{P} = (L_1, L_2, L_3, L_4, L_5, L_6, 
 - $L_7$ - 应用层 (Application Layer)
 
 #### 定义 1.2 (协议状态机)
+
 协议状态机是一个五元组 $\mathcal{M} = (Q, \Sigma, \delta, q_0, F)$，其中：
+
 - $Q$ 是状态集合
 - $\Sigma$ 是输入字母表
 - $\delta: Q \times \Sigma \rightarrow Q$ 是状态转移函数
@@ -24,7 +27,9 @@ IoT协议栈是一个七层结构 $\mathcal{P} = (L_1, L_2, L_3, L_4, L_5, L_6, 
 - $F \subseteq Q$ 是接受状态集合
 
 #### 定义 1.3 (协议消息)
+
 协议消息是一个三元组 $m = (h, p, d)$，其中：
+
 - $h$ 是消息头，$h \in \mathcal{H}$
 - $p$ 是协议标识，$p \in \mathcal{P}$
 - $d$ 是消息数据，$d \in \mathcal{D}$
@@ -32,18 +37,22 @@ IoT协议栈是一个七层结构 $\mathcal{P} = (L_1, L_2, L_3, L_4, L_5, L_6, 
 ### 1.2 协议性能模型
 
 #### 定义 1.4 (协议延迟)
+
 协议延迟定义为：
 $$\text{Latency} = T_{\text{processing}} + T_{\text{transmission}} + T_{\text{propagation}}$$
 
 #### 定义 1.5 (协议吞吐量)
+
 协议吞吐量定义为：
 $$\text{Throughput} = \frac{\text{Message Size}}{\text{Total Time}} \times \text{Success Rate}$$
 
 #### 定理 1.1 (协议效率上界)
+
 对于协议 $P$，其效率上界为：
 $$\text{Efficiency} \leq \frac{\text{Payload Size}}{\text{Total Packet Size}} \times \text{Channel Utilization}$$
 
 **证明**：
+
 1. 信道利用率 $\leq 1$
 2. 有效载荷比例 $\leq 1$
 3. 根据乘法原理，效率上界成立
@@ -53,22 +62,27 @@ $$\text{Efficiency} \leq \frac{\text{Payload Size}}{\text{Total Packet Size}} \t
 ### 2.1 MQTT状态机模型
 
 #### 定义 2.1 (MQTT连接状态)
+
 MQTT连接状态集合：
 $$Q_{\text{MQTT}} = \{\text{DISCONNECTED}, \text{CONNECTING}, \text{CONNECTED}, \text{DISCONNECTING}\}$$
 
 #### 定义 2.2 (MQTT消息类型)
+
 MQTT消息类型集合：
 $$\Sigma_{\text{MQTT}} = \{\text{CONNECT}, \text{CONNACK}, \text{PUBLISH}, \text{PUBACK}, \text{SUBSCRIBE}, \text{SUBACK}, \text{UNSUBSCRIBE}, \text{UNSUBACK}, \text{PINGREQ}, \text{PINGRESP}, \text{DISCONNECT}\}$$
 
 ### 2.2 MQTT服务质量模型
 
 #### 定义 2.3 (QoS级别)
+
 MQTT QoS级别定义：
+
 - QoS 0: 最多一次传递 (At most once)
 - QoS 1: 至少一次传递 (At least once)  
 - QoS 2: 恰好一次传递 (Exactly once)
 
 #### 定理 2.1 (QoS可靠性)
+
 对于QoS级别 $q \in \{0,1,2\}$，消息传递可靠性为：
 $$P(\text{delivery}) = \begin{cases}
 1 - p_{\text{loss}} & \text{if } q = 0 \\
@@ -88,7 +102,7 @@ use std::sync::Arc;
 use tokio::sync::RwLock;
 
 /// MQTT消息类型
-#[derive(Debug, Clone, Serialize, Deserialize)]
+# [derive(Debug, Clone, Serialize, Deserialize)]
 pub enum MqttMessageType {
     Connect,
     ConnAck,
@@ -104,7 +118,7 @@ pub enum MqttMessageType {
 }
 
 /// MQTT服务质量级别
-#[derive(Debug, Clone, Copy, Serialize, Deserialize)]
+# [derive(Debug, Clone, Copy, Serialize, Deserialize)]
 pub enum QoS {
     AtMostOnce = 0,
     AtLeastOnce = 1,
@@ -112,7 +126,7 @@ pub enum QoS {
 }
 
 /// MQTT消息
-#[derive(Debug, Clone, Serialize, Deserialize)]
+# [derive(Debug, Clone, Serialize, Deserialize)]
 pub struct MqttMessage {
     pub message_type: MqttMessageType,
     pub message_id: Option<u16>,
@@ -124,7 +138,7 @@ pub struct MqttMessage {
 }
 
 /// MQTT连接状态
-#[derive(Debug, Clone, PartialEq)]
+# [derive(Debug, Clone, PartialEq)]
 pub enum ConnectionState {
     Disconnected,
     Connecting,
@@ -133,7 +147,7 @@ pub enum ConnectionState {
 }
 
 /// MQTT客户端
-#[derive(Debug)]
+# [derive(Debug)]
 pub struct MqttClient {
     pub client_id: String,
     pub broker_url: String,
@@ -147,7 +161,7 @@ pub struct MqttClient {
 }
 
 /// 连接管理器
-#[derive(Debug)]
+# [derive(Debug)]
 pub struct ConnectionManager {
     pub keep_alive_interval: u16,
     pub session_expiry_interval: u32,
@@ -160,7 +174,7 @@ impl MqttClient {
     /// 创建新的MQTT客户端
     pub fn new(client_id: String, broker_url: String) -> Self {
         let (message_sender, message_receiver) = mpsc::channel(1000);
-        
+
         Self {
             client_id,
             broker_url,
@@ -372,7 +386,7 @@ impl Default for ConnectionManager {
 }
 
 /// MQTT错误类型
-#[derive(Debug, thiserror::Error)]
+# [derive(Debug, thiserror::Error)]
 pub enum MqttError {
     #[error("Not connected to broker")]
     NotConnected,
@@ -418,7 +432,7 @@ use std::sync::Arc;
 use tokio::sync::RwLock;
 
 /// CoAP消息类型
-#[derive(Debug, Clone, Serialize, Deserialize)]
+# [derive(Debug, Clone, Serialize, Deserialize)]
 pub enum CoapMessageType {
     Confirmable,
     NonConfirmable,
@@ -427,7 +441,7 @@ pub enum CoapMessageType {
 }
 
 /// CoAP方法
-#[derive(Debug, Clone, Serialize, Deserialize)]
+# [derive(Debug, Clone, Serialize, Deserialize)]
 pub enum CoapMethod {
     Get,
     Post,
@@ -436,7 +450,7 @@ pub enum CoapMethod {
 }
 
 /// CoAP响应码
-#[derive(Debug, Clone, Serialize, Deserialize)]
+# [derive(Debug, Clone, Serialize, Deserialize)]
 pub enum CoapResponseCode {
     Created = 65,
     Deleted = 66,
@@ -463,7 +477,7 @@ pub enum CoapResponseCode {
 }
 
 /// CoAP消息
-#[derive(Debug, Clone, Serialize, Deserialize)]
+# [derive(Debug, Clone, Serialize, Deserialize)]
 pub struct CoapMessage {
     pub message_type: CoapMessageType,
     pub message_id: u16,
@@ -475,7 +489,7 @@ pub struct CoapMessage {
 }
 
 /// CoAP客户端
-#[derive(Debug)]
+# [derive(Debug)]
 pub struct CoapClient {
     pub server_url: String,
     pub message_sender: mpsc::Sender<CoapMessage>,
@@ -484,7 +498,7 @@ pub struct CoapClient {
 }
 
 /// 待处理请求
-#[derive(Debug)]
+# [derive(Debug)]
 pub struct PendingRequest {
     pub message_id: u16,
     pub timeout: std::time::Instant,
@@ -496,7 +510,7 @@ impl CoapClient {
     /// 创建新的CoAP客户端
     pub fn new(server_url: String) -> Self {
         let (message_sender, message_receiver) = mpsc::channel(1000);
-        
+
         Self {
             server_url,
             message_sender,
@@ -599,12 +613,12 @@ impl CoapClient {
     /// 创建路径选项
     fn create_path_options(&self, path: String) -> HashMap<u16, Vec<u8>> {
         let mut options = HashMap::new();
-        
+
         // 添加Uri-Path选项
         for segment in path.split('/').filter(|s| !s.is_empty()) {
             options.insert(11, segment.as_bytes().to_vec()); // Uri-Path = 11
         }
-        
+
         options
     }
 
@@ -622,7 +636,7 @@ impl CoapClient {
 }
 
 /// CoAP错误类型
-#[derive(Debug, thiserror::Error)]
+# [derive(Debug, thiserror::Error)]
 pub enum CoapError {
     #[error("Request timeout")]
     Timeout,
@@ -667,7 +681,7 @@ $$P^* = \arg\min_{P \in \mathcal{P}} \alpha \cdot \text{Latency}(P) + \beta \cdo
 use std::collections::HashMap;
 
 /// 应用场景
-#[derive(Debug, Clone)]
+# [derive(Debug, Clone)]
 pub enum ApplicationScenario {
     PublishSubscribe,
     RequestResponse,
@@ -677,7 +691,7 @@ pub enum ApplicationScenario {
 }
 
 /// 协议特性
-#[derive(Debug, Clone)]
+# [derive(Debug, Clone)]
 pub struct ProtocolCharacteristics {
     pub latency: f64,
     pub throughput: f64,
@@ -687,14 +701,14 @@ pub struct ProtocolCharacteristics {
 }
 
 /// 协议选择器
-#[derive(Debug)]
+# [derive(Debug)]
 pub struct ProtocolSelector {
     pub protocols: HashMap<String, ProtocolCharacteristics>,
     pub weights: SelectionWeights,
 }
 
 /// 选择权重
-#[derive(Debug, Clone)]
+# [derive(Debug, Clone)]
 pub struct SelectionWeights {
     pub latency_weight: f64,
     pub resource_weight: f64,
@@ -706,7 +720,7 @@ impl ProtocolSelector {
     /// 创建新的协议选择器
     pub fn new() -> Self {
         let mut protocols = HashMap::new();
-        
+
         // MQTT特性
         protocols.insert("MQTT".to_string(), ProtocolCharacteristics {
             latency: 0.1,
@@ -715,7 +729,7 @@ impl ProtocolSelector {
             resource_consumption: 0.2,
             complexity: 0.3,
         });
-        
+
         // CoAP特性
         protocols.insert("CoAP".to_string(), ProtocolCharacteristics {
             latency: 0.1,
@@ -724,7 +738,7 @@ impl ProtocolSelector {
             resource_consumption: 0.1,
             complexity: 0.2,
         });
-        
+
         // HTTP特性
         protocols.insert("HTTP".to_string(), ProtocolCharacteristics {
             latency: 0.5,
@@ -733,7 +747,7 @@ impl ProtocolSelector {
             resource_consumption: 0.5,
             complexity: 0.4,
         });
-        
+
         // AMQP特性
         protocols.insert("AMQP".to_string(), ProtocolCharacteristics {
             latency: 0.4,
@@ -756,7 +770,7 @@ impl ProtocolSelector {
 
         for (protocol_name, characteristics) in &self.protocols {
             let score = self.calculate_score(characteristics, scenario);
-            
+
             if score > best_score {
                 best_score = score;
                 best_protocol = protocol_name.clone();
@@ -839,7 +853,7 @@ use ring::aead;
 use ring::rand::SecureRandom;
 
 /// 安全配置
-#[derive(Debug, Clone)]
+# [derive(Debug, Clone)]
 pub struct SecurityConfig {
     pub encryption_enabled: bool,
     pub authentication_enabled: bool,
@@ -848,14 +862,14 @@ pub struct SecurityConfig {
 }
 
 /// 加密管理器
-#[derive(Debug)]
+# [derive(Debug)]
 pub struct EncryptionManager {
     pub config: SecurityConfig,
     pub key_manager: KeyManager,
 }
 
 /// 密钥管理器
-#[derive(Debug)]
+# [derive(Debug)]
 pub struct KeyManager {
     pub current_key: Vec<u8>,
     pub key_rotation_time: std::time::Instant,
@@ -881,7 +895,7 @@ impl EncryptionManager {
 
         let nonce = self.generate_nonce();
         let sealing_key = aead::LessSafeKey::new(key);
-        
+
         let mut ciphertext = vec![0; plaintext.len() + sealing_key.algorithm().tag_len()];
         ciphertext[..plaintext.len()].copy_from_slice(plaintext);
 
@@ -961,7 +975,7 @@ impl KeyManager {
 }
 
 /// 安全错误类型
-#[derive(Debug, thiserror::Error)]
+# [derive(Debug, thiserror::Error)]
 pub enum SecurityError {
     #[error("Key error: {0}")]
     KeyError(String),
@@ -993,4 +1007,4 @@ pub enum SecurityError {
 **参考文献**：
 1. [MQTT Specification](http://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html)
 2. [CoAP Specification](https://tools.ietf.org/html/rfc7252)
-3. [IoT Security Guidelines](https://www.ietf.org/rfc/rfc8576.txt) 
+3. [IoT Security Guidelines](https://www.ietf.org/rfc/rfc8576.txt)

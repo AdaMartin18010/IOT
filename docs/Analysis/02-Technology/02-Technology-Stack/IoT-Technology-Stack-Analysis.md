@@ -9,6 +9,7 @@ IoT技术栈是一个五层架构体系：
 $$\mathcal{T} = (\mathcal{H}, \mathcal{N}, \mathcal{P}, \mathcal{M}, \mathcal{A})$$
 
 其中：
+
 - $\mathcal{H}$ 是硬件抽象层 (Hardware Abstraction)
 - $\mathcal{N}$ 是网络通信层 (Network Communication)
 - $\mathcal{P}$ 是协议处理层 (Protocol Processing)
@@ -17,6 +18,7 @@ $$\mathcal{T} = (\mathcal{H}, \mathcal{N}, \mathcal{P}, \mathcal{M}, \mathcal{A}
 
 **定理 1.1 (技术栈分层原则)**
 IoT技术栈的分层满足以下原则：
+
 1. **依赖单向性**：上层依赖下层，下层不依赖上层
 2. **接口标准化**：层间接口标准化，支持可插拔组件
 3. **功能独立性**：每层功能相对独立，可独立演进
@@ -25,6 +27,7 @@ IoT技术栈的分层满足以下原则：
 
 **定义 1.2 (技术栈评估矩阵)**
 技术栈评估矩阵 $E = [e_{ij}]_{n \times m}$，其中：
+
 - $e_{ij}$ 表示技术 $i$ 在标准 $j$ 上的评分
 - $n$ 是候选技术数量
 - $m$ 是评估标准数量
@@ -88,6 +91,7 @@ $$\text{Safety}(P) = \forall x \in \text{Inputs}(P) : \text{NoMemoryError}(P, x)
 Rust程序在编译通过后，运行时不会出现内存错误。
 
 **证明：** 通过所有权系统：
+
 1. **所有权规则**：每个值只有一个所有者
 2. **借用检查**：编译时检查借用规则
 3. **生命周期**：确保引用有效性
@@ -123,6 +127,7 @@ Rust的零成本抽象原则：
 $$\text{Cost}(\text{Abstraction}) = \text{Cost}(\text{Manual Implementation})$$
 
 **性能基准测试**：
+
 | 指标 | Rust | C | C++ | Go |
 |------|------|---|-----|----|
 | 内存使用 | 1.0x | 1.0x | 1.1x | 1.5x |
@@ -158,6 +163,7 @@ pub struct ParallelExecutor {
 
 **定义 3.1 (WASM执行环境)**
 WASM执行环境是一个三元组 $\mathcal{W} = (I, M, S)$，其中：
+
 - $I$ 是指令集 (Instruction Set)
 - $M$ 是内存模型 (Memory Model)
 - $S$ 是安全模型 (Security Model)
@@ -166,6 +172,7 @@ WASM执行环境是一个三元组 $\mathcal{W} = (I, M, S)$，其中：
 WASM模块可以在任何支持WASM运行时的平台上执行。
 
 **证明：** 通过标准化：
+
 1. **指令集标准化**：WASM指令集独立于目标平台
 2. **内存模型标准化**：统一的内存访问模式
 3. **安全模型标准化**：一致的沙箱隔离机制
@@ -201,6 +208,7 @@ WASM支持细粒度更新：
 $$\text{Update}(M_1, M_2) = \text{Replace}(M_1, M_2) \land \text{Preserve}(\text{State})$$
 
 **更新优势分析**：
+
 1. **增量更新**：只更新业务逻辑，不更新系统组件
 2. **安全隔离**：更新失败不影响系统稳定性
 3. **版本管理**：支持多版本并存和回滚
@@ -238,6 +246,7 @@ IoT协议栈是一个四层模型：
 $$\mathcal{P} = (\mathcal{P}_L, \mathcal{P}_N, \mathcal{P}_T, \mathcal{P}_A)$$
 
 其中：
+
 - $\mathcal{P}_L$ 是链路层协议 (Link Layer)
 - $\mathcal{P}_N$ 是网络层协议 (Network Layer)
 - $\mathcal{P}_T$ 是传输层协议 (Transport Layer)
@@ -289,6 +298,7 @@ $$\text{Adapter}(P_1, P_2) : \text{Message}_{P_1} \rightarrow \text{Message}_{P_
 如果适配器正确实现，则协议转换保持消息语义。
 
 **证明：** 通过语义映射：
+
 1. **语法映射**：正确转换消息格式
 2. **语义映射**：保持消息含义
 3. **约束映射**：保持协议约束
@@ -325,6 +335,7 @@ IoT安全架构是一个多层次防护体系：
 $$\mathcal{S} = (\mathcal{S}_D, \mathcal{S}_N, \mathcal{S}_A, \mathcal{S}_P)$$
 
 其中：
+
 - $\mathcal{S}_D$ 是设备安全 (Device Security)
 - $\mathcal{S}_N$ 是网络安全 (Network Security)
 - $\mathcal{S}_A$ 是应用安全 (Application Security)
@@ -364,6 +375,7 @@ pub struct NetworkSecurity {
 
 **定义 5.2 (加密方案)**
 加密方案是一个三元组 $\mathcal{E} = (K, E, D)$，其中：
+
 - $K$ 是密钥空间
 - $E$ 是加密函数
 - $D$ 是解密函数
@@ -403,6 +415,7 @@ pub struct KeyManagement {
 $$\text{DataFlow} = (\text{Source}, \text{Processor}, \text{Sink})$$
 
 **处理模式**：
+
 1. **批处理**：$\text{Batch}(D) = \text{Process}(\text{Collect}(D))$
 2. **流处理**：$\text{Stream}(D) = \text{Process}(\text{RealTime}(D))$
 3. **混合处理**：$\text{Hybrid}(D) = \text{Stream}(D) \oplus \text{Batch}(D)$
@@ -475,6 +488,7 @@ $$\text{Optimize} \quad f(\mathcal{T}) = \sum_{i=1}^{n} w_i \cdot \text{Metric}_
 $$\text{Subject to} \quad \text{Constraint}_j(\mathcal{T}) \leq \text{Limit}_j, \quad j = 1, 2, \ldots, m$$
 
 **优化目标**：
+
 1. **性能最大化**：$\text{Maximize} \quad \text{Performance}(\mathcal{T})$
 2. **成本最小化**：$\text{Minimize} \quad \text{Cost}(\mathcal{T})$
 3. **可靠性最大化**：$\text{Maximize} \quad \text{Reliability}(\mathcal{T})$
@@ -508,6 +522,7 @@ pub enum OptimizationAlgorithm {
 $$\text{Optimize} \quad \text{Performance} = \text{Profile} \rightarrow \text{Analyze} \rightarrow \text{Optimize} \rightarrow \text{Validate}$$
 
 **调优策略**：
+
 1. **算法优化**：选择更高效的算法
 2. **数据结构优化**：使用更合适的数据结构
 3. **并发优化**：利用并行计算能力
@@ -556,4 +571,4 @@ pub struct PerformanceMetrics {
 
 ---
 
-*本文档提供了IoT技术栈的全面分析，为技术选型和系统设计提供了理论指导和实践参考。* 
+*本文档提供了IoT技术栈的全面分析，为技术选型和系统设计提供了理论指导和实践参考。*

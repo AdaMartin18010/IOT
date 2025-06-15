@@ -953,6 +953,7 @@ pub enum CommitResult {
 ### 7.1 智能传感器网络
 
 **案例 7.1.1 (分布式数据采集)**
+
 ```rust
 // 分布式数据采集系统
 pub struct DistributedDataCollection {
@@ -1011,6 +1012,7 @@ impl DistributedDataCollection {
 ### 7.2 工业控制系统
 
 **案例 7.2.1 (实时控制回路)**
+
 ```rust
 // 实时控制回路系统
 pub struct RealTimeControlLoop {
@@ -1096,4 +1098,4 @@ impl RealTimeControlLoop {
 
 ---
 
-*本文档基于严格的数学证明和形式化方法，为IOT系统的形式化理论提供了完整的理论基础和实践指导。* 
+*本文档基于严格的数学证明和形式化方法，为IOT系统的形式化理论提供了完整的理论基础和实践指导。*

@@ -56,6 +56,7 @@ MQTT协议是一个八元组 $\mathcal{MQTT} = (C, T, Q, R, \mathcal{P}, \mathca
 
 **定理 2.1 (MQTT消息传递可靠性)**  
 对于MQTT协议，如果满足：
+
 1. $\forall c \in C: \mathcal{K}(c, \text{broker}) = \text{true}$ (客户端连接)
 2. $\forall t \in T: \exists c \in C: \mathcal{S}(c, t) \neq \emptyset$ (主题有订阅者)
 3. $\forall m \in M: \mathcal{V}(m) = \text{true}$ (消息有效)
@@ -63,6 +64,7 @@ MQTT协议是一个八元组 $\mathcal{MQTT} = (C, T, Q, R, \mathcal{P}, \mathca
 则消息传递是可靠的。
 
 **证明**：
+
 - 客户端连接确保通信通道可用
 - 主题订阅确保消息有接收者
 - 消息验证确保消息内容正确
@@ -375,4 +377,4 @@ $$P_{secure} = 1 - \prod_{i=1}^{n} (1 - P_{protection_i})$$
 4. **Rust实现**：给出了具体的协议实现代码
 5. **安全分析**：建立了协议安全的理论框架
 
-这些理论为IOT通信协议的设计、实现和优化提供了坚实的理论基础。 
+这些理论为IOT通信协议的设计、实现和优化提供了坚实的理论基础。

@@ -784,6 +784,7 @@ pub struct AccessRequest {
 其中 $|E|$ 为边数，$|V|$ 为节点数，$|H|$ 为事件处理器数量。
 
 **证明**：
+
 1. 设备操作使用HashMap，平均时间复杂度为 $O(1)$
 2. 路径计算使用Dijkstra算法，时间复杂度为 $O(|E| + |V| \log |V|)$
 3. 事件处理为线性遍历，时间复杂度为 $O(|H|)$
@@ -848,13 +849,13 @@ $$\forall p \in P: p.evaluate(r) = true \Rightarrow \text{Safe}(r)$$
 3. Hoare, C. A. R. (1985). Communicating Sequential Processes. Prentice-Hall.
 4. Lynch, N. A. (1996). Distributed Algorithms. Morgan Kaufmann.
 5. Lamport, L. (1978). Time, Clocks, and the Ordering of Events in a Distributed System. Communications of the ACM, 21(7), 558-565.
-6. Rust Programming Language. (2023). The Rust Programming Language. https://doc.rust-lang.org/book/
-7. Tokio. (2023). Tokio - An asynchronous runtime for Rust. https://tokio.rs/
-8. Serde. (2023). Serde - Serialization framework for Rust. https://serde.rs/
+6. Rust Programming Language. (2023). The Rust Programming Language. <https://doc.rust-lang.org/book/>
+7. Tokio. (2023). Tokio - An asynchronous runtime for Rust. <https://tokio.rs/>
+8. Serde. (2023). Serde - Serialization framework for Rust. <https://serde.rs/>
 
 ---
 
 **文档版本**: v1.0  
 **最后更新**: 2024-12-19  
 **作者**: IoT架构分析团队  
-**状态**: 已完成基础理论框架 
+**状态**: 已完成基础理论框架

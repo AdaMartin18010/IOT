@@ -29,6 +29,7 @@ $$\forall \epsilon > 0, \exists \delta > 0: \|s_0 - s^*\| < \delta \Rightarrow \
 
 **定理 1.1 (Lyapunov稳定性)**  
 如果存在Lyapunov函数 $V: S \rightarrow \mathbb{R}^+$ 满足：
+
 1. $V(s^*) = 0$
 2. $V(s) > 0, \forall s \neq s^*$
 3. $\Delta V(s) = V(\mathcal{F}(s, \mathcal{H}(\mathcal{G}(s)))) - V(s) \leq 0$
@@ -36,6 +37,7 @@ $$\forall \epsilon > 0, \exists \delta > 0: \|s_0 - s^*\| < \delta \Rightarrow \
 则系统在 $s^*$ 处稳定。
 
 **证明**：
+
 - 条件1和2确保 $V$ 是正定的
 - 条件3确保 $V$ 沿系统轨迹非增
 - 由Lyapunov稳定性理论，系统稳定
@@ -79,6 +81,7 @@ $$K_p > 0, K_i > 0, K_d > 0$$
 $$K_p^2 > 4K_i K_d$$
 
 **证明**：
+
 - 一阶系统传递函数为 $G(s) = \frac{1}{Ts + 1}$
 - PID控制器传递函数为 $C(s) = K_p + \frac{K_i}{s} + K_d s$
 - 闭环特征方程为 $Ts^3 + (1 + K_d)s^2 + K_p s + K_i = 0$
@@ -121,6 +124,7 @@ $$\hat{s}_t = \arg\min_{s} \mathbb{E}[\|s - s_t\|^2 | o_{0:t}]$$
 - $R$ 是观测噪声协方差
 
 **算法 3.1 (卡尔曼滤波算法)**  
+
 1. **预测步骤**：
    $$\hat{s}_{t|t-1} = A \hat{s}_{t-1|t-1} + B a_{t-1}$$
    $$P_{t|t-1} = A P_{t-1|t-1} A^T + Q$$
@@ -134,6 +138,7 @@ $$\hat{s}_t = \arg\min_{s} \mathbb{E}[\|s - s_t\|^2 | o_{0:t}]$$
 在Gaussian噪声假设下，卡尔曼滤波器提供最小均方误差估计。
 
 **证明**：
+
 - 在Gaussian假设下，后验分布也是Gaussian
 - 卡尔曼滤波器计算的是后验分布的均值
 - 对于Gaussian分布，均值是最小均方误差估计
@@ -145,6 +150,7 @@ $$\hat{s}_t = \arg\min_{s} \mathbb{E}[\|s - s_t\|^2 | o_{0:t}]$$
 $$p(s_t | o_{0:t}) \approx \sum_{i=1}^N w_t^{(i)} \delta(s_t - s_t^{(i)})$$
 
 **算法 3.2 (粒子滤波算法)**  
+
 1. **采样**：$s_t^{(i)} \sim p(s_t | s_{t-1}^{(i)}, a_{t-1})$
 2. **权重更新**：$w_t^{(i)} = w_{t-1}^{(i)} p(o_t | s_t^{(i)})$
 3. **归一化**：$w_t^{(i)} = \frac{w_t^{(i)}}{\sum_{j=1}^N w_t^{(j)}}$
@@ -169,6 +175,7 @@ $$V_t(s) = \min_{a_t, \ldots, a_{T-1}} \sum_{k=t}^{T-1} \mathcal{C}(s_k, a_k) + 
 $$V_t(s) = \min_{a} \{\mathcal{C}(s, a) + V_{t+1}(\mathcal{F}(s, a))\}$$
 
 **算法 4.1 (动态规划算法)**  
+
 1. 初始化：$V_T(s) = \mathcal{C}_T(s)$
 2. 反向迭代：$V_t(s) = \min_{a} \{\mathcal{C}(s, a) + V_{t+1}(\mathcal{F}(s, a))\}$
 3. 最优策略：$\pi_t^*(s) = \arg\min_{a} \{\mathcal{C}(s, a) + V_{t+1}(\mathcal{F}(s, a))\}$
@@ -661,4 +668,4 @@ $$\mathcal{C}^* = \arg\min_{\mathcal{C}} \alpha \cdot (1-S(\mathcal{C})) + \beta
 5. **Rust实现**：给出了具体的控制算法实现代码
 6. **性能分析**：建立了控制性能的数学模型
 
-这些理论为IOT系统的控制设计和实现提供了坚实的理论基础。 
+这些理论为IOT系统的控制设计和实现提供了坚实的理论基础。

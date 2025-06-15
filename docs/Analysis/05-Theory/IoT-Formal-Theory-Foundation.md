@@ -5,7 +5,9 @@
 ### 1.1 控制系统形式化模型
 
 #### 定义 1.1 (IoT控制系统)
+
 IoT控制系统是一个五元组 $\mathcal{C} = (X, U, Y, f, h)$，其中：
+
 - $X \subseteq \mathbb{R}^n$ 是状态空间
 - $U \subseteq \mathbb{R}^m$ 是控制输入空间
 - $Y \subseteq \mathbb{R}^p$ 是输出空间
@@ -13,6 +15,7 @@ IoT控制系统是一个五元组 $\mathcal{C} = (X, U, Y, f, h)$，其中：
 - $h: X \rightarrow Y$ 是输出函数
 
 #### 定义 1.2 (离散时间系统)
+
 离散时间IoT系统的状态方程为：
 $$x(k+1) = f(x(k), u(k))$$
 $$y(k) = h(x(k))$$
@@ -20,6 +23,7 @@ $$y(k) = h(x(k))$$
 其中 $k \in \mathbb{N}$ 是时间步。
 
 #### 定义 1.3 (反馈控制律)
+
 反馈控制律是一个函数：
 $$u(k) = g(x(k), r(k))$$
 
@@ -28,7 +32,9 @@ $$u(k) = g(x(k), r(k))$$
 ### 1.2 稳定性理论
 
 #### 定理 1.1 (李雅普诺夫稳定性)
+
 对于系统 $\dot{x} = f(x)$，如果存在李雅普诺夫函数 $V(x)$ 满足：
+
 1. $V(0) = 0$
 2. $V(x) > 0$ 对所有 $x \neq 0$
 3. $\dot{V}(x) \leq 0$ 对所有 $x$
@@ -36,6 +42,7 @@ $$u(k) = g(x(k), r(k))$$
 则系统在原点稳定。
 
 #### 定理 1.2 (渐近稳定性)
+
 如果进一步满足 $\dot{V}(x) < 0$ 对所有 $x \neq 0$，则系统渐近稳定。
 
 ### 1.3 Rust控制系统实现
@@ -265,20 +272,24 @@ pub struct StabilityAnalysis {
 ### 2.1 时态逻辑基础
 
 #### 定义 2.1 (线性时态逻辑LTL)
+
 线性时态逻辑的语法定义为：
 $$\phi ::= p \mid \neg \phi \mid \phi \land \psi \mid \phi \lor \psi \mid X\phi \mid F\phi \mid G\phi \mid \phi U\psi$$
 
 其中：
+
 - $X\phi$ (Next): 下一个时刻满足 $\phi$
 - $F\phi$ (Finally): 将来某个时刻满足 $\phi$
 - $G\phi$ (Globally): 所有时刻都满足 $\phi$
 - $\phi U\psi$ (Until): $\phi$ 一直满足直到 $\psi$ 满足
 
 #### 定义 2.2 (计算树逻辑CTL)
+
 计算树逻辑的语法定义为：
 $$\phi ::= p \mid \neg \phi \mid \phi \land \psi \mid \phi \lor \psi \mid EX\phi \mid EF\phi \mid EG\phi \mid E[\phi U\psi] \mid A[\phi U\psi]$$
 
 #### 定理 2.1 (LTL模型检查)
+
 LTL模型检查问题是PSPACE完全的。
 
 ### 2.2 Rust时态逻辑实现
@@ -570,18 +581,23 @@ pub struct ModelCheckingResult {
 ### 3.1 一致性模型
 
 #### 定义 3.1 (强一致性)
+
 强一致性要求所有节点在任何时刻看到相同的数据状态。
 
 #### 定义 3.2 (最终一致性)
+
 最终一致性允许暂时的不一致，但最终所有节点会收敛到相同状态。
 
 #### 定义 3.3 (因果一致性)
+
 因果一致性要求因果相关的事件在所有节点上以相同顺序执行。
 
 ### 3.2 CAP定理
 
 #### 定理 3.1 (CAP定理)
+
 在分布式系统中，最多只能同时满足以下三个性质中的两个：
+
 1. **一致性(Consistency)**: 所有节点看到相同的数据
 2. **可用性(Availability)**: 每个请求都能得到响应
 3. **分区容错性(Partition tolerance)**: 系统在网络分区时仍能工作
@@ -908,6 +924,7 @@ impl DistributedNode {
 ---
 
 **参考文献**：
+
 1. [Control Theory](https://en.wikipedia.org/wiki/Control_theory)
 2. [Temporal Logic](https://en.wikipedia.org/wiki/Temporal_logic)
-3. [Distributed Systems](https://en.wikipedia.org/wiki/Distributed_computing) 
+3. [Distributed Systems](https://en.wikipedia.org/wiki/Distributed_computing)

@@ -5,7 +5,9 @@
 ### 1.1 基本概念
 
 #### 定义 1.1 (领域模型)
+
 领域模型是一个五元组 $\mathcal{D} = (E, R, A, C, I)$，其中：
+
 - $E$ 是实体集合
 - $R$ 是关系集合
 - $A$ 是属性集合
@@ -13,13 +15,17 @@
 - $I$ 是不变式集合
 
 #### 定义 1.2 (实体)
+
 实体是一个三元组 $e = (id, type, attributes)$，其中：
+
 - $id$ 是唯一标识符
 - $type$ 是实体类型
 - $attributes$ 是属性映射
 
 #### 定义 1.3 (关系)
+
 关系是一个四元组 $r = (source, target, type, properties)$，其中：
+
 - $source$ 是源实体
 - $target$ 是目标实体
 - $type$ 是关系类型
@@ -28,12 +34,15 @@
 ### 1.2 领域规则
 
 #### 公理 1.1 (实体唯一性)
+
 对于任意实体 $e_1, e_2 \in E$，如果 $e_1.id = e_2.id$，则 $e_1 = e_2$。
 
 #### 公理 1.2 (关系完整性)
+
 对于任意关系 $r \in R$，$r.source \in E$ 且 $r.target \in E$。
 
 #### 公理 1.3 (约束一致性)
+
 对于任意约束 $c \in C$，领域模型必须满足 $c$。
 
 ## 2. IoT核心领域实体
@@ -41,10 +50,12 @@
 ### 2.1 设备实体模型
 
 #### 定义 2.1 (设备)
+
 设备是一个六元组：
 $$Device = (id, type, location, status, capabilities, configuration)$$
 
 #### 定义 2.2 (设备状态)
+
 设备状态是一个三元组：
 $$DeviceStatus = (operational, connected, lastSeen)$$
 
@@ -249,10 +260,12 @@ impl Default for SecuritySettings {
 ### 3.1 数据模型定义
 
 #### 定义 3.1 (传感器数据)
+
 传感器数据是一个五元组：
 $$SensorData = (deviceId, timestamp, value, quality, metadata)$$
 
 #### 定义 3.2 (数据质量)
+
 数据质量是一个三元组：
 $$DataQuality = (accuracy, precision, reliability)$$
 
@@ -404,10 +417,12 @@ impl Default for DataStatistics {
 ### 4.1 规则定义
 
 #### 定义 4.1 (业务规则)
+
 业务规则是一个四元组：
 $$BusinessRule = (condition, action, priority, metadata)$$
 
 #### 定义 4.2 (规则引擎)
+
 规则引擎是一个三元组：
 $$RuleEngine = (rules, facts, inference)$$
 
@@ -685,10 +700,12 @@ pub struct RuleEngineStatistics {
 ### 5.1 事件模型定义
 
 #### 定义 5.1 (领域事件)
+
 领域事件是一个四元组：
 $$DomainEvent = (id, type, data, timestamp)$$
 
 #### 定义 5.2 (事件流)
+
 事件流是一个有序序列：
 $$EventStream = \langle e_1, e_2, \ldots, e_n \rangle$$
 
@@ -884,6 +901,7 @@ impl DeviceRepository {
 ### 6.1 验证规则
 
 #### 定义 6.1 (模型验证)
+
 模型验证是一个函数：
 $$Validate: \mathcal{D} \rightarrow \{true, false\} \times \mathcal{E}$$
 
@@ -1051,6 +1069,7 @@ impl Validator<SensorData> for SensorDataValidator {
 ---
 
 **参考文献**：
+
 1. [Domain-Driven Design](https://martinfowler.com/bliki/DomainDrivenDesign.html)
 2. [Event Sourcing](https://martinfowler.com/eaaDev/EventSourcing.html)
-3. [Business Rules Engine](https://en.wikipedia.org/wiki/Business_rules_engine) 
+3. [Business Rules Engine](https://en.wikipedia.org/wiki/Business_rules_engine)
