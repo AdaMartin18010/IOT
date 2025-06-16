@@ -20,6 +20,7 @@ IoT 系统按功能和资源约束分为四个层次：
 $$\mathcal{IoT} = (\mathcal{L}_1, \mathcal{L}_2, \mathcal{L}_3, \mathcal{L}_4)$$
 
 其中：
+
 - $\mathcal{L}_1$ 为受限终端设备层（MCU，KB级RAM，MHz级CPU）
 - $\mathcal{L}_2$ 为标准终端设备层（低功耗处理器，小型OS）
 - $\mathcal{L}_3$ 为边缘网关设备层（较强计算能力，数据聚合）
@@ -59,7 +60,7 @@ $$\forall p_1, p_2 \in \mathcal{AP}: \exists p_3 \in \mathcal{AP}: p_3 = p_1 \op
 
 $$\mathcal{D}_{constrained} = \{d | \text{RAM}(d) \leq 64\text{KB}, \text{CPU}(d) \leq 100\text{MHz}\}$$
 
-**架构模式 2.1 (裸机架构)**
+**架构模式 2.1 (裸机架构)**:
 
 ```rust
 #[derive(Debug, Clone)]
@@ -124,7 +125,7 @@ impl ConstrainedDevice {
 
 $$\mathcal{D}_{standard} = \{d | 64\text{KB} < \text{RAM}(d) \leq 1\text{MB}, 100\text{MHz} < \text{CPU}(d) \leq 1\text{GHz}\}$$
 
-**架构模式 2.2 (RTOS 架构)**
+**架构模式 2.2 (RTOS 架构)**:
 
 ```rust
 #[derive(Debug, Clone)]
@@ -352,6 +353,7 @@ impl DeviceService {
 $$\mathcal{E}_{system} = (\mathcal{E}, \mathcal{H}, \mathcal{P})$$
 
 其中：
+
 - $\mathcal{E}$ 是事件集合
 - $\mathcal{H}$ 是事件处理器集合
 - $\mathcal{P}$ 是事件管道集合
@@ -413,6 +415,7 @@ impl EventDrivenSystem {
 $$\mathcal{S}_{security} = (\mathcal{S}_1, \mathcal{S}_2, \mathcal{S}_3, \mathcal{S}_4)$$
 
 其中：
+
 - $\mathcal{S}_1$ 为设备层安全
 - $\mathcal{S}_2$ 为网络层安全
 - $\mathcal{S}_3$ 为应用层安全
@@ -617,6 +620,7 @@ IoT 架构可以用状态机模型描述：
 $$\mathcal{SM} = (Q, \Sigma, \delta, q_0, F)$$
 
 其中：
+
 - $Q$ 是状态集合
 - $\Sigma$ 是输入字母表
 - $\delta: Q \times \Sigma \rightarrow Q$ 是状态转移函数
@@ -679,4 +683,4 @@ impl ArchitecturePerformance {
 
 - [形式化理论基础](./../02-Theory/01-Formal-Theory-Foundation.md)
 - [分布式算法](./../03-Algorithms/01-Distributed-Algorithms.md)
-- [安全验证技术](./../04-Technology/01-Security-Verification.md) 
+- [安全验证技术](./../04-Technology/01-Security-Verification.md)
