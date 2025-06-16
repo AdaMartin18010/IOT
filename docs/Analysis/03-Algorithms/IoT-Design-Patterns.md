@@ -1,956 +1,1088 @@
-# IoT设计模式与算法分析
+# IoT设计模式分析
 
-## 目录
+## 1. IoT设计模式形式化模型
 
-1. [概述与定义](#概述与定义)
-2. [IoT架构模式](#iot架构模式)
-3. [分布式系统模式](#分布式系统模式)
-4. [并发控制模式](#并发控制模式)
-5. [事件驱动模式](#事件驱动模式)
-6. [安全模式](#安全模式)
-7. [性能优化模式](#性能优化模式)
-8. [实现架构](#实现架构)
+### 1.1 设计模式定义
 
-## 概述与定义
+**定义 1.1** (设计模式)
+设计模式是一个五元组 $\mathcal{P} = (N, I, S, C, E)$，其中：
 
-### 定义 1.1 (IoT设计模式)
-IoT设计模式是一个四元组 $\mathcal{P} = (C, S, A, I)$，其中：
-- $C$ 是上下文集合 $C = \{c_1, c_2, ..., c_n\}$
-- $S$ 是解决方案集合 $S = \{s_1, s_2, ..., s_m\}$
-- $A$ 是应用场景集合 $A = \{a_1, a_2, ..., a_k\}$
-- $I$ 是实现接口集合 $I = \{i_1, i_2, ..., i_p\}$
+- $N$ 是模式名称
+- $I$ 是意图描述
+- $S$ 是结构定义
+- $C$ 是协作关系
+- $E$ 是效果评估
 
-### 定义 1.2 (模式有效性)
-模式 $\mathcal{P}$ 在IoT系统 $\mathcal{I}$ 中有效，如果：
-$$\forall c \in C, \exists s \in S: f(c, s) \in A$$
-其中 $f$ 是模式应用函数。
+**定义 1.2** (模式分类)
+设计模式分类定义为：
+$$\mathcal{C} = \{C_{cre}, C_{str}, C_{beh}, C_{con}, C_{par}, C_{dis}\}$$
 
-### 定理 1.1 (模式组合性)
-如果模式 $\mathcal{P}_1$ 和 $\mathcal{P}_2$ 都有效，且它们的接口兼容，则组合模式 $\mathcal{P}_1 \circ \mathcal{P}_2$ 也有效。
-
-**证明**：
-设 $\mathcal{P}_1 = (C_1, S_1, A_1, I_1)$ 和 $\mathcal{P}_2 = (C_2, S_2, A_2, I_2)$。
-如果 $I_1 \cap I_2 \neq \emptyset$，则组合模式为：
-$\mathcal{P}_1 \circ \mathcal{P}_2 = (C_1 \cup C_2, S_1 \times S_2, A_1 \cap A_2, I_1 \cup I_2)$
-由于每个子模式都有效，组合模式也有效。
-$\square$
-
-## IoT架构模式
-
-### 定义 2.1 (分层架构模式)
-分层架构模式定义为：
-$$\mathcal{L} = (L_1, L_2, L_3, L_4, L_5, \mathcal{R})$$
 其中：
-- $L_i$ 是第 $i$ 层
-- $\mathcal{R}$ 是层间关系集合
+- $C_{cre}$: 创建型模式
+- $C_{str}$: 结构型模式
+- $C_{beh}$: 行为型模式
+- $C_{con}$: 并发型模式
+- $C_{par}$: 并行型模式
+- $C_{dis}$: 分布式模式
 
-### 算法 2.1 (分层架构实现)
+**定理 1.1** (模式组合)
+如果模式 $P_1$ 和 $P_2$ 兼容，则组合模式 $P_1 \circ P_2$ 也是有效的设计模式。
+
+### 1.2 IoT特定模式
+
+**定义 1.3** (IoT模式)
+IoT特定模式是一个六元组 $\mathcal{I} = (D, S, C, A, R, T)$，其中：
+
+- $D$ 是设备管理模式
+- $S$ 是传感器模式
+- $C$ 是通信模式
+- $A$ 是聚合模式
+- $R$ 是路由模式
+- $T$ 是时间模式
+
+## 2. 创建型模式
+
+### 2.1 设备工厂模式
+
+**定义 2.1** (设备工厂)
+设备工厂模式定义为：
+$$F: T \times C \rightarrow D$$
+
+其中 $T$ 是设备类型，$C$ 是配置参数，$D$ 是设备实例。
+
 ```rust
-pub trait Layer {
-    fn process(&self, data: &LayerData) -> Result<LayerData, LayerError>;
-    fn get_layer_id(&self) -> LayerId;
+use std::collections::HashMap;
+use serde::{Deserialize, Serialize};
+
+/// 设备类型枚举
+#[derive(Debug, Clone, PartialEq)]
+pub enum DeviceType {
+    Sensor(SensorType),
+    Actuator(ActuatorType),
+    Gateway,
+    EdgeNode,
 }
 
-pub struct LayeredArchitecture {
-    layers: Vec<Box<dyn Layer>>,
-    layer_relationships: HashMap<LayerId, Vec<LayerId>>,
+#[derive(Debug, Clone, PartialEq)]
+pub enum SensorType {
+    Temperature,
+    Humidity,
+    Pressure,
+    Light,
+    Motion,
 }
 
-impl LayeredArchitecture {
-    pub fn add_layer(&mut self, layer: Box<dyn Layer>) -> Result<(), ArchitectureError> {
-        let layer_id = layer.get_layer_id();
-        
-        // 检查层间依赖关系
-        if let Some(dependencies) = self.layer_relationships.get(&layer_id) {
-            for dep_id in dependencies {
-                if !self.has_layer(*dep_id) {
-                    return Err(ArchitectureError::MissingDependency(*dep_id));
-                }
-            }
-        }
-        
-        self.layers.push(layer);
-        Ok(())
-    }
-    
-    pub async fn process_data(&self, input_data: LayerData) -> Result<LayerData, ArchitectureError> {
-        let mut current_data = input_data;
-        
-        for layer in &self.layers {
-            current_data = layer.process(&current_data)?;
-        }
-        
-        Ok(current_data)
-    }
-    
-    fn has_layer(&self, layer_id: LayerId) -> bool {
-        self.layers.iter().any(|layer| layer.get_layer_id() == layer_id)
-    }
+#[derive(Debug, Clone, PartialEq)]
+pub enum ActuatorType {
+    Relay,
+    Motor,
+    Valve,
+    Light,
+    Display,
 }
 
-// 具体层实现
-pub struct PerceptionLayer {
-    sensors: Vec<Box<dyn Sensor>>,
-}
-
-impl Layer for PerceptionLayer {
-    fn process(&self, data: &LayerData) -> Result<LayerData, LayerError> {
-        let mut sensor_data = Vec::new();
-        
-        for sensor in &self.sensors {
-            let reading = sensor.read()?;
-            sensor_data.push(reading);
-        }
-        
-        Ok(LayerData::SensorData(sensor_data))
-    }
-    
-    fn get_layer_id(&self) -> LayerId {
-        LayerId::Perception
-    }
-}
-```
-
-### 定理 2.1 (分层架构正确性)
-如果每层都正确实现其接口，且层间关系满足传递闭包性质，则分层架构是正确的。
-
-**证明**：
-设 $R$ 是层间关系矩阵。
-传递闭包性质：$R^+ = R \cup R^2 \cup R^3 \cup ...$
-如果 $R^+$ 无环，则架构无循环依赖。
-每层正确实现确保数据流正确。
-$\square$
-
-## 分布式系统模式
-
-### 定义 3.1 (微服务模式)
-微服务模式定义为：
-$$\mathcal{M} = (S, C, D, N)$$
-其中：
-- $S$ 是服务集合 $S = \{s_1, s_2, ..., s_n\}$
-- $C$ 是通信协议集合
-- $D$ 是数据存储集合
-- $N$ 是网络拓扑
-
-### 算法 3.1 (服务发现模式)
-```rust
-pub struct ServiceRegistry {
-    services: HashMap<ServiceId, ServiceInfo>,
-    health_checker: HealthChecker,
+/// 设备配置
+#[derive(Debug, Clone)]
+pub struct DeviceConfig {
+    pub device_id: String,
+    pub device_type: DeviceType,
+    pub parameters: HashMap<String, String>,
+    pub location: Location,
+    pub capabilities: Vec<String>,
 }
 
 #[derive(Debug, Clone)]
-pub struct ServiceInfo {
-    pub service_id: ServiceId,
-    pub endpoint: Endpoint,
-    pub health_status: HealthStatus,
-    pub load: f64,
-    pub last_heartbeat: Instant,
+pub struct Location {
+    pub latitude: f64,
+    pub longitude: f64,
+    pub altitude: Option<f64>,
 }
 
-impl ServiceRegistry {
-    pub async fn register_service(&mut self, service_info: ServiceInfo) -> Result<(), RegistryError> {
-        let service_id = service_info.service_id;
-        
-        // 检查服务是否已存在
-        if self.services.contains_key(&service_id) {
-            return Err(RegistryError::ServiceAlreadyExists(service_id));
+/// 设备特征
+pub trait Device: Send + Sync {
+    fn get_id(&self) -> &str;
+    fn get_type(&self) -> &DeviceType;
+    fn initialize(&mut self) -> Result<(), DeviceError>;
+    fn shutdown(&mut self) -> Result<(), DeviceError>;
+    fn get_status(&self) -> DeviceStatus;
+}
+
+#[derive(Debug, Clone)]
+pub struct DeviceStatus {
+    pub online: bool,
+    pub battery_level: f64,
+    pub last_seen: std::time::Instant,
+    pub error_count: u32,
+}
+
+/// 温度传感器
+pub struct TemperatureSensor {
+    id: String,
+    config: DeviceConfig,
+    status: DeviceStatus,
+    current_temperature: f64,
+}
+
+impl TemperatureSensor {
+    pub fn new(config: DeviceConfig) -> Self {
+        Self {
+            id: config.device_id.clone(),
+            config,
+            status: DeviceStatus {
+                online: false,
+                battery_level: 100.0,
+                last_seen: std::time::Instant::now(),
+                error_count: 0,
+            },
+            current_temperature: 0.0,
         }
-        
-        // 验证服务健康状态
-        let health_status = self.health_checker.check_health(&service_info.endpoint).await?;
-        let mut updated_info = service_info;
-        updated_info.health_status = health_status;
-        
-        self.services.insert(service_id, updated_info);
+    }
+    
+    pub fn read_temperature(&mut self) -> Result<f64, DeviceError> {
+        // 模拟温度读取
+        self.current_temperature = 20.0 + (rand::random::<f64>() - 0.5) * 10.0;
+        self.status.last_seen = std::time::Instant::now();
+        Ok(self.current_temperature)
+    }
+}
+
+impl Device for TemperatureSensor {
+    fn get_id(&self) -> &str {
+        &self.id
+    }
+    
+    fn get_type(&self) -> &DeviceType {
+        &self.config.device_type
+    }
+    
+    fn initialize(&mut self) -> Result<(), DeviceError> {
+        self.status.online = true;
+        self.status.last_seen = std::time::Instant::now();
         Ok(())
     }
     
-    pub async fn discover_service(&self, service_type: ServiceType) -> Result<Vec<ServiceInfo>, RegistryError> {
-        let mut available_services = Vec::new();
-        
-        for (_, service_info) in &self.services {
-            if service_info.service_type == service_type && 
-               service_info.health_status == HealthStatus::Healthy {
-                available_services.push(service_info.clone());
-            }
-        }
-        
-        // 按负载排序，选择负载最低的服务
-        available_services.sort_by(|a, b| a.load.partial_cmp(&b.load).unwrap());
-        
-        Ok(available_services)
-    }
-    
-    pub async fn update_health_status(&mut self) -> Result<(), RegistryError> {
-        let mut to_remove = Vec::new();
-        
-        for (service_id, service_info) in &mut self.services {
-            let current_health = self.health_checker.check_health(&service_info.endpoint).await?;
-            service_info.health_status = current_health;
-            
-            // 检查心跳超时
-            if service_info.last_heartbeat.elapsed() > Duration::from_secs(30) {
-                to_remove.push(*service_id);
-            }
-        }
-        
-        // 移除超时的服务
-        for service_id in to_remove {
-            self.services.remove(&service_id);
-        }
-        
+    fn shutdown(&mut self) -> Result<(), DeviceError> {
+        self.status.online = false;
         Ok(())
     }
+    
+    fn get_status(&self) -> DeviceStatus {
+        self.status.clone()
+    }
+}
+
+/// 继电器执行器
+pub struct RelayActuator {
+    id: String,
+    config: DeviceConfig,
+    status: DeviceStatus,
+    is_on: bool,
+}
+
+impl RelayActuator {
+    pub fn new(config: DeviceConfig) -> Self {
+        Self {
+            id: config.device_id.clone(),
+            config,
+            status: DeviceStatus {
+                online: false,
+                battery_level: 100.0,
+                last_seen: std::time::Instant::now(),
+                error_count: 0,
+            },
+            is_on: false,
+        }
+    }
+    
+    pub fn turn_on(&mut self) -> Result<(), DeviceError> {
+        self.is_on = true;
+        self.status.last_seen = std::time::Instant::now();
+        Ok(())
+    }
+    
+    pub fn turn_off(&mut self) -> Result<(), DeviceError> {
+        self.is_on = false;
+        self.status.last_seen = std::time::Instant::now();
+        Ok(())
+    }
+    
+    pub fn get_state(&self) -> bool {
+        self.is_on
+    }
+}
+
+impl Device for RelayActuator {
+    fn get_id(&self) -> &str {
+        &self.id
+    }
+    
+    fn get_type(&self) -> &DeviceType {
+        &self.config.device_type
+    }
+    
+    fn initialize(&mut self) -> Result<(), DeviceError> {
+        self.status.online = true;
+        self.status.last_seen = std::time::Instant::now();
+        Ok(())
+    }
+    
+    fn shutdown(&mut self) -> Result<(), DeviceError> {
+        self.status.online = false;
+        Ok(())
+    }
+    
+    fn get_status(&self) -> DeviceStatus {
+        self.status.clone()
+    }
+}
+
+/// 设备工厂
+pub struct DeviceFactory;
+
+impl DeviceFactory {
+    /// 创建设备实例
+    pub fn create_device(config: DeviceConfig) -> Result<Box<dyn Device>, DeviceError> {
+        match config.device_type {
+            DeviceType::Sensor(SensorType::Temperature) => {
+                Ok(Box::new(TemperatureSensor::new(config)))
+            }
+            DeviceType::Actuator(ActuatorType::Relay) => {
+                Ok(Box::new(RelayActuator::new(config)))
+            }
+            _ => Err(DeviceError::UnsupportedDeviceType),
+        }
+    }
+    
+    /// 批量创建设备
+    pub fn create_devices(configs: Vec<DeviceConfig>) -> Result<Vec<Box<dyn Device>>, DeviceError> {
+        let mut devices = Vec::new();
+        
+        for config in configs {
+            let device = Self::create_device(config)?;
+            devices.push(device);
+        }
+        
+        Ok(devices)
+    }
+}
+
+#[derive(Debug)]
+pub enum DeviceError {
+    UnsupportedDeviceType,
+    InitializationFailed,
+    CommunicationError,
+    ConfigurationError,
 }
 ```
 
-### 定义 3.2 (负载均衡模式)
-负载均衡算法定义为：
-$$LB: S \times R \rightarrow S$$
-其中 $S$ 是服务集合，$R$ 是请求集合。
+### 2.2 单例模式
 
-### 算法 3.2 (智能负载均衡)
 ```rust
-pub struct LoadBalancer {
-    services: Vec<ServiceInfo>,
-    strategy: LoadBalancingStrategy,
-    metrics_collector: MetricsCollector,
+use std::sync::{Arc, Mutex, Once};
+use std::collections::HashMap;
+
+/// IoT系统管理器单例
+pub struct IoTSystemManager {
+    devices: HashMap<String, Box<dyn Device>>,
+    event_handlers: Vec<Box<dyn EventHandler>>,
+    system_status: SystemStatus,
 }
 
-pub enum LoadBalancingStrategy {
-    RoundRobin,
-    LeastConnections,
-    WeightedRoundRobin,
-    Adaptive,
+#[derive(Debug, Clone)]
+pub struct SystemStatus {
+    pub total_devices: usize,
+    pub online_devices: usize,
+    pub system_health: f64,
+    pub last_update: std::time::Instant,
 }
 
-impl LoadBalancer {
-    pub async fn select_service(&mut self, request: &Request) -> Result<ServiceInfo, LoadBalancerError> {
-        match self.strategy {
-            LoadBalancingStrategy::RoundRobin => {
-                self.round_robin_select()
-            },
-            LoadBalancingStrategy::LeastConnections => {
-                self.least_connections_select()
-            },
-            LoadBalancingStrategy::WeightedRoundRobin => {
-                self.weighted_round_robin_select()
-            },
-            LoadBalancingStrategy::Adaptive => {
-                self.adaptive_select(request).await
+#[async_trait::async_trait]
+pub trait EventHandler: Send + Sync {
+    async fn handle_event(&self, event: &SystemEvent) -> Result<(), EventError>;
+    fn event_type(&self) -> &str;
+}
+
+#[derive(Debug, Clone)]
+pub enum SystemEvent {
+    DeviceConnected(String),
+    DeviceDisconnected(String),
+    DataReceived(String, Vec<u8>),
+    Alert(String, String),
+}
+
+#[derive(Debug)]
+pub enum EventError {
+    HandlerError,
+    ProcessingError,
+}
+
+impl IoTSystemManager {
+    fn new() -> Self {
+        Self {
+            devices: HashMap::new(),
+            event_handlers: Vec::new(),
+            system_status: SystemStatus {
+                total_devices: 0,
+                online_devices: 0,
+                system_health: 100.0,
+                last_update: std::time::Instant::now(),
             },
         }
     }
     
-    fn round_robin_select(&mut self) -> Result<ServiceInfo, LoadBalancerError> {
-        if self.services.is_empty() {
-            return Err(LoadBalancerError::NoAvailableServices);
-        }
+    /// 注册设备
+    pub fn register_device(&mut self, device: Box<dyn Device>) -> Result<(), ManagerError> {
+        let device_id = device.get_id().to_string();
+        self.devices.insert(device_id.clone(), device);
         
-        let selected = self.services.remove(0);
-        self.services.push(selected.clone());
-        Ok(selected)
+        self.system_status.total_devices = self.devices.len();
+        self.system_status.last_update = std::time::Instant::now();
+        
+        // 发布设备连接事件
+        let event = SystemEvent::DeviceConnected(device_id);
+        self.publish_event(event).await?;
+        
+        Ok(())
     }
     
-    fn least_connections_select(&self) -> Result<ServiceInfo, LoadBalancerError> {
-        self.services
-            .iter()
-            .min_by_key(|service| service.active_connections)
-            .cloned()
-            .ok_or(LoadBalancerError::NoAvailableServices)
+    /// 获取设备
+    pub fn get_device(&self, device_id: &str) -> Option<&Box<dyn Device>> {
+        self.devices.get(device_id)
     }
     
-    async fn adaptive_select(&self, request: &Request) -> Result<ServiceInfo, LoadBalancerError> {
-        let mut best_service = None;
-        let mut best_score = f64::NEG_INFINITY;
-        
-        for service in &self.services {
-            let score = self.calculate_service_score(service, request).await;
-            if score > best_score {
-                best_score = score;
-                best_service = Some(service.clone());
+    /// 注册事件处理器
+    pub fn register_event_handler(&mut self, handler: Box<dyn EventHandler>) {
+        self.event_handlers.push(handler);
+    }
+    
+    /// 发布事件
+    async fn publish_event(&self, event: SystemEvent) -> Result<(), ManagerError> {
+        for handler in &self.event_handlers {
+            if let Err(e) = handler.handle_event(&event).await {
+                eprintln!("事件处理错误: {:?}", e);
             }
         }
-        
-        best_service.ok_or(LoadBalancerError::NoAvailableServices)
+        Ok(())
     }
     
-    async fn calculate_service_score(&self, service: &ServiceInfo, request: &Request) -> f64 {
-        let load_factor = 1.0 / (1.0 + service.load);
-        let response_time_factor = 1.0 / (1.0 + service.avg_response_time.as_secs_f64());
-        let availability_factor = service.uptime_percentage / 100.0;
+    /// 获取系统状态
+    pub fn get_system_status(&self) -> SystemStatus {
+        let online_devices = self.devices.values()
+            .filter(|device| device.get_status().online)
+            .count();
         
-        // 根据请求类型调整权重
-        let request_weight = match request.request_type {
-            RequestType::Read => 0.3,
-            RequestType::Write => 0.7,
-            RequestType::Compute => 0.5,
+        SystemStatus {
+            total_devices: self.devices.len(),
+            online_devices,
+            system_health: self.calculate_system_health(),
+            last_update: std::time::Instant::now(),
+        }
+    }
+    
+    fn calculate_system_health(&self) -> f64 {
+        if self.devices.is_empty() {
+            return 100.0;
+        }
+        
+        let total_errors: u32 = self.devices.values()
+            .map(|device| device.get_status().error_count)
+            .sum();
+        
+        let health_score = 100.0 - (total_errors as f64 * 10.0).min(100.0);
+        health_score.max(0.0)
+    }
+}
+
+/// 单例实现
+pub struct IoTSystemManagerSingleton {
+    instance: Arc<Mutex<Option<IoTSystemManager>>>,
+    init_once: Once,
+}
+
+impl IoTSystemManagerSingleton {
+    pub fn new() -> Self {
+        Self {
+            instance: Arc::new(Mutex::new(None)),
+            init_once: Once::new(),
+        }
+    }
+    
+    /// 获取单例实例
+    pub fn get_instance(&self) -> Arc<Mutex<IoTSystemManager>> {
+        self.init_once.call_once(|| {
+            let mut instance_guard = self.instance.lock().unwrap();
+            *instance_guard = Some(IoTSystemManager::new());
+        });
+        
+        Arc::new(Mutex::new(self.instance.lock().unwrap().as_ref().unwrap().clone()))
+    }
+}
+
+#[derive(Debug)]
+pub enum ManagerError {
+    DeviceNotFound,
+    EventPublishError,
+    SystemError,
+}
+```
+
+## 3. 结构型模式
+
+### 3.1 适配器模式
+
+```rust
+use std::collections::HashMap;
+
+/// 旧版设备接口
+pub trait LegacyDevice {
+    fn read_data(&self) -> String;
+    fn write_data(&self, data: &str) -> bool;
+    fn get_device_info(&self) -> HashMap<String, String>;
+}
+
+/// 新版设备接口
+pub trait ModernDevice {
+    async fn read_data(&self) -> Result<Vec<u8>, DeviceError>;
+    async fn write_data(&self, data: &[u8]) -> Result<(), DeviceError>;
+    async fn get_device_info(&self) -> Result<DeviceInfo, DeviceError>;
+}
+
+#[derive(Debug, Clone)]
+pub struct DeviceInfo {
+    pub device_id: String,
+    pub device_type: String,
+    pub capabilities: Vec<String>,
+    pub metadata: HashMap<String, String>,
+}
+
+/// 旧版温度传感器
+pub struct LegacyTemperatureSensor {
+    device_id: String,
+    current_temperature: f64,
+}
+
+impl LegacyTemperatureSensor {
+    pub fn new(device_id: String) -> Self {
+        Self {
+            device_id,
+            current_temperature: 20.0,
+        }
+    }
+}
+
+impl LegacyDevice for LegacyTemperatureSensor {
+    fn read_data(&self) -> String {
+        format!("{{\"temperature\": {:.2}}}", self.current_temperature)
+    }
+    
+    fn write_data(&self, _data: &str) -> bool {
+        // 旧版设备不支持写入
+        false
+    }
+    
+    fn get_device_info(&self) -> HashMap<String, String> {
+        let mut info = HashMap::new();
+        info.insert("device_id".to_string(), self.device_id.clone());
+        info.insert("device_type".to_string(), "legacy_temperature_sensor".to_string());
+        info.insert("protocol".to_string(), "legacy".to_string());
+        info
+    }
+}
+
+/// 适配器：将旧版设备适配到新版接口
+pub struct LegacyDeviceAdapter {
+    legacy_device: Box<dyn LegacyDevice>,
+}
+
+impl LegacyDeviceAdapter {
+    pub fn new(legacy_device: Box<dyn LegacyDevice>) -> Self {
+        Self { legacy_device }
+    }
+}
+
+#[async_trait::async_trait]
+impl ModernDevice for LegacyDeviceAdapter {
+    async fn read_data(&self) -> Result<Vec<u8>, DeviceError> {
+        let data = self.legacy_device.read_data();
+        Ok(data.into_bytes())
+    }
+    
+    async fn write_data(&self, data: &[u8]) -> Result<(), DeviceError> {
+        let data_str = String::from_utf8_lossy(data);
+        if self.legacy_device.write_data(&data_str) {
+            Ok(())
+        } else {
+            Err(DeviceError::CommunicationError)
+        }
+    }
+    
+    async fn get_device_info(&self) -> Result<DeviceInfo, DeviceError> {
+        let legacy_info = self.legacy_device.get_device_info();
+        
+        let device_info = DeviceInfo {
+            device_id: legacy_info.get("device_id").unwrap_or(&"unknown".to_string()).clone(),
+            device_type: legacy_info.get("device_type").unwrap_or(&"unknown".to_string()).clone(),
+            capabilities: vec!["read".to_string()],
+            metadata: legacy_info,
         };
         
-        load_factor * 0.4 + response_time_factor * 0.3 + availability_factor * 0.3
+        Ok(device_info)
     }
 }
 ```
 
-### 定理 3.1 (负载均衡最优性)
-如果负载均衡算法满足：
-$$\forall s \in S, \lim_{t \rightarrow \infty} \frac{load_s(t)}{avg_load(t)} = 1$$
-则负载分布是最优的。
+### 3.2 装饰器模式
 
-**证明**：
-设 $load_s(t)$ 是服务 $s$ 在时间 $t$ 的负载。
-平均负载：$avg_load(t) = \frac{1}{|S|} \sum_{s \in S} load_s(t)$
-当所有服务的负载都趋近于平均负载时，负载分布最均匀。
-$\square$
-
-## 并发控制模式
-
-### 定义 4.1 (Actor模式)
-Actor模式定义为：
-$$\mathcal{A} = (A, M, B, S)$$
-其中：
-- $A$ 是Actor集合
-- $M$ 是消息集合
-- $B$ 是邮箱集合
-- $S$ 是状态集合
-
-### 算法 4.1 (Actor系统实现)
 ```rust
-pub struct ActorSystem {
-    actors: HashMap<ActorId, Box<dyn Actor>>,
-    mailboxes: HashMap<ActorId, Mailbox>,
-    scheduler: ActorScheduler,
+use std::time::{Duration, Instant};
+
+/// 基础设备接口
+pub trait BaseDevice {
+    fn read(&self) -> Result<Vec<u8>, DeviceError>;
+    fn write(&self, data: &[u8]) -> Result<(), DeviceError>;
+    fn get_id(&self) -> &str;
 }
 
-pub trait Actor: Send + Sync {
-    fn receive(&mut self, message: Message) -> Result<Vec<Message>, ActorError>;
-    fn get_actor_id(&self) -> ActorId;
+/// 基础传感器
+pub struct BaseSensor {
+    id: String,
+    data: Vec<u8>,
 }
 
-pub struct Mailbox {
-    messages: VecDeque<Message>,
-    capacity: usize,
-}
-
-impl Mailbox {
-    pub fn new(capacity: usize) -> Self {
+impl BaseSensor {
+    pub fn new(id: String) -> Self {
         Self {
-            messages: VecDeque::new(),
-            capacity,
+            id,
+            data: vec![0; 10],
+        }
+    }
+}
+
+impl BaseDevice for BaseSensor {
+    fn read(&self) -> Result<Vec<u8>, DeviceError> {
+        Ok(self.data.clone())
+    }
+    
+    fn write(&self, data: &[u8]) -> Result<(), DeviceError> {
+        // 基础传感器不支持写入
+        Err(DeviceError::CommunicationError)
+    }
+    
+    fn get_id(&self) -> &str {
+        &self.id
+    }
+}
+
+/// 缓存装饰器
+pub struct CachedDevice {
+    device: Box<dyn BaseDevice>,
+    cache: HashMap<String, (Vec<u8>, Instant)>,
+    cache_duration: Duration,
+}
+
+impl CachedDevice {
+    pub fn new(device: Box<dyn BaseDevice>, cache_duration: Duration) -> Self {
+        Self {
+            device,
+            cache: HashMap::new(),
+            cache_duration,
         }
     }
     
-    pub fn send(&mut self, message: Message) -> Result<(), MailboxError> {
-        if self.messages.len() >= self.capacity {
-            return Err(MailboxError::MailboxFull);
+    fn is_cache_valid(&self, key: &str) -> bool {
+        if let Some((_, timestamp)) = self.cache.get(key) {
+            timestamp.elapsed() < self.cache_duration
+        } else {
+            false
+        }
+    }
+}
+
+impl BaseDevice for CachedDevice {
+    fn read(&self) -> Result<Vec<u8>, DeviceError> {
+        let cache_key = format!("read_{}", self.device.get_id());
+        
+        if self.is_cache_valid(&cache_key) {
+            if let Some((data, _)) = self.cache.get(&cache_key) {
+                return Ok(data.clone());
+            }
         }
         
-        self.messages.push_back(message);
-        Ok(())
+        // 从设备读取数据
+        let data = self.device.read()?;
+        
+        // 更新缓存
+        let mut cache = self.cache.clone();
+        cache.insert(cache_key, (data.clone(), Instant::now()));
+        
+        Ok(data)
     }
     
-    pub fn receive(&mut self) -> Option<Message> {
-        self.messages.pop_front()
+    fn write(&self, data: &[u8]) -> Result<(), DeviceError> {
+        // 写入时清除相关缓存
+        let cache_key = format!("read_{}", self.device.get_id());
+        let mut cache = self.cache.clone();
+        cache.remove(&cache_key);
+        
+        self.device.write(data)
+    }
+    
+    fn get_id(&self) -> &str {
+        self.device.get_id()
     }
 }
 
-impl ActorSystem {
-    pub async fn run(&mut self) -> Result<(), ActorSystemError> {
-        loop {
-            // 调度Actor执行
-            let actor_ids = self.scheduler.schedule_actors(&self.actors);
-            
-            for actor_id in actor_ids {
-                if let Some(actor) = self.actors.get_mut(&actor_id) {
-                    if let Some(mailbox) = self.mailboxes.get_mut(&actor_id) {
-                        while let Some(message) = mailbox.receive() {
-                            let responses = actor.receive(message)?;
-                            
-                            // 处理响应消息
-                            for response in responses {
-                                self.route_message(response).await?;
-                            }
-                        }
+/// 重试装饰器
+pub struct RetryDevice {
+    device: Box<dyn BaseDevice>,
+    max_retries: u32,
+    retry_delay: Duration,
+}
+
+impl RetryDevice {
+    pub fn new(device: Box<dyn BaseDevice>, max_retries: u32, retry_delay: Duration) -> Self {
+        Self {
+            device,
+            max_retries,
+            retry_delay,
+        }
+    }
+}
+
+impl BaseDevice for RetryDevice {
+    fn read(&self) -> Result<Vec<u8>, DeviceError> {
+        let mut last_error = None;
+        
+        for attempt in 0..=self.max_retries {
+            match self.device.read() {
+                Ok(data) => return Ok(data),
+                Err(e) => {
+                    last_error = Some(e);
+                    if attempt < self.max_retries {
+                        std::thread::sleep(self.retry_delay);
                     }
                 }
             }
-            
-            tokio::time::sleep(Duration::from_millis(1)).await;
         }
+        
+        Err(last_error.unwrap_or(DeviceError::CommunicationError))
     }
     
-    async fn route_message(&mut self, message: Message) -> Result<(), ActorSystemError> {
-        let target_actor_id = message.target_actor_id;
+    fn write(&self, data: &[u8]) -> Result<(), DeviceError> {
+        let mut last_error = None;
         
-        if let Some(mailbox) = self.mailboxes.get_mut(&target_actor_id) {
-            mailbox.send(message)?;
-        } else {
-            return Err(ActorSystemError::ActorNotFound(target_actor_id));
+        for attempt in 0..=self.max_retries {
+            match self.device.write(data) {
+                Ok(()) => return Ok(()),
+                Err(e) => {
+                    last_error = Some(e);
+                    if attempt < self.max_retries {
+                        std::thread::sleep(self.retry_delay);
+                    }
+                }
+            }
         }
         
-        Ok(())
+        Err(last_error.unwrap_or(DeviceError::CommunicationError))
+    }
+    
+    fn get_id(&self) -> &str {
+        self.device.get_id()
     }
 }
 
-// IoT设备Actor示例
-pub struct DeviceActor {
-    actor_id: ActorId,
-    device_state: DeviceState,
-    sensor_manager: SensorManager,
-    actuator_manager: ActuatorManager,
+/// 日志装饰器
+pub struct LoggedDevice {
+    device: Box<dyn BaseDevice>,
+    logger: Box<dyn DeviceLogger>,
 }
 
-impl Actor for DeviceActor {
-    fn receive(&mut self, message: Message) -> Result<Vec<Message>, ActorError> {
-        match message.message_type {
-            MessageType::ReadSensor => {
-                let sensor_data = self.sensor_manager.read_all_sensors()?;
-                let response = Message {
-                    source_actor_id: self.actor_id,
-                    target_actor_id: message.source_actor_id,
-                    message_type: MessageType::SensorData(sensor_data),
-                    payload: message.payload,
-                };
-                Ok(vec![response])
-            },
-            MessageType::ControlActuator(control_command) => {
-                self.actuator_manager.execute_command(control_command)?;
-                Ok(vec![])
-            },
-            MessageType::UpdateState(new_state) => {
-                self.device_state = new_state;
-                Ok(vec![])
-            },
-            _ => Ok(vec![]),
-        }
+#[async_trait::async_trait]
+pub trait DeviceLogger: Send + Sync {
+    async fn log(&self, level: LogLevel, message: &str);
+}
+
+#[derive(Debug, Clone)]
+pub enum LogLevel {
+    Debug,
+    Info,
+    Warning,
+    Error,
+}
+
+impl LoggedDevice {
+    pub fn new(device: Box<dyn BaseDevice>, logger: Box<dyn DeviceLogger>) -> Self {
+        Self { device, logger }
+    }
+}
+
+impl BaseDevice for LoggedDevice {
+    fn read(&self) -> Result<Vec<u8>, DeviceError> {
+        let device_id = self.device.get_id();
+        
+        // 记录读取开始
+        let logger = self.logger.clone();
+        tokio::spawn(async move {
+            logger.log(LogLevel::Debug, &format!("开始读取设备 {}", device_id)).await;
+        });
+        
+        let result = self.device.read();
+        
+        // 记录读取结果
+        let logger = self.logger.clone();
+        let device_id = device_id.to_string();
+        tokio::spawn(async move {
+            match &result {
+                Ok(data) => {
+                    logger.log(LogLevel::Info, &format!("设备 {} 读取成功，数据长度: {}", device_id, data.len())).await;
+                }
+                Err(e) => {
+                    logger.log(LogLevel::Error, &format!("设备 {} 读取失败: {:?}", device_id, e)).await;
+                }
+            }
+        });
+        
+        result
     }
     
-    fn get_actor_id(&self) -> ActorId {
-        self.actor_id
+    fn write(&self, data: &[u8]) -> Result<(), DeviceError> {
+        let device_id = self.device.get_id();
+        
+        // 记录写入开始
+        let logger = self.logger.clone();
+        let device_id_clone = device_id.to_string();
+        tokio::spawn(async move {
+            logger.log(LogLevel::Debug, &format!("开始写入设备 {}", device_id_clone)).await;
+        });
+        
+        let result = self.device.write(data);
+        
+        // 记录写入结果
+        let logger = self.logger.clone();
+        let device_id = device_id.to_string();
+        tokio::spawn(async move {
+            match &result {
+                Ok(()) => {
+                    logger.log(LogLevel::Info, &format!("设备 {} 写入成功", device_id)).await;
+                }
+                Err(e) => {
+                    logger.log(LogLevel::Error, &format!("设备 {} 写入失败: {:?}", device_id, e)).await;
+                }
+            }
+        });
+        
+        result
+    }
+    
+    fn get_id(&self) -> &str {
+        self.device.get_id()
     }
 }
 ```
 
-### 定理 4.1 (Actor系统正确性)
-如果每个Actor都正确实现其接口，且消息传递是无损的，则Actor系统是正确的。
+## 4. 行为型模式
 
-**证明**：
-Actor之间通过消息传递通信，避免了共享状态。
-每个Actor独立处理消息，确保线程安全。
-消息队列确保消息不丢失。
-因此，系统是正确的。
-$\square$
+### 4.1 观察者模式
 
-## 事件驱动模式
-
-### 定义 5.1 (事件总线模式)
-事件总线模式定义为：
-$$\mathcal{E} = (E, H, B, P)$$
-其中：
-- $E$ 是事件集合
-- $H$ 是处理器集合
-- $B$ 是总线
-- $P$ 是发布者集合
-
-### 算法 5.1 (事件总线实现)
 ```rust
+use std::collections::HashMap;
+use tokio::sync::mpsc;
+use serde::{Deserialize, Serialize};
+
+/// 事件类型
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub enum IoTEvent {
+    DeviceConnected { device_id: String, timestamp: u64 },
+    DeviceDisconnected { device_id: String, timestamp: u64 },
+    DataReceived { device_id: String, data: Vec<u8>, timestamp: u64 },
+    Alert { device_id: String, message: String, severity: AlertSeverity, timestamp: u64 },
+    SystemStatus { status: SystemStatus, timestamp: u64 },
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub enum AlertSeverity {
+    Low,
+    Medium,
+    High,
+    Critical,
+}
+
+/// 事件观察者
+#[async_trait::async_trait]
+pub trait EventObserver: Send + Sync {
+    async fn on_event(&self, event: &IoTEvent) -> Result<(), ObserverError>;
+    fn observer_id(&self) -> &str;
+    fn event_types(&self) -> Vec<String>;
+}
+
+/// 事件总线
 pub struct EventBus {
-    handlers: HashMap<EventType, Vec<Box<dyn EventHandler>>>,
-    event_queue: VecDeque<Event>,
-    publisher_registry: HashMap<PublisherId, Box<dyn Publisher>>,
-}
-
-pub trait EventHandler: Send + Sync {
-    fn handle(&self, event: &Event) -> Result<(), HandlerError>;
-    fn get_handler_id(&self) -> HandlerId;
-}
-
-pub trait Publisher: Send + Sync {
-    fn publish(&self, event: Event) -> Result<(), PublisherError>;
-    fn get_publisher_id(&self) -> PublisherId;
+    observers: HashMap<String, Box<dyn EventObserver>>,
+    event_sender: mpsc::Sender<IoTEvent>,
+    event_receiver: mpsc::Receiver<IoTEvent>,
 }
 
 impl EventBus {
-    pub async fn run(&mut self) -> Result<(), EventBusError> {
-        loop {
-            // 处理事件队列
-            while let Some(event) = self.event_queue.pop_front() {
-                self.process_event(&event).await?;
-            }
-            
-            // 检查发布者是否有新事件
-            for (_, publisher) in &self.publisher_registry {
-                if let Some(event) = publisher.check_for_events()? {
-                    self.event_queue.push_back(event);
-                }
-            }
-            
-            tokio::time::sleep(Duration::from_millis(1)).await;
+    pub fn new() -> Self {
+        let (tx, rx) = mpsc::channel(1000);
+        Self {
+            observers: HashMap::new(),
+            event_sender: tx,
+            event_receiver: rx,
         }
     }
     
-    async fn process_event(&self, event: &Event) -> Result<(), EventBusError> {
-        if let Some(handlers) = self.handlers.get(&event.event_type) {
-            let mut handler_tasks = Vec::new();
+    /// 注册观察者
+    pub fn register_observer(&mut self, observer: Box<dyn EventObserver>) {
+        let observer_id = observer.observer_id().to_string();
+        self.observers.insert(observer_id, observer);
+    }
+    
+    /// 取消注册观察者
+    pub fn unregister_observer(&mut self, observer_id: &str) {
+        self.observers.remove(observer_id);
+    }
+    
+    /// 发布事件
+    pub async fn publish_event(&self, event: IoTEvent) -> Result<(), EventBusError> {
+        self.event_sender.send(event).await
+            .map_err(|_| EventBusError::SendError)
+    }
+    
+    /// 运行事件总线
+    pub async fn run(&mut self) -> Result<(), EventBusError> {
+        while let Some(event) = self.event_receiver.recv().await {
+            self.notify_observers(&event).await?;
+        }
+        Ok(())
+    }
+    
+    /// 通知观察者
+    async fn notify_observers(&self, event: &IoTEvent) -> Result<(), EventBusError> {
+        let mut tasks = Vec::new();
+        
+        for observer in self.observers.values() {
+            let event_types = observer.event_types();
+            let event_type = self.get_event_type(event);
             
-            for handler in handlers {
-                let event_clone = event.clone();
-                let handler_clone = handler.clone();
+            if event_types.contains(&event_type) {
+                let observer = observer.clone();
+                let event = event.clone();
                 
                 let task = tokio::spawn(async move {
-                    handler_clone.handle(&event_clone)
+                    if let Err(e) = observer.on_event(&event).await {
+                        eprintln!("观察者 {} 处理事件失败: {:?}", observer.observer_id(), e);
+                    }
                 });
                 
-                handler_tasks.push(task);
+                tasks.push(task);
             }
-            
-            // 等待所有处理器完成
-            for task in handler_tasks {
-                task.await??;
+        }
+        
+        // 等待所有观察者处理完成
+        for task in tasks {
+            if let Err(e) = task.await {
+                eprintln!("观察者任务失败: {:?}", e);
             }
         }
         
         Ok(())
     }
     
-    pub fn subscribe(&mut self, event_type: EventType, handler: Box<dyn EventHandler>) {
-        self.handlers
-            .entry(event_type)
-            .or_insert_with(Vec::new)
-            .push(handler);
+    fn get_event_type(&self, event: &IoTEvent) -> String {
+        match event {
+            IoTEvent::DeviceConnected { .. } => "device_connected".to_string(),
+            IoTEvent::DeviceDisconnected { .. } => "device_disconnected".to_string(),
+            IoTEvent::DataReceived { .. } => "data_received".to_string(),
+            IoTEvent::Alert { .. } => "alert".to_string(),
+            IoTEvent::SystemStatus { .. } => "system_status".to_string(),
+        }
+    }
+}
+
+/// 日志观察者
+pub struct LoggingObserver {
+    observer_id: String,
+    log_file: String,
+}
+
+impl LoggingObserver {
+    pub fn new(observer_id: String, log_file: String) -> Self {
+        Self {
+            observer_id,
+            log_file,
+        }
+    }
+}
+
+#[async_trait::async_trait]
+impl EventObserver for LoggingObserver {
+    async fn on_event(&self, event: &IoTEvent) -> Result<(), ObserverError> {
+        let log_entry = format!("[{}] {:?}\n", 
+            chrono::Utc::now().format("%Y-%m-%d %H:%M:%S"), 
+            event
+        );
+        
+        // 这里应该写入日志文件
+        println!("日志观察者 {}: {}", self.observer_id, log_entry.trim());
+        
+        Ok(())
     }
     
-    pub fn register_publisher(&mut self, publisher: Box<dyn Publisher>) {
-        let publisher_id = publisher.get_publisher_id();
-        self.publisher_registry.insert(publisher_id, publisher);
+    fn observer_id(&self) -> &str {
+        &self.observer_id
+    }
+    
+    fn event_types(&self) -> Vec<String> {
+        vec![
+            "device_connected".to_string(),
+            "device_disconnected".to_string(),
+            "data_received".to_string(),
+            "alert".to_string(),
+            "system_status".to_string(),
+        ]
     }
 }
 
-// IoT事件处理器示例
-pub struct SensorDataHandler {
-    handler_id: HandlerId,
-    data_processor: DataProcessor,
-    storage_manager: StorageManager,
+/// 告警观察者
+pub struct AlertingObserver {
+    observer_id: String,
+    alert_rules: Vec<AlertRule>,
 }
 
-impl EventHandler for SensorDataHandler {
-    fn handle(&self, event: &Event) -> Result<(), HandlerError> {
-        match &event.event_type {
-            EventType::SensorDataReceived(sensor_data) => {
-                // 处理传感器数据
-                let processed_data = self.data_processor.process(sensor_data)?;
-                
-                // 存储数据
-                self.storage_manager.store(processed_data)?;
-                
-                Ok(())
-            },
-            _ => Ok(()),
+#[derive(Debug, Clone)]
+pub struct AlertRule {
+    pub rule_id: String,
+    pub condition: AlertCondition,
+    pub action: AlertAction,
+}
+
+#[derive(Debug, Clone)]
+pub enum AlertCondition {
+    DeviceOffline { device_id: String, duration: u64 },
+    DataThreshold { device_id: String, field: String, operator: String, value: f64 },
+    ErrorRate { device_id: String, threshold: f64 },
+}
+
+#[derive(Debug, Clone)]
+pub enum AlertAction {
+    SendEmail { recipients: Vec<String>, template: String },
+    SendSMS { phone_numbers: Vec<String>, message: String },
+    Webhook { url: String, payload: HashMap<String, String> },
+}
+
+impl AlertingObserver {
+    pub fn new(observer_id: String) -> Self {
+        Self {
+            observer_id,
+            alert_rules: Vec::new(),
         }
     }
     
-    fn get_handler_id(&self) -> HandlerId {
-        self.handler_id
+    pub fn add_rule(&mut self, rule: AlertRule) {
+        self.alert_rules.push(rule);
     }
+}
+
+#[async_trait::async_trait]
+impl EventObserver for AlertingObserver {
+    async fn on_event(&self, event: &IoTEvent) -> Result<(), ObserverError> {
+        for rule in &self.alert_rules {
+            if self.evaluate_condition(&rule.condition, event).await? {
+                self.execute_action(&rule.action, event).await?;
+            }
+        }
+        Ok(())
+    }
+    
+    fn observer_id(&self) -> &str {
+        &self.observer_id
+    }
+    
+    fn event_types(&self) -> Vec<String> {
+        vec![
+            "device_disconnected".to_string(),
+            "data_received".to_string(),
+            "alert".to_string(),
+        ]
+    }
+    
+    async fn evaluate_condition(&self, condition: &AlertCondition, event: &IoTEvent) -> Result<bool, ObserverError> {
+        match condition {
+            AlertCondition::DeviceOffline { device_id, duration } => {
+                // 检查设备离线时间
+                if let IoTEvent::DeviceDisconnected { device_id: event_device_id, timestamp } = event {
+                    if device_id == event_device_id {
+                        let current_time = chrono::Utc::now().timestamp() as u64;
+                        return Ok(current_time - timestamp > *duration);
+                    }
+                }
+                Ok(false)
+            }
+            AlertCondition::DataThreshold { device_id, field, operator, value } => {
+                // 检查数据阈值
+                if let IoTEvent::DataReceived { device_id: event_device_id, data, .. } = event {
+                    if device_id == event_device_id {
+                        // 解析数据并检查阈值
+                        // 这里简化处理
+                        return Ok(data.len() as f64 > *value);
+                    }
+                }
+                Ok(false)
+            }
+            AlertCondition::ErrorRate { device_id, threshold } => {
+                // 检查错误率
+                // 这里需要维护错误统计
+                Ok(false)
+            }
+        }
+    }
+    
+    async fn execute_action(&self, action: &AlertAction, event: &IoTEvent) -> Result<(), ObserverError> {
+        match action {
+            AlertAction::SendEmail { recipients, template } => {
+                println!("发送邮件到 {:?}: {}", recipients, template);
+            }
+            AlertAction::SendSMS { phone_numbers, message } => {
+                println!("发送短信到 {:?}: {}", phone_numbers, message);
+            }
+            AlertAction::Webhook { url, payload } => {
+                println!("调用Webhook {}: {:?}", url, payload);
+            }
+        }
+        Ok(())
+    }
+}
+
+#[derive(Debug)]
+pub enum ObserverError {
+    ProcessingError,
+    CommunicationError,
+    ConfigurationError,
+}
+
+#[derive(Debug)]
+pub enum EventBusError {
+    SendError,
+    ReceiveError,
+    ObserverError,
 }
 ```
 
-### 定理 5.1 (事件总线正确性)
-如果事件处理器都是幂等的，且事件顺序得到保证，则事件总线是正确的。
+## 5. 总结
 
-**证明**：
-幂等性确保重复处理不会产生副作用。
-事件顺序保证确保因果一致性。
-异步处理确保系统响应性。
-因此，事件总线是正确的。
-$\square$
+本文档提供了IoT设计模式的完整分析，包括：
 
-## 安全模式
+1. **形式化模型**：设计模式的数学定义和分类
+2. **创建型模式**：设备工厂和单例模式
+3. **结构型模式**：适配器和装饰器模式
+4. **行为型模式**：观察者模式
+5. **Rust实现**：完整的代码示例
 
-### 定义 6.1 (安全模式)
-安全模式定义为：
-$$\mathcal{S} = (A, P, E, V)$$
-其中：
-- $A$ 是认证机制集合
-- $P$ 是权限控制集合
-- $E$ 是加密机制集合
-- $V$ 是验证机制集合
+IoT设计模式提供了：
+- 代码复用和可维护性
+- 系统灵活性和扩展性
+- 错误处理和容错能力
+- 性能优化和资源管理
 
-### 算法 6.1 (零信任安全模式)
-```rust
-pub struct ZeroTrustSecurity {
-    identity_provider: IdentityProvider,
-    policy_engine: PolicyEngine,
-    encryption_manager: EncryptionManager,
-    audit_logger: AuditLogger,
-}
-
-impl ZeroTrustSecurity {
-    pub async fn authenticate_request(&self, request: &Request) -> Result<AuthResult, SecurityError> {
-        // 1. 身份验证
-        let identity = self.identity_provider.verify_identity(&request.credentials).await?;
-        
-        // 2. 设备验证
-        let device_trust = self.verify_device_trust(&request.device_info).await?;
-        
-        // 3. 风险评估
-        let risk_score = self.assess_risk(&request, &identity, &device_trust).await?;
-        
-        // 4. 策略检查
-        let policy_result = self.policy_engine.check_policy(&request, &identity, risk_score).await?;
-        
-        // 5. 记录审计日志
-        self.audit_logger.log_auth_attempt(&request, &identity, &policy_result).await?;
-        
-        Ok(AuthResult {
-            authorized: policy_result.allowed,
-            permissions: policy_result.permissions,
-            session_token: if policy_result.allowed {
-                Some(self.generate_session_token(&identity).await?)
-            } else {
-                None
-            },
-        })
-    }
-    
-    async fn verify_device_trust(&self, device_info: &DeviceInfo) -> Result<DeviceTrust, SecurityError> {
-        let mut trust_score = 0.0;
-        
-        // 检查设备证书
-        if let Some(certificate) = &device_info.certificate {
-            if self.verify_certificate(certificate).await? {
-                trust_score += 0.3;
-            }
-        }
-        
-        // 检查设备完整性
-        if self.verify_device_integrity(device_info).await? {
-            trust_score += 0.3;
-        }
-        
-        // 检查设备行为
-        if self.analyze_device_behavior(device_info).await? {
-            trust_score += 0.4;
-        }
-        
-        Ok(DeviceTrust { trust_score })
-    }
-    
-    async fn assess_risk(&self, request: &Request, identity: &Identity, device_trust: &DeviceTrust) -> Result<f64, SecurityError> {
-        let mut risk_score = 0.0;
-        
-        // 基于身份的固有风险
-        risk_score += identity.inherent_risk;
-        
-        // 基于设备信任的风险
-        risk_score += (1.0 - device_trust.trust_score) * 0.3;
-        
-        // 基于请求行为的风险
-        risk_score += self.analyze_request_behavior(request).await? * 0.4;
-        
-        // 基于时间位置的风险
-        risk_score += self.assess_contextual_risk(request).await? * 0.3;
-        
-        Ok(risk_score.min(1.0))
-    }
-    
-    async fn encrypt_sensitive_data(&self, data: &[u8], key_id: &str) -> Result<Vec<u8>, SecurityError> {
-        let encryption_key = self.encryption_manager.get_key(key_id).await?;
-        let encrypted_data = self.encryption_manager.encrypt(data, &encryption_key).await?;
-        
-        Ok(encrypted_data)
-    }
-    
-    async fn verify_data_integrity(&self, data: &[u8], signature: &[u8], public_key: &PublicKey) -> Result<bool, SecurityError> {
-        let computed_hash = self.compute_hash(data);
-        let signature_valid = self.verify_signature(&computed_hash, signature, public_key).await?;
-        
-        Ok(signature_valid)
-    }
-}
-```
-
-### 定理 6.1 (零信任安全性)
-如果认证、授权、加密和审计都正确实现，则零信任安全模式是安全的。
-
-**证明**：
-零信任原则：永不信任，始终验证。
-多层验证确保身份可信。
-持续监控确保行为合规。
-加密保护确保数据安全。
-因此，系统是安全的。
-$\square$
-
-## 性能优化模式
-
-### 定义 7.1 (缓存模式)
-缓存模式定义为：
-$$\mathcal{C} = (K, V, T, S)$$
-其中：
-- $K$ 是键集合
-- $V$ 是值集合
-- $T$ 是时间策略
-- $S$ 是存储策略
-
-### 算法 7.1 (多级缓存实现)
-```rust
-pub struct MultiLevelCache {
-    l1_cache: L1Cache,
-    l2_cache: L2Cache,
-    l3_cache: L3Cache,
-    cache_policy: CachePolicy,
-}
-
-impl MultiLevelCache {
-    pub async fn get(&mut self, key: &CacheKey) -> Result<Option<CacheValue>, CacheError> {
-        // 1. 检查L1缓存
-        if let Some(value) = self.l1_cache.get(key).await? {
-            self.update_cache_stats(key, CacheLevel::L1, true);
-            return Ok(Some(value));
-        }
-        
-        // 2. 检查L2缓存
-        if let Some(value) = self.l2_cache.get(key).await? {
-            // 提升到L1缓存
-            self.l1_cache.set(key, &value).await?;
-            self.update_cache_stats(key, CacheLevel::L2, true);
-            return Ok(Some(value));
-        }
-        
-        // 3. 检查L3缓存
-        if let Some(value) = self.l3_cache.get(key).await? {
-            // 提升到L2和L1缓存
-            self.l2_cache.set(key, &value).await?;
-            self.l1_cache.set(key, &value).await?;
-            self.update_cache_stats(key, CacheLevel::L3, true);
-            return Ok(Some(value));
-        }
-        
-        // 4. 从数据源获取
-        let value = self.fetch_from_source(key).await?;
-        
-        // 5. 存储到所有缓存层
-        self.l3_cache.set(key, &value).await?;
-        self.l2_cache.set(key, &value).await?;
-        self.l1_cache.set(key, &value).await?;
-        
-        self.update_cache_stats(key, CacheLevel::Source, false);
-        Ok(Some(value))
-    }
-    
-    pub async fn set(&mut self, key: &CacheKey, value: &CacheValue) -> Result<(), CacheError> {
-        // 写入所有缓存层
-        self.l1_cache.set(key, value).await?;
-        self.l2_cache.set(key, value).await?;
-        self.l3_cache.set(key, value).await?;
-        
-        Ok(())
-    }
-    
-    async fn evict_if_needed(&mut self) -> Result<(), CacheError> {
-        // 检查L1缓存容量
-        if self.l1_cache.is_full() {
-            let evicted_keys = self.l1_cache.evict_least_used().await?;
-            for key in evicted_keys {
-                self.update_cache_stats(&key, CacheLevel::L1, false);
-            }
-        }
-        
-        // 检查L2缓存容量
-        if self.l2_cache.is_full() {
-            let evicted_keys = self.l2_cache.evict_least_used().await?;
-            for key in evicted_keys {
-                self.update_cache_stats(&key, CacheLevel::L2, false);
-            }
-        }
-        
-        Ok(())
-    }
-    
-    fn update_cache_stats(&mut self, key: &CacheKey, level: CacheLevel, hit: bool) {
-        // 更新缓存统计信息
-        let stats = self.cache_policy.get_stats_mut();
-        stats.record_access(key, level, hit);
-    }
-}
-
-// 缓存策略实现
-pub struct AdaptiveCachePolicy {
-    stats: CacheStats,
-    eviction_policy: EvictionPolicy,
-    prefetch_policy: PrefetchPolicy,
-}
-
-impl AdaptiveCachePolicy {
-    pub fn adapt_policy(&mut self) {
-        let hit_rates = self.stats.get_hit_rates();
-        
-        // 根据命中率调整策略
-        if hit_rates.l1 < 0.8 {
-            self.eviction_policy = EvictionPolicy::LRU;
-        } else if hit_rates.l1 > 0.95 {
-            self.eviction_policy = EvictionPolicy::LFU;
-        }
-        
-        // 根据访问模式调整预取策略
-        let access_pattern = self.stats.analyze_access_pattern();
-        self.prefetch_policy = self.optimize_prefetch_policy(access_pattern);
-    }
-    
-    fn optimize_prefetch_policy(&self, pattern: AccessPattern) -> PrefetchPolicy {
-        match pattern {
-            AccessPattern::Sequential => PrefetchPolicy::Sequential,
-            AccessPattern::Random => PrefetchPolicy::None,
-            AccessPattern::Temporal => PrefetchPolicy::Temporal,
-        }
-    }
-}
-```
-
-### 定理 7.1 (缓存性能优化)
-如果缓存命中率 $h$ 满足 $h > \frac{c_m}{c_m + c_s}$，其中 $c_m$ 是内存访问成本，$c_s$ 是存储访问成本，则缓存是有效的。
-
-**证明**：
-平均访问时间：$T_{avg} = h \cdot c_m + (1-h) \cdot c_s$
-当 $h > \frac{c_m}{c_m + c_s}$ 时，$T_{avg} < c_s$
-因此，缓存提高了性能。
-$\square$
-
-## 实现架构
-
-### 定义 8.1 (IoT模式架构)
-IoT模式架构实现定义为：
-$$\mathcal{I} = (Patterns, Integration, Monitoring, Evolution)$$
-其中：
-- $Patterns$ 是模式集合
-- $Integration$ 是集成机制
-- $Monitoring$ 是监控系统
-- $Evolution$ 是演化机制
-
-### 实现 8.1 (完整模式架构)
-```rust
-pub struct IoTPatternArchitecture {
-    layered_architecture: LayeredArchitecture,
-    microservices: MicroserviceSystem,
-    actor_system: ActorSystem,
-    event_bus: EventBus,
-    security_system: ZeroTrustSecurity,
-    cache_system: MultiLevelCache,
-    pattern_monitor: PatternMonitor,
-}
-
-impl IoTPatternArchitecture {
-    pub async fn run(&mut self) -> Result<(), ArchitectureError> {
-        // 启动所有模式组件
-        let layered_task = tokio::spawn(self.layered_architecture.run());
-        let microservice_task = tokio::spawn(self.microservices.run());
-        let actor_task = tokio::spawn(self.actor_system.run());
-        let event_task = tokio::spawn(self.event_bus.run());
-        let security_task = tokio::spawn(self.security_system.run());
-        let cache_task = tokio::spawn(self.cache_system.run());
-        let monitor_task = tokio::spawn(self.pattern_monitor.run());
-        
-        // 等待所有任务完成
-        tokio::try_join!(
-            layered_task,
-            microservice_task,
-            actor_task,
-            event_task,
-            security_task,
-            cache_task,
-            monitor_task,
-        )?;
-        
-        Ok(())
-    }
-    
-    pub async fn process_request(&mut self, request: Request) -> Result<Response, ArchitectureError> {
-        // 1. 安全验证
-        let auth_result = self.security_system.authenticate_request(&request).await?;
-        if !auth_result.authorized {
-            return Err(ArchitectureError::Unauthorized);
-        }
-        
-        // 2. 缓存检查
-        if let Some(cached_response) = self.cache_system.get(&request.cache_key()).await? {
-            return Ok(cached_response);
-        }
-        
-        // 3. 分层处理
-        let processed_request = self.layered_architecture.process_data(request.into()).await?;
-        
-        // 4. 微服务处理
-        let service_response = self.microservices.process_request(processed_request).await?;
-        
-        // 5. 事件发布
-        self.event_bus.publish_event(Event::RequestProcessed {
-            request_id: request.id,
-            response: service_response.clone(),
-        }).await?;
-        
-        // 6. 缓存响应
-        self.cache_system.set(&request.cache_key(), &service_response).await?;
-        
-        Ok(service_response)
-    }
-}
-
-pub struct PatternMonitor {
-    pattern_metrics: HashMap<PatternType, PatternMetrics>,
-    performance_analyzer: PerformanceAnalyzer,
-    adaptation_engine: AdaptationEngine,
-}
-
-impl PatternMonitor {
-    pub async fn run(&mut self) -> Result<(), MonitorError> {
-        loop {
-            // 收集模式性能指标
-            self.collect_pattern_metrics().await?;
-            
-            // 分析性能
-            let analysis = self.performance_analyzer.analyze(&self.pattern_metrics).await?;
-            
-            // 执行自适应调整
-            if analysis.needs_adaptation {
-                self.adaptation_engine.adapt_patterns(&analysis).await?;
-            }
-            
-            tokio::time::sleep(Duration::from_secs(60)).await;
-        }
-    }
-    
-    async fn collect_pattern_metrics(&mut self) -> Result<(), MonitorError> {
-        for pattern_type in PatternType::iter() {
-            let metrics = self.measure_pattern_performance(pattern_type).await?;
-            self.pattern_metrics.insert(pattern_type, metrics);
-        }
-        Ok(())
-    }
-}
-```
-
-### 定理 8.1 (模式架构正确性)
-如果所有模式都正确实现，且模式间集成正确，则整个IoT模式架构是正确的。
-
-**证明**：
-每个模式都有明确的接口和实现。
-模式间通过标准接口集成。
-监控系统确保模式正确运行。
-自适应机制优化模式性能。
-因此，整个架构是正确的。
-$\square$
-
-## 结论
-
-本文档提供了IoT设计模式的完整形式化分析，包括：
-
-1. **架构模式**：分层架构、微服务架构等
-2. **分布式模式**：服务发现、负载均衡等
-3. **并发模式**：Actor模式、消息传递等
-4. **事件驱动模式**：事件总线、发布订阅等
-5. **安全模式**：零信任、多层安全等
-6. **性能模式**：多级缓存、自适应优化等
-7. **实现架构**：完整的模式集成和监控
-
-这些模式为IoT系统的设计、开发和部署提供了完整的解决方案。 
+这些模式为IoT系统的设计和实现提供了最佳实践指导。 
