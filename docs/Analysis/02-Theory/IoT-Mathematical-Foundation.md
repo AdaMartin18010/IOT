@@ -21,6 +21,7 @@ $$y(t) = h(x(t), u(t), t)$$
 
 **定理 1.1** (系统稳定性)
 如果存在连续可微函数 $V: X \rightarrow \mathbb{R}^+$ 满足：
+
 1. $V(x) > 0, \forall x \neq 0$
 2. $V(0) = 0$
 3. $\dot{V}(x) = \frac{\partial V}{\partial x} f(x, 0, t) < 0, \forall x \neq 0$
@@ -41,6 +42,7 @@ $$y(k) = h_d(x(k), u(k), k)$$
 
 **定理 1.2** (离散时间稳定性)
 如果存在函数 $V: X \rightarrow \mathbb{R}^+$ 满足：
+
 1. $V(x) > 0, \forall x \neq 0$
 2. $V(0) = 0$
 3. $V(x(k+1)) - V(x(k)) < 0, \forall x(k) \neq 0$
@@ -207,31 +209,31 @@ impl IoTSystem {
             feedthrough_matrix: d,
         }
     }
-    
+
     /// 系统响应
     pub fn response(&self, x: &DVector<f64>, u: &DVector<f64>) -> (DVector<f64>, DVector<f64>) {
         let next_state = &self.state_matrix * x + &self.input_matrix * u;
         let output = &self.output_matrix * x + &self.feedthrough_matrix * u;
         (next_state, output)
     }
-    
+
     /// 检查可控性
     pub fn is_controllable(&self) -> bool {
         let controllability = self.controllability_matrix();
         controllability.rank() == self.state_dimension
     }
-    
+
     /// 检查可观性
     pub fn is_observable(&self) -> bool {
         let observability = self.observability_matrix();
         observability.rank() == self.state_dimension
     }
-    
+
     /// 计算可控性矩阵
     fn controllability_matrix(&self) -> DMatrix<f64> {
         let n = self.state_dimension;
         let mut controllability = DMatrix::zeros(n, n * self.input_dimension);
-        
+
         for i in 0..n {
             let power = self.state_matrix.pow(i);
             let column_start = i * self.input_dimension;
@@ -240,15 +242,15 @@ impl IoTSystem {
                 controllability.set_column(column_start + j, &column);
             }
         }
-        
+
         controllability
     }
-    
+
     /// 计算可观性矩阵
     fn observability_matrix(&self) -> DMatrix<f64> {
         let n = self.state_dimension;
         let mut observability = DMatrix::zeros(n * self.output_dimension, n);
-        
+
         for i in 0..n {
             let power = self.state_matrix.pow(i);
             let row_start = i * self.output_dimension;
@@ -257,7 +259,7 @@ impl IoTSystem {
                 observability.set_row(row_start + j, &row);
             }
         }
-        
+
         observability
     }
 }
@@ -273,7 +275,7 @@ impl NetworkGraph {
     pub fn new(adjacency: DMatrix<f64>, node_names: Vec<String>) -> Self {
         let n = adjacency.nrows();
         let mut laplacian = DMatrix::zeros(n, n);
-        
+
         for i in 0..n {
             for j in 0..n {
                 if i == j {
@@ -283,14 +285,14 @@ impl NetworkGraph {
                 }
             }
         }
-        
+
         Self {
             adjacency_matrix: adjacency,
             laplacian_matrix: laplacian,
             nodes: node_names,
         }
     }
-    
+
     /// 检查连通性
     pub fn is_connected(&self) -> bool {
         let eigenvalues = self.laplacian_matrix.eigenvalues();
@@ -298,7 +300,7 @@ impl NetworkGraph {
             // 第二小特征值应该大于0
             let mut sorted_eigenvalues: Vec<f64> = eigenvalues.iter().cloned().collect();
             sorted_eigenvalues.sort_by(|a, b| a.partial_cmp(b).unwrap());
-            
+
             if sorted_eigenvalues.len() >= 2 {
                 sorted_eigenvalues[1] > 1e-10
             } else {
@@ -308,15 +310,15 @@ impl NetworkGraph {
             false
         }
     }
-    
+
     /// 计算网络直径
     pub fn diameter(&self) -> f64 {
         let n = self.adjacency_matrix.nrows();
         let mut max_distance = 0.0;
-        
+
         // 使用Floyd-Warshall算法计算最短路径
         let mut distances = self.adjacency_matrix.clone();
-        
+
         for k in 0..n {
             for i in 0..n {
                 for j in 0..n {
@@ -329,7 +331,7 @@ impl NetworkGraph {
                 }
             }
         }
-        
+
         for i in 0..n {
             for j in 0..n {
                 if i != j && distances[(i, j)] > max_distance {
@@ -337,7 +339,7 @@ impl NetworkGraph {
                 }
             }
         }
-        
+
         max_distance
     }
 }
@@ -353,11 +355,11 @@ impl InformationTheory {
             .map(|&p| -p * p.log2())
             .sum()
     }
-    
+
     /// 计算条件熵
     pub fn conditional_entropy(joint_probs: &DMatrix<f64>) -> f64 {
         let mut conditional_entropy = 0.0;
-        
+
         for j in 0..joint_probs.ncols() {
             let marginal_prob = joint_probs.column(j).sum();
             if marginal_prob > 0.0 {
@@ -370,16 +372,16 @@ impl InformationTheory {
                 }
             }
         }
-        
+
         conditional_entropy
     }
-    
+
     /// 计算互信息
     pub fn mutual_information(joint_probs: &DMatrix<f64>) -> f64 {
         let entropy_x = Self::entropy(&joint_probs.row_sum().as_slice());
         let entropy_y = Self::entropy(&joint_probs.column_sum().as_slice());
         let joint_entropy = Self::entropy(&joint_probs.as_slice());
-        
+
         entropy_x + entropy_y - joint_entropy
     }
 }
@@ -398,35 +400,35 @@ impl OptimizationSolver {
     ) -> Result<DVector<f64>, OptimizationError> {
         // 简化的线性规划求解器
         // 实际应用中应使用专业的优化库
-        
+
         let n = objective.len();
         let mut solution = DVector::zeros(n);
-        
+
         // 简单的梯度下降方法
         let learning_rate = 0.01;
         let max_iterations = 1000;
-        
+
         for _ in 0..max_iterations {
             let gradient = objective.clone();
-            
+
             // 更新解
             solution -= &(gradient * learning_rate);
-            
+
             // 应用边界约束
             for i in 0..n {
                 solution[i] = solution[i].max(bounds_lower[i]).min(bounds_upper[i]);
             }
-            
+
             // 检查约束
             let constraint_violation = constraints_a * &solution - constraints_b;
             if constraint_violation.iter().all(|&v| v <= 1e-6) {
                 break;
             }
         }
-        
+
         Ok(solution)
     }
-    
+
     /// 凸优化求解
     pub fn solve_convex_optimization(
         objective: &dyn Fn(&DVector<f64>) -> f64,
@@ -437,23 +439,23 @@ impl OptimizationSolver {
         let mut x = initial_point.clone();
         let learning_rate = 0.01;
         let max_iterations = 1000;
-        
+
         for _ in 0..max_iterations {
             let grad = gradient(&x);
             let step_size = learning_rate;
-            
+
             x -= &(grad * step_size);
-            
+
             if grad.norm() < tolerance {
                 break;
             }
         }
-        
+
         Ok(x)
     }
 }
 
-#[derive(Debug)]
+# [derive(Debug)]
 pub enum OptimizationError {
     ConvergenceError,
     ConstraintViolation,
@@ -471,4 +473,4 @@ pub enum OptimizationError {
 4. **优化理论**：凸优化和资源分配
 5. **Rust实现**：完整的数学库实现
 
-所有内容都包含严格的数学定义和证明，为IoT系统的数学建模和优化提供了理论基础。 
+所有内容都包含严格的数学定义和证明，为IoT系统的数学建模和优化提供了理论基础。

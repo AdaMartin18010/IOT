@@ -16,12 +16,14 @@ IoT安全系统是一个六元组 $\mathcal{S} = (E, D, A, K, P, T)$，其中：
 
 **定义 1.2** (安全状态)
 安全状态是一个三元组 $\sigma = (S, A, P)$，其中：
+
 - $S$ 是主体集合
 - $A$ 是客体集合
 - $P: S \times A \rightarrow \{read, write, execute, none\}$ 是权限函数
 
 **定理 1.1** (安全策略一致性)
 如果安全策略 $\pi$ 满足：
+
 1. 自反性：$\forall s \in S, \pi(s, s, read) = allow$
 2. 传递性：$\forall s_1, s_2, s_3 \in S, \pi(s_1, s_2, read) = allow \land \pi(s_2, s_3, read) = allow \Rightarrow \pi(s_1, s_3, read) = allow$
 
@@ -439,6 +441,7 @@ pub enum CryptoError {
 
 **定理 3.1** (签名安全性)
 如果签名方案满足：
+
 1. 不可伪造性：$\forall PPT A, \Pr[A^{S(sk, \cdot)}(pk) = (m, \sigma)] \leq negl(n)$
 2. 不可否认性：$\forall m, \sigma: V(pk, m, \sigma) = true \Rightarrow \exists sk: S(sk, m) = \sigma$
 
@@ -527,6 +530,7 @@ pub enum SignatureError {
 
 **定理 3.2** (零知识性质)
 如果零知识证明满足：
+
 1. 完备性：$\forall x \in L, \Pr[V(x, P(x)) = 1] = 1$
 2. 可靠性：$\forall x \notin L, \forall P^*, \Pr[V(x, P^*(x)) = 1] \leq negl(n)$
 3. 零知识性：$\forall x \in L, \text{View}_V(x, P(x)) \approx S(x)$
@@ -940,9 +944,10 @@ impl PrivacyPreservingAggregation {
 5. **隐私保护**：差分隐私和隐私保护聚合
 
 IoT安全算法提供了：
+
 - 数据机密性和完整性保护
 - 身份认证和授权机制
 - 异常检测和入侵防护
 - 隐私保护和合规性
 
-这些算法为IoT系统提供了全面的安全保障。 
+这些算法为IoT系统提供了全面的安全保障。

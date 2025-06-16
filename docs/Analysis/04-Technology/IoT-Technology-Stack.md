@@ -18,6 +18,7 @@ IoT技术栈是一个五元组 $\mathcal{T} = (L, P, F, I, S)$，其中：
 $$\mathcal{P}(\mathcal{T}) = (E, P, S, M, D)$$
 
 其中：
+
 - $E$ 是能效指标
 - $P$ 是性能指标
 - $S$ 是安全指标
@@ -26,6 +27,7 @@ $$\mathcal{P}(\mathcal{T}) = (E, P, S, M, D)$$
 
 **定理 1.1** (技术栈优化)
 对于任意IoT技术栈 $\mathcal{T}$，如果满足：
+
 1. 能效约束：$E \geq E_{min}$
 2. 性能约束：$P \geq P_{min}$
 3. 安全约束：$S \geq S_{min}$
@@ -48,6 +50,7 @@ Rust+WASM技术栈的性能模型定义为：
 $$P_{RW} = \alpha \cdot P_R + \beta \cdot P_W + \gamma \cdot P_I$$
 
 其中：
+
 - $P_R$ 是Rust性能
 - $P_W$ 是WASM性能
 - $P_I$ 是集成开销
@@ -367,6 +370,7 @@ WASM性能模型定义为：
 $$P_{WASM} = \frac{P_{native}}{1 + \alpha \cdot O_{runtime}}$$
 
 其中：
+
 - $P_{native}$ 是原生性能
 - $O_{runtime}$ 是运行时开销
 - $\alpha$ 是开销系数
@@ -553,6 +557,7 @@ IoT性能指标定义为：
 $$\mathcal{P}_{IoT} = (T_{response}, T_{throughput}, E_{power}, M_{memory}, S_{security})$$
 
 其中：
+
 - $T_{response}$ 是响应时间
 - $T_{throughput}$ 是吞吐量
 - $E_{power}$ 是功耗
@@ -561,6 +566,7 @@ $$\mathcal{P}_{IoT} = (T_{response}, T_{throughput}, E_{power}, M_{memory}, S_{s
 
 **定理 4.1** (性能优化)
 对于Rust+WASM技术栈，如果满足：
+
 1. 编译优化：使用 `--release` 模式
 2. 内存管理：最小化分配
 3. 并发控制：使用异步编程
@@ -683,6 +689,7 @@ pub struct PerformanceReport {
 4. **性能优化**：性能监控和优化策略
 
 Rust+WASM技术栈为IoT系统提供了：
+
 - 内存安全和类型安全
 - 高性能和低功耗
 - 模块化和可更新性

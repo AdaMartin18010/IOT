@@ -55,6 +55,7 @@ IoT系统在时刻 $t$ 的状态定义为：
 $$S(t) = (D(t), N(t), C(t), E(t))$$
 
 其中：
+
 - $D(t)$ 是设备状态集合
 - $N(t)$ 是网络状态集合
 - $C(t)$ 是计算状态集合
@@ -75,6 +76,7 @@ IoT系统性能指标定义为：
 $$P = (T_{latency}, T_{throughput}, E_{power}, R_{reliability})$$
 
 其中：
+
 - $T_{latency}$ 是延迟时间
 - $T_{throughput}$ 是吞吐量
 - $E_{power}$ 是功耗
@@ -90,6 +92,7 @@ IoT企业架构是一个四层模型：
 $$\mathcal{EA} = (B, A, T, I)$$
 
 其中：
+
 - $B$ 是业务架构层
 - $A$ 是应用架构层
 - $T$ 是技术架构层
@@ -306,6 +309,7 @@ impl IoTLayeredArchitecture {
 $$\mathcal{EDA} = (P, C, E, B)$$
 
 其中：
+
 - $P$ 是生产者集合
 - $C$ 是消费者集合
 - $E$ 是事件集合
@@ -364,6 +368,7 @@ impl EventBus {
 $$\mathcal{MSA} = \{s_1, s_2, \ldots, s_n\}$$
 
 其中每个服务 $s_i$ 满足：
+
 - 独立性：$\text{indep}(s_i)$
 - 可部署性：$\text{deployable}(s_i)$
 - 可扩展性：$\text{scalable}(s_i)$
@@ -419,6 +424,7 @@ IoT标准体系是一个多层次的标准集合：
 $$\mathcal{STD} = \{STD_{protocol}, STD_{security}, STD_{interop}, STD_{quality}\}$$
 
 其中：
+
 - $STD_{protocol}$ 是通信协议标准
 - $STD_{security}$ 是安全标准
 - $STD_{interop}$ 是互操作性标准
@@ -515,6 +521,7 @@ impl IoTSecurityStandard {
 $$E(T) = \sum_{i=1}^{n} w_i \cdot f_i(T)$$
 
 其中：
+
 - $T$ 是技术栈
 - $w_i$ 是权重
 - $f_i(T)$ 是评估函数
@@ -707,6 +714,7 @@ impl ArchitectureValidator {
 $$P(A) = (L(A), T(A), E(A), R(A))$$
 
 其中：
+
 - $L(A)$ 是延迟函数
 - $T(A)$ 是吞吐量函数
 - $E(A)$ 是效率函数
@@ -765,6 +773,7 @@ impl PerformanceAnalyzer {
 $$\mathcal{S}(A) = (T(A), D(A), R(A))$$
 
 其中：
+
 - $T(A)$ 是威胁模型
 - $D(A)$ 是防御机制
 - $R(A)$ 是风险评估
@@ -922,4 +931,4 @@ impl ROICalculator {
 
 ---
 
-*本文档提供了IoT行业架构的全面分析，包括理论基础、实现方案和最佳实践。通过形式化的方法和Rust语言的实现，为IoT系统的设计和开发提供了可靠的指导。* 
+*本文档提供了IoT行业架构的全面分析，包括理论基础、实现方案和最佳实践。通过形式化的方法和Rust语言的实现，为IoT系统的设计和开发提供了可靠的指导。*

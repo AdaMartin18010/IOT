@@ -19,6 +19,7 @@ IoT微服务系统是一个六元组 $\mathcal{M} = (S, C, D, E, P, T)$，其中
 $$\sigma(s_i, t) = (h_i, l_i, r_i, e_i, d_i)$$
 
 其中：
+
 - $h_i \in \{healthy, degraded, failed\}$ 是健康状态
 - $l_i \in \mathbb{R}^+$ 是负载水平
 - $r_i \in \mathbb{R}^+$ 是响应时间
@@ -27,6 +28,7 @@ $$\sigma(s_i, t) = (h_i, l_i, r_i, e_i, d_i)$$
 
 **定理 1.1** (微服务系统稳定性)
 如果微服务系统 $\mathcal{M}$ 满足：
+
 1. 所有服务健康：$\sigma(s_i, t).h_i = healthy, \forall i, t$
 2. 负载均衡：$\max_i \sigma(s_i, t).l_i - \min_i \sigma(s_i, t).l_i < \epsilon, \forall t$
 3. 通信连通：$\text{rank}(C) = n-1$
@@ -62,6 +64,7 @@ IoT分层微服务架构是一个四层结构 $\mathcal{L} = (L_1, L_2, L_3, L_4
 
 **定理 2.1** (分层架构正确性)
 如果分层架构 $\mathcal{L}$ 满足：
+
 1. 层间依赖：$L_i \rightarrow L_{i+1}, i = 1,2,3$
 2. 接口一致性：$\forall f \in I_{i,i+1}, f$ 是函数性的
 3. 数据流正确：数据只能从下层流向上层
@@ -535,6 +538,7 @@ $$F(p_i) = \{routing, load\_balancing, security, observability\}$$
 
 **定理 3.1** (服务网格正确性)
 如果服务网格 $\mathcal{G}$ 满足：
+
 1. 代理覆盖：$\forall s \in S, \exists p \in P: p \text{ proxies } s$
 2. 控制一致性：$\forall p_1, p_2 \in P, C(p_1) = C(p_2)$
 3. 数据流正确：数据流通过代理正确路由
@@ -764,9 +768,10 @@ pub enum ProxyError {
 4. **服务编排**：服务发现、负载均衡和健康检查
 
 IoT微服务架构提供了：
+
 - 高可扩展性和可维护性
 - 服务自治和独立部署
 - 故障隔离和弹性设计
 - 分布式数据管理
 
-这些特性使微服务架构成为IoT系统的理想选择。 
+这些特性使微服务架构成为IoT系统的理想选择。

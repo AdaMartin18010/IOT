@@ -15,7 +15,9 @@
 IoT系统产生海量数据，需要高效的算法进行实时处理、压缩和分析。本文分析IoT数据处理的核心算法及其形式化理论。
 
 ### 定义 1.1 (IoT数据处理)
+
 IoT数据处理是一个四元组 $\mathcal{P} = (D, A, T, Q)$，其中：
+
 - $D$ 是数据流集合
 - $A$ 是算法集合
 - $T$ 是时间约束
@@ -24,10 +26,12 @@ IoT数据处理是一个四元组 $\mathcal{P} = (D, A, T, Q)$，其中：
 ## 数据压缩算法
 
 ### 定义 1.2 (数据压缩)
+
 数据压缩算法将原始数据 $X$ 转换为压缩表示 $C(X)$，满足：
 $$|C(X)| < |X|$$
 
 ### 定理 1.1 (压缩率下界)
+
 对于任意无损压缩算法，存在数据使得压缩率不能无限小。
 
 **证明**：
@@ -287,9 +291,11 @@ impl HuffmanNode {
 ## 数据流处理算法
 
 ### 定义 1.3 (数据流)
+
 数据流是一个无限序列 $S = (s_1, s_2, s_3, \ldots)$，其中每个元素 $s_i$ 在时间 $t_i$ 到达。
 
 ### 定义 1.4 (滑动窗口)
+
 滑动窗口是数据流的一个有限子序列 $W(t) = (s_{t-w+1}, s_{t-w+2}, \ldots, s_t)$，其中 $w$ 是窗口大小。
 
 ### 算法 1.2 (滑动窗口聚合)
@@ -515,6 +521,7 @@ impl StreamingKMeans {
 ## 机器学习算法
 
 ### 定义 1.5 (在线学习)
+
 在线学习算法在数据流上逐步更新模型，最小化累积损失：
 $$\min_{w} \sum_{t=1}^{T} \ell_t(w_t)$$
 
@@ -728,6 +735,7 @@ impl OnlineDecisionTree {
 ## 时间序列分析
 
 ### 定义 1.6 (时间序列)
+
 时间序列是一个有序的数据序列 $X = (x_1, x_2, \ldots, x_n)$，其中每个 $x_i$ 对应时间点 $t_i$。
 
 ### 算法 1.4 (时间序列预测)
@@ -1043,7 +1051,8 @@ mod tests {
 ---
 
 **参考文献**：
+
 1. Ziv, J., & Lempel, A. (1977). A universal algorithm for sequential data compression. IEEE Transactions on information theory, 23(3), 337-343.
 2. Cormode, G., & Muthukrishnan, S. (2005). An improved data stream summary: the count-min sketch and its applications. Journal of Algorithms, 55(1), 58-75.
 3. Bottou, L. (2010). Large-scale machine learning with stochastic gradient descent. Proceedings of COMPSTAT'2010, 177-186.
-4. Box, G. E., Jenkins, G. M., Reinsel, G. C., & Ljung, G. M. (2015). Time series analysis: forecasting and control. John Wiley & Sons. 
+4. Box, G. E., Jenkins, G. M., Reinsel, G. C., & Ljung, G. M. (2015). Time series analysis: forecasting and control. John Wiley & Sons.

@@ -17,7 +17,9 @@
 物联网(IoT)系统作为复杂的分布式实时系统，需要严格的形式化理论基础来保证其正确性、安全性和性能。本文从数学和计算机科学的角度，建立IoT系统的形式化理论框架。
 
 ### 定义 1.1 (IoT系统)
+
 一个IoT系统是一个五元组 $\mathcal{I} = (S, E, T, \delta, \lambda)$，其中：
+
 - $S$ 是系统状态集合
 - $E$ 是事件集合
 - $T$ 是时间域
@@ -27,7 +29,9 @@
 ## IoT系统形式化模型
 
 ### 定义 1.2 (IoT设备)
+
 一个IoT设备是一个七元组 $\mathcal{D} = (Q, \Sigma, \Gamma, \delta, q_0, F, \tau)$，其中：
+
 - $Q$ 是设备状态集合
 - $\Sigma$ 是输入字母表（传感器数据、命令等）
 - $\Gamma$ 是输出字母表（执行器控制、数据输出等）
@@ -37,6 +41,7 @@
 - $\tau: Q \rightarrow \mathbb{R}^+$ 是时间约束函数
 
 ### 定理 1.1 (IoT设备确定性)
+
 对于任意IoT设备 $\mathcal{D}$，如果 $\delta$ 是确定性的，则设备行为是可预测的。
 
 **证明**：
@@ -48,7 +53,9 @@ $$q_0 \xrightarrow{\sigma_1} q_1 \xrightarrow{\sigma_2} q_2 \xrightarrow{\sigma_
 由于 $\delta$ 的确定性，每个 $q_i$ 都是唯一确定的，因此设备行为完全可预测。
 
 ### 定义 1.3 (IoT网络拓扑)
+
 一个IoT网络拓扑是一个图 $G = (V, E, w)$，其中：
+
 - $V$ 是设备节点集合
 - $E \subseteq V \times V$ 是通信链路集合
 - $w: E \rightarrow \mathbb{R}^+$ 是链路权重函数（延迟、带宽等）
@@ -56,19 +63,23 @@ $$q_0 \xrightarrow{\sigma_1} q_1 \xrightarrow{\sigma_2} q_2 \xrightarrow{\sigma_
 ## 状态空间建模
 
 ### 定义 1.4 (IoT系统状态空间)
+
 对于包含 $n$ 个设备的IoT系统，其状态空间为：
 $$\mathcal{S} = \prod_{i=1}^{n} Q_i \times \mathcal{N} \times \mathcal{T}$$
 
 其中：
+
 - $Q_i$ 是第 $i$ 个设备的状态集合
 - $\mathcal{N}$ 是网络状态空间
 - $\mathcal{T}$ 是时间状态空间
 
 ### 定义 1.5 (状态转移关系)
+
 状态转移关系 $R \subseteq \mathcal{S} \times \mathcal{S}$ 定义为：
 $$(s_1, s_2) \in R \iff \exists e \in E: s_2 = \delta(s_1, e, t)$$
 
 ### 定理 1.2 (状态可达性)
+
 对于任意状态 $s \in \mathcal{S}$，如果存在从初始状态 $s_0$ 到 $s$ 的路径，则 $s$ 是可达的。
 
 **证明**：
@@ -79,21 +90,26 @@ $$(s_1, s_2) \in R \iff \exists e \in E: s_2 = \delta(s_1, e, t)$$
 ## 事件驱动系统理论
 
 ### 定义 1.6 (事件)
+
 一个事件是一个三元组 $e = (type, data, timestamp)$，其中：
+
 - $type \in \mathcal{T}$ 是事件类型
 - $data \in \mathcal{D}$ 是事件数据
 - $timestamp \in \mathbb{R}^+$ 是时间戳
 
 ### 定义 1.7 (事件流)
+
 事件流是一个时间序列 $\mathcal{E} = (e_1, e_2, \ldots)$，其中 $e_i.timestamp \leq e_{i+1}.timestamp$。
 
 ### 定义 1.8 (事件处理函数)
+
 事件处理函数 $f: \mathcal{E} \times S \rightarrow S \times A$ 定义为：
 $$f(e, s) = (s', a)$$
 
 其中 $s'$ 是新状态，$a$ 是产生的动作。
 
 ### 定理 1.3 (事件处理确定性)
+
 如果事件处理函数 $f$ 是确定性的，则对于相同的输入事件和状态，总是产生相同的输出。
 
 **证明**：
@@ -110,15 +126,19 @@ $$(s_{n-1}, a_n) = f(e_n, s_{n-1})$$
 ## 分布式系统一致性理论
 
 ### 定义 1.9 (分布式IoT系统)
+
 一个分布式IoT系统是一个三元组 $\mathcal{DS} = (N, C, P)$，其中：
+
 - $N = \{n_1, n_2, \ldots, n_m\}$ 是节点集合
 - $C \subseteq N \times N$ 是通信关系
 - $P$ 是协议集合
 
 ### 定义 1.10 (一致性)
+
 分布式IoT系统满足一致性，当且仅当对于任意两个节点 $n_i, n_j \in N$，如果它们都接收到相同的消息序列，则它们的状态转换序列相同。
 
 ### 定理 1.4 (CAP定理在IoT中的应用)
+
 在分布式IoT系统中，不可能同时满足一致性(Consistency)、可用性(Availability)和分区容错性(Partition tolerance)。
 
 **证明**：
@@ -131,6 +151,7 @@ $$(s_{n-1}, a_n) = f(e_n, s_{n-1})$$
 3. **分区容错性要求**：系统在分区情况下继续运行
 
 当 $P_1$ 中的节点需要更新状态时：
+
 - 为了保持一致性，$P_2$ 中的节点必须同步更新
 - 但由于网络分区，$P_2$ 无法接收到更新消息
 - 这违反了可用性要求
@@ -140,16 +161,20 @@ $$(s_{n-1}, a_n) = f(e_n, s_{n-1})$$
 ## 实时系统理论
 
 ### 定义 1.11 (实时任务)
+
 一个实时任务是一个四元组 $\tau = (C, D, T, P)$，其中：
+
 - $C$ 是最坏情况执行时间(WCET)
 - $D$ 是截止时间
 - $T$ 是任务周期
 - $P$ 是优先级
 
 ### 定义 1.12 (可调度性)
+
 一个任务集合 $\Gamma = \{\tau_1, \tau_2, \ldots, \tau_n\}$ 是可调度的，当且仅当所有任务都能在各自的截止时间内完成。
 
 ### 定理 1.5 (速率单调调度)
+
 对于具有不同周期的周期性任务，如果任务按周期递增的顺序分配优先级，则当处理器利用率不超过 $n(2^{1/n} - 1)$ 时，系统是可调度的。
 
 **证明**：
@@ -165,21 +190,26 @@ $$R_i = C_i + \sum_{j=1}^{i-1} \left\lceil \frac{R_i}{T_j} \right\rceil C_j$$
 ## 安全形式化模型
 
 ### 定义 1.13 (安全状态)
+
 一个IoT系统状态 $s \in S$ 是安全的，当且仅当它不违反任何安全策略。
 
 ### 定义 1.14 (安全策略)
+
 安全策略是一个函数 $\pi: S \rightarrow \{true, false\}$，其中 $\pi(s) = true$ 表示状态 $s$ 符合安全要求。
 
 ### 定义 1.15 (安全系统)
+
 一个IoT系统是安全的，当且仅当从任意安全状态出发，经过任意状态转移后，系统仍然处于安全状态。
 
 ### 定理 1.6 (安全不变性)
+
 如果初始状态 $s_0$ 是安全的，且所有状态转移都保持安全性质，则系统始终处于安全状态。
 
 **证明**：
 设 $\pi(s_0) = true$，且对于任意状态转移 $\delta(s, e, t) = s'$，如果 $\pi(s) = true$，则 $\pi(s') = true$。
 
 通过数学归纳法：
+
 - 基础情况：$\pi(s_0) = true$
 - 归纳步骤：假设 $\pi(s_k) = true$，则 $\pi(s_{k+1}) = true$
 
@@ -745,7 +775,8 @@ mod tests {
 ---
 
 **参考文献**：
+
 1. Lamport, L. (1978). Time, clocks, and the ordering of events in a distributed system. Communications of the ACM, 21(7), 558-565.
 2. Brewer, E. A. (2012). CAP twelve years later: How the "rules" have changed. Computer, 45(2), 23-29.
 3. Liu, C. L., & Layland, J. W. (1973). Scheduling algorithms for multiprogramming in a hard-real-time environment. Journal of the ACM, 20(1), 46-61.
-4. Hoare, C. A. R. (1978). Communicating sequential processes. Communications of the ACM, 21(8), 666-677. 
+4. Hoare, C. A. R. (1978). Communicating sequential processes. Communications of the ACM, 21(8), 666-677.

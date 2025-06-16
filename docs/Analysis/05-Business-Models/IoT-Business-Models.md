@@ -16,7 +16,9 @@
 IoT行业正在重塑传统商业模式，创造新的价值创造和捕获机制。本文从经济学和商业战略的角度，分析IoT业务模型的理论基础和实践应用。
 
 ### 定义 1.1 (IoT业务模型)
+
 一个IoT业务模型是一个六元组 $\mathcal{B} = (V, C, R, P, A, E)$，其中：
+
 - $V$ 是价值主张集合
 - $C$ 是客户细分集合
 - $R$ 是收入流集合
@@ -27,12 +29,14 @@ IoT行业正在重塑传统商业模式，创造新的价值创造和捕获机�
 ## IoT商业模式框架
 
 ### 定义 1.2 (平台商业模式)
+
 平台商业模式通过连接多个参与者创造价值，其价值函数为：
 $$V(n) = n^2 - n$$
 
 其中 $n$ 是参与者数量，$n^2$ 表示可能的连接数，$n$ 表示自连接。
 
 ### 定理 1.1 (网络效应)
+
 平台价值随参与者数量呈二次增长。
 
 **证明**：
@@ -43,10 +47,12 @@ $$C(n, 2) = \frac{n!}{2!(n-2)!} = \frac{n(n-1)}{2}$$
 $$V(n) = \frac{n(n-1)}{2} \approx \frac{n^2}{2}$$
 
 ### 定义 1.3 (数据驱动商业模式)
+
 数据驱动商业模式的价值函数为：
 $$V(D) = \alpha \cdot D^{\beta}$$
 
 其中：
+
 - $D$ 是数据量
 - $\alpha$ 是数据价值系数
 - $\beta$ 是规模效应指数（通常 $\beta > 1$）
@@ -797,7 +803,8 @@ mod tests {
 ---
 
 **参考文献**：
+
 1. Osterwalder, A., & Pigneur, Y. (2010). Business model generation: a handbook for visionaries, game changers, and challengers. John Wiley & Sons.
 2. Parker, G. G., Van Alstyne, M. W., & Choudary, S. P. (2016). Platform revolution: How networked markets are transforming the economy and how to make them work for you. WW Norton & Company.
 3. Porter, M. E. (1985). Competitive advantage: creating and sustaining superior performance. Free Press.
-4. Christensen, C. M. (1997). The innovator's dilemma: when new technologies cause great firms to fail. Harvard Business Review Press. 
+4. Christensen, C. M. (1997). The innovator's dilemma: when new technologies cause great firms to fail. Harvard Business Review Press.

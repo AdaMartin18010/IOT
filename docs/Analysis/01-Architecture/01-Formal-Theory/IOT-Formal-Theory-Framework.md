@@ -422,6 +422,7 @@ impl CTLModelChecker {
 4. Anderson, R. (2020). Security engineering: a guide to building dependable distributed systems. John Wiley & Sons.
 
 **版本信息**
+
 - 版本：v1.0.0
 - 最后更新：2024年12月
-- 作者：AI Assistant 
+- 作者：AI Assistant

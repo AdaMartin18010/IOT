@@ -5,10 +5,12 @@
 ### 1.1 控制系统形式化定义
 
 #### 定义 1.1.1 (IOT控制系统)
+
 IOT控制系统 $\mathcal{C}$ 是一个六元组：
 $$\mathcal{C} = (P, C, S, R, A, E)$$
 
 其中：
+
 - $P$ 是受控对象 (Plant)
 - $C$ 是控制器 (Controller)
 - $S$ 是传感器 (Sensor)
@@ -17,15 +19,18 @@ $$\mathcal{C} = (P, C, S, R, A, E)$$
 - $E$ 是环境 (Environment)
 
 #### 定义 1.1.2 (控制性能指标)
+
 控制性能指标 $J$ 定义为：
 $$J = \int_0^T [e^T(t)Qe(t) + u^T(t)Ru(t)]dt$$
 
 其中：
+
 - $e(t)$ 是误差信号
 - $u(t)$ 是控制输入
 - $Q$ 和 $R$ 是权重矩阵
 
 #### 定理 1.1.1 (最优控制存在性)
+
 对于线性二次型控制问题，如果系统可控且可观，则存在唯一的最优控制律。
 
 **证明**：
@@ -40,14 +45,17 @@ $$\dot{P}(t) = -P(t)A - A^TP(t) + P(t)BR^{-1}B^TP(t) - Q$$
 ### 1.2 数字控制系统
 
 #### 定义 1.2.1 (数字控制系统)
+
 数字控制系统 $\mathcal{D}$ 是一个五元组：
 $$\mathcal{D} = (T_s, A_d, B_d, C_d, D_d)$$
 
 其中：
+
 - $T_s$ 是采样周期
 - $A_d, B_d, C_d, D_d$ 是离散时间系统矩阵
 
 #### 定义 1.2.2 (采样定理)
+
 如果连续信号 $x(t)$ 的频谱限制在 $[-\omega_m, \omega_m]$，则采样频率 $\omega_s$ 必须满足：
 $$\omega_s > 2\omega_m$$
 
@@ -56,19 +64,23 @@ $$\omega_s > 2\omega_m$$
 ### 2.1 PID控制器理论
 
 #### 定义 2.1.1 (PID控制器)
+
 PID控制器的传递函数为：
 $$G_c(s) = K_p + \frac{K_i}{s} + K_ds$$
 
 其中：
+
 - $K_p$ 是比例增益
 - $K_i$ 是积分增益
 - $K_d$ 是微分增益
 
 #### 定义 2.1.2 (PID控制律)
+
 PID控制律为：
 $$u(t) = K_pe(t) + K_i\int_0^t e(\tau)d\tau + K_d\frac{de(t)}{dt}$$
 
 #### 定理 2.1.1 (PID稳定性)
+
 对于一阶系统，PID控制器在满足以下条件时稳定：
 $$K_p > 0, K_i > 0, K_d > 0$$
 
@@ -84,6 +96,7 @@ $$Ts^3 + (1 + KK_d)s^2 + KK_ps + KK_i = 0$$
 ### 2.2 PID参数整定算法
 
 #### 定义 2.2.1 (Ziegler-Nichols方法)
+
 Ziegler-Nichols整定方法基于系统临界增益 $K_c$ 和临界周期 $T_c$：
 
 1. **比例控制整定**：
@@ -193,6 +206,7 @@ impl PIDController {
 ### 2.3 数字PID实现
 
 #### 定义 2.3.1 (数字PID)
+
 数字PID控制律为：
 $$u(k) = K_pe(k) + K_iT_s\sum_{i=0}^k e(i) + K_d\frac{e(k) - e(k-1)}{T_s}$$
 
@@ -266,6 +280,7 @@ impl DigitalPIDController {
 ### 3.1 模型参考自适应控制 (MRAC)
 
 #### 定义 3.1.1 (参考模型)
+
 参考模型 $\mathcal{M}_r$ 的状态方程为：
 $$\dot{x}_r(t) = A_rx_r(t) + B_rr(t)$$
 $$y_r(t) = C_rx_r(t)$$
@@ -273,12 +288,14 @@ $$y_r(t) = C_rx_r(t)$$
 其中 $r(t)$ 是参考输入。
 
 #### 定义 3.1.2 (自适应控制律)
+
 MRAC控制律为：
 $$u(t) = K_x(t)x(t) + K_r(t)r(t)$$
 
 其中 $K_x(t)$ 和 $K_r(t)$ 是自适应增益。
 
 #### 定理 3.1.1 (MRAC稳定性)
+
 如果参考模型稳定且系统满足匹配条件，则MRAC系统在Lyapunov意义下稳定。
 
 **证明**：
@@ -379,18 +396,21 @@ impl AdaptiveGains {
 ### 3.2 自校正控制
 
 #### 定义 3.2.1 (参数估计)
+
 参数估计模型为：
 $$y(k) = \phi^T(k)\theta(k) + e(k)$$
 
 其中：
+
 - $\phi(k)$ 是回归向量
 - $\theta(k)$ 是参数向量
 - $e(k)$ 是噪声
 
 #### 定义 3.2.2 (递归最小二乘)
+
 递归最小二乘算法为：
-$$\hat{\theta}(k) = \hat{\theta}(k-1) + K(k)[y(k) - \phi^T(k)\hat{\theta}(k-1)]$$
-$$K(k) = P(k-1)\phi(k)[\lambda + \phi^T(k)P(k-1)\phi(k)]^{-1}$$
+$$\hat{\theta}(k) = \hat{\theta}(k-1) + K[k](y(k) - \phi^T(k)\hat{\theta}(k-1))$$
+$$K(k) = P(k-1)\phi[k](\lambda + \phi^T(k)P(k-1)\phi(k))^{-1}$$
 $$P(k) = \frac{1}{\lambda}[I - K(k)\phi^T(k)]P(k-1)$$
 
 #### 算法 3.2.1 (自校正控制器)
@@ -476,18 +496,21 @@ impl RecursiveLeastSquares {
 ### 4.1 H∞控制
 
 #### 定义 4.1.1 (H∞范数)
+
 传递函数 $G(s)$ 的H∞范数为：
 $$\|G(s)\|_\infty = \sup_{\omega \in \mathbb{R}} \sigma_{\max}(G(j\omega))$$
 
 其中 $\sigma_{\max}$ 是最大奇异值。
 
 #### 定义 4.1.2 (H∞控制问题)
+
 H∞控制问题是寻找控制器 $K(s)$ 使得：
 $$\|T_{zw}(s)\|_\infty < \gamma$$
 
 其中 $T_{zw}(s)$ 是从干扰 $w$ 到性能输出 $z$ 的闭环传递函数。
 
 #### 定理 4.1.1 (H∞控制器存在性)
+
 H∞控制器存在的充分必要条件是Riccati方程有正定解。
 
 **证明**：
@@ -581,20 +604,24 @@ impl HInfinityController {
 ### 4.2 滑模控制
 
 #### 定义 4.2.1 (滑模面)
+
 滑模面定义为：
 $$s(x) = c^Tx = 0$$
 
 其中 $c$ 是滑模面参数向量。
 
 #### 定义 4.2.2 (滑模控制律)
+
 滑模控制律为：
 $$u(t) = u_{eq}(t) + u_{sw}(t)$$
 
 其中：
+
 - $u_{eq}(t)$ 是等效控制
 - $u_{sw}(t)$ 是切换控制
 
 #### 定理 4.2.1 (滑模稳定性)
+
 如果滑模面参数 $c$ 选择使得 $c^TB \neq 0$，则滑模控制可以保证系统在有限时间内到达滑模面。
 
 **证明**：
@@ -664,23 +691,28 @@ impl SlidingModeController {
 ### 5.1 一致性控制
 
 #### 定义 5.1.1 (图论基础)
+
 多智能体系统的通信拓扑用图 $G = (V, E)$ 表示，其中：
+
 - $V = \{1, 2, \ldots, n\}$ 是节点集合
 - $E \subseteq V \times V$ 是边集合
 
 #### 定义 5.1.2 (拉普拉斯矩阵)
+
 拉普拉斯矩阵 $L$ 定义为：
 $$L = D - A$$
 
 其中 $D$ 是度矩阵，$A$ 是邻接矩阵。
 
 #### 定义 5.1.3 (一致性协议)
+
 一致性协议为：
 $$\dot{x}_i(t) = \sum_{j \in \mathcal{N}_i} a_{ij}(x_j(t) - x_i(t))$$
 
 其中 $\mathcal{N}_i$ 是节点 $i$ 的邻居集合。
 
 #### 定理 5.1.1 (一致性收敛性)
+
 如果图 $G$ 是连通的，则一致性协议使得所有状态收敛到：
 $$\lim_{t \rightarrow \infty} x_i(t) = \frac{1}{n}\sum_{j=1}^n x_j(0)$$
 
@@ -784,8 +816,9 @@ impl Graph {
 ---
 
 **参考文献**：
+
 1. [Control System Design](https://www.mathworks.com/help/control/)
 2. [PID Controller Design](https://en.wikipedia.org/wiki/PID_controller)
 3. [Adaptive Control](https://en.wikipedia.org/wiki/Adaptive_control)
 4. [Robust Control](https://en.wikipedia.org/wiki/Robust_control)
-5. [Distributed Control](https://en.wikipedia.org/wiki/Distributed_control) 
+5. [Distributed Control](https://en.wikipedia.org/wiki/Distributed_control)

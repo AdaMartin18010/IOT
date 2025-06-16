@@ -1232,6 +1232,7 @@ pub struct QualityScore {
 4. Liu, F. T., Ting, K. M., & Zhou, Z. H. (2008). Isolation forest. In 2008 eighth ieee international conference on data mining (pp. 413-422). IEEE.
 
 **版本信息**
+
 - 版本：v1.0.0
 - 最后更新：2024年12月
-- 作者：AI Assistant 
+- 作者：AI Assistant

@@ -19,6 +19,7 @@
 $$\sigma(d_i, t) = (s_i, l_i, c_i, p_i)$$
 
 其中：
+
 - $s_i \in \{online, offline, error\}$ 是连接状态
 - $l_i \in \mathbb{R}^3$ 是位置坐标
 - $c_i \in \mathbb{R}^n$ 是能力向量
@@ -28,6 +29,7 @@ $$\sigma(d_i, t) = (s_i, l_i, c_i, p_i)$$
 对于任意IoT系统 $\mathcal{S}$，如果网络拓扑 $N$ 是连通的，且所有设备 $d_i \in D$ 满足 $\sigma(d_i, t).s_i = online$，则系统 $\mathcal{S}$ 在时间 $t$ 是连通的。
 
 **证明**：
+
 1. 由于 $N$ 是连通的，存在从任意节点到任意其他节点的路径
 2. 所有设备状态为 $online$，确保通信通道可用
 3. 根据连通性传递性，系统整体连通性成立
@@ -50,6 +52,7 @@ $$I_{i,j} = \{f_{i,j}^1, f_{i,j}^2, \ldots, f_{i,j}^n\}$$
 
 **定理 1.2** (分层架构正确性)
 如果对于所有相邻层 $(L_i, L_{i+1})$，接口 $I_{i,i+1}$ 满足：
+
 1. 函数性：$\forall x \in X_i, \exists! y \in Y_{i+1}: f_{i,i+1}(x) = y$
 2. 一致性：$\forall f, g \in I_{i,i+1}, f \circ g = g \circ f$
 
@@ -73,6 +76,7 @@ $$I_{i,j} = \{f_{i,j}^1, f_{i,j}^2, \ldots, f_{i,j}^n\}$$
 $$L(\mathcal{E}, t) = \frac{\sum_{i=1}^{n} w_i \cdot r_i(t)}{C}$$
 
 其中：
+
 - $w_i$ 是任务 $i$ 的权重
 - $r_i(t)$ 是任务 $i$ 在时间 $t$ 的资源需求
 - $C$ 是总处理能力
@@ -248,6 +252,7 @@ pub enum EdgeEvent {
 
 **定义 3.1** (事件)
 事件是一个三元组 $e = (t, s, d)$，其中：
+
 - $t \in \mathbb{R}^+$ 是时间戳
 - $s \in S$ 是事件源
 - $d \in D$ 是事件数据
@@ -263,12 +268,14 @@ $$E = (e_1, e_2, \ldots, e_n)$$
 $$H: E \times C \rightarrow A$$
 
 其中：
+
 - $E$ 是事件集合
 - $C$ 是上下文集合
 - $A$ 是动作集合
 
 **定理 3.1** (事件处理正确性)
 如果事件处理器 $H$ 满足：
+
 1. 单调性：$\forall e_1, e_2 \in E, e_1.t < e_2.t \Rightarrow H(e_1, c).t < H(e_2, c).t$
 2. 一致性：$\forall e \in E, c \in C, H(e, c) \in A$
 
@@ -427,6 +434,7 @@ pub enum EventError {
 
 **定义 4.1** (安全状态)
 系统安全状态是一个三元组 $\mathcal{S} = (S, A, P)$，其中：
+
 - $S$ 是主体集合
 - $A$ 是客体集合
 - $P: S \times A \rightarrow \{read, write, execute, none\}$ 是权限函数
@@ -439,6 +447,7 @@ $$\pi: S \times A \times O \rightarrow \{allow, deny\}$$
 
 **定理 4.1** (安全策略一致性)
 如果安全策略 $\pi$ 满足：
+
 1. 自反性：$\forall s \in S, \pi(s, s, read) = allow$
 2. 传递性：$\forall s_1, s_2, s_3 \in S, \pi(s_1, s_2, read) = allow \land \pi(s_2, s_3, read) = allow \Rightarrow \pi(s_1, s_3, read) = allow$
 
@@ -606,6 +615,7 @@ $$T = \lim_{t \to \infty} \frac{N(t)}{t}$$
 
 **定理 5.1** (性能边界)
 对于任意IoT系统，如果：
+
 1. 平均响应时间 $R < R_{max}$
 2. 吞吐量 $T > T_{min}$
 3. 资源利用率 $U < U_{max}$

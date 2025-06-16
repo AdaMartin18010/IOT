@@ -53,6 +53,7 @@ $$\dot{x}_i(t) = f_i(x_i(t), u_i(t), x_{N_i}(t))$$
 $$y_i(t) = h_i(x_i(t))$$
 
 其中：
+
 - $x_i(t)$ 是第 $i$ 个设备的状态
 - $u_i(t)$ 是第 $i$ 个设备的输入
 - $x_{N_i}(t)$ 是邻居设备的状态
@@ -235,6 +236,7 @@ impl DistributedIoTSystem {
 $$\dot{\theta}(t) = -\gamma \phi(t) e(t)$$
 
 其中：
+
 - $\theta(t)$ 是参数估计
 - $\gamma > 0$ 是自适应增益
 - $\phi(t)$ 是回归向量
@@ -727,4 +729,4 @@ impl BarrierFunction for LogBarrierFunction {
 
 ---
 
-*本文档提供了IoT控制理论的全面分析，包括分布式控制、自适应控制和鲁棒控制等核心理论。通过形式化的方法和Rust语言的实现，为IoT控制系统的设计和开发提供了可靠的指导。* 
+*本文档提供了IoT控制理论的全面分析，包括分布式控制、自适应控制和鲁棒控制等核心理论。通过形式化的方法和Rust语言的实现，为IoT控制系统的设计和开发提供了可靠的指导。*

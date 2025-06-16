@@ -20,6 +20,7 @@
 ### 核心业务概念
 
 IoT业务模型的核心包括四个主要组件：
+
 - **设备管理模型** (Device Management Model)
 - **数据流模型** (Data Flow Model)  
 - **规则引擎模型** (Rule Engine Model)
@@ -28,25 +29,30 @@ IoT业务模型的核心包括四个主要组件：
 ## 数学基础
 
 ### 定义 1.1 (IoT业务域)
+
 设 $\mathcal{D}$ 为设备集合，$\mathcal{S}$ 为传感器集合，$\mathcal{R}$ 为规则集合，$\mathcal{E}$ 为事件集合。
 
 IoT业务域定义为四元组：
 $$\mathcal{IoT} = (\mathcal{D}, \mathcal{S}, \mathcal{R}, \mathcal{E})$$
 
 ### 定义 1.2 (设备状态空间)
+
 对于设备 $d \in \mathcal{D}$，其状态空间定义为：
 $$\Sigma_d = \{online, offline, error, maintenance\}$$
 
 ### 定义 1.3 (传感器数据空间)
+
 对于传感器 $s \in \mathcal{S}$，其数据空间定义为：
 $$\mathcal{V}_s = \mathbb{R} \times \mathbb{T} \times \mathcal{Q}$$
 
 其中：
+
 - $\mathbb{R}$ 为实数集（传感器值）
 - $\mathbb{T}$ 为时间戳集
 - $\mathcal{Q}$ 为数据质量集 $\{good, fair, poor\}$
 
 ### 定义 1.4 (规则条件空间)
+
 规则条件空间定义为：
 $$\mathcal{C} = \mathcal{P}(\mathcal{D} \times \mathcal{S} \times \mathbb{R} \times \mathbb{T})$$
 
@@ -55,6 +61,7 @@ $$\mathcal{C} = \mathcal{P}(\mathcal{D} \times \mathcal{S} \times \mathbb{R} \ti
 ## 设备管理模型
 
 ### 定义 2.1 (设备管理函数)
+
 设备管理函数 $M_d: \mathcal{D} \times \mathbb{T} \rightarrow \Sigma_d$ 定义为：
 $$M_d(d, t) = \begin{cases}
 online & \text{if } \exists s \in \mathcal{S}_d: \text{last\_activity}(s) > t - \Delta \\
@@ -222,7 +229,7 @@ use std::collections::HashMap;
 use std::time::{Duration, SystemTime, UNIX_EPOCH};
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Clone, PartialEq)]
+# [derive(Debug, Clone, PartialEq)]
 pub enum DeviceStatus {
     Online,
     Offline,
@@ -230,7 +237,7 @@ pub enum DeviceStatus {
     Maintenance,
 }
 
-#[derive(Debug, Clone)]
+# [derive(Debug, Clone)]
 pub struct Device {
     pub id: String,
     pub name: String,
@@ -240,7 +247,7 @@ pub struct Device {
     pub health_score: f64,
 }
 
-#[derive(Debug, Clone)]
+# [derive(Debug, Clone)]
 pub struct Sensor {
     pub id: String,
     pub sensor_type: String,
@@ -249,7 +256,7 @@ pub struct Sensor {
     pub data_quality: DataQuality,
 }
 
-#[derive(Debug, Clone, PartialEq)]
+# [derive(Debug, Clone, PartialEq)]
 pub enum DataQuality {
     Good,
     Fair,
@@ -260,18 +267,18 @@ impl Device {
     /// 设备管理函数 M_d 的实现
     pub fn update_status(&mut self, timeout: Duration) -> DeviceStatus {
         let now = SystemTime::now();
-        
+
         // 检查是否有传感器在超时时间内有活动
         let has_recent_activity = self.sensors.iter().any(|s| {
             now.duration_since(s.last_activity).unwrap_or(Duration::from_secs(0)) < timeout
         });
-        
+
         // 检查是否有传感器处于错误状态
         let has_error = self.sensors.iter().any(|s| s.error_state);
-        
+
         // 检查是否处于维护模式
         let in_maintenance = self.status == DeviceStatus::Maintenance;
-        
+
         self.status = if in_maintenance {
             DeviceStatus::Maintenance
         } else if has_error {
@@ -281,24 +288,24 @@ impl Device {
         } else {
             DeviceStatus::Offline
         };
-        
+
         self.status.clone()
     }
-    
+
     /// 设备健康度函数 H_d 的实现
     pub fn calculate_health_score(&mut self) -> f64 {
         if self.sensors.is_empty() {
             return 0.0;
         }
-        
+
         let good_sensors = self.sensors.iter()
             .filter(|s| s.data_quality == DataQuality::Good)
             .count();
-        
+
         self.health_score = good_sensors as f64 / self.sensors.len() as f64;
         self.health_score
     }
-    
+
     /// 定理 2.1 的验证：设备状态一致性
     pub fn verify_status_consistency(&self) -> bool {
         match self.status {
@@ -328,7 +335,7 @@ impl Device {
 ```rust
 use std::collections::HashMap;
 
-#[derive(Debug, Clone)]
+# [derive(Debug, Clone)]
 pub struct DataFlow {
     pub source: String,
     pub destination: String,
@@ -336,7 +343,7 @@ pub struct DataFlow {
     pub timestamp: SystemTime,
 }
 
-#[derive(Debug, Clone)]
+# [derive(Debug, Clone)]
 pub struct SensorData {
     pub sensor_id: String,
     pub value: f64,
@@ -344,13 +351,13 @@ pub struct SensorData {
     pub quality: DataQuality,
 }
 
-#[derive(Debug, Clone)]
+# [derive(Debug, Clone)]
 pub struct DataFlowGraph {
     pub nodes: HashMap<String, FlowNode>,
     pub edges: Vec<DataFlow>,
 }
 
-#[derive(Debug, Clone)]
+# [derive(Debug, Clone)]
 pub struct FlowNode {
     pub id: String,
     pub node_type: NodeType,
@@ -358,7 +365,7 @@ pub struct FlowNode {
     pub output_flows: Vec<String>,
 }
 
-#[derive(Debug, Clone)]
+# [derive(Debug, Clone)]
 pub enum NodeType {
     Device,
     Sensor,
@@ -380,7 +387,7 @@ impl DataFlowGraph {
             timestamp: SystemTime::now(),
         }
     }
-    
+
     /// 数据聚合函数 A 的实现
     pub fn aggregate_data(&self, data_points: &[SensorData]) -> SensorData {
         if data_points.is_empty() {
@@ -391,15 +398,15 @@ impl DataFlowGraph {
                 quality: DataQuality::Poor,
             };
         }
-        
+
         let sum: f64 = data_points.iter().map(|d| d.value).sum();
         let average = sum / data_points.len() as f64;
-        
+
         let min_quality = data_points.iter()
             .map(|d| &d.quality)
             .min()
             .unwrap_or(&DataQuality::Poor);
-        
+
         SensorData {
             sensor_id: "aggregated".to_string(),
             value: average,
@@ -407,13 +414,13 @@ impl DataFlowGraph {
             quality: min_quality.clone(),
         }
     }
-    
+
     /// 定理 3.1 的验证：数据流守恒
     pub fn verify_flow_conservation(&self) -> bool {
         for (node_id, node) in &self.nodes {
             let input_flow_count = node.input_flows.len();
             let output_flow_count = node.output_flows.len();
-            
+
             // 对于处理器节点，输入流应该等于输出流
             if matches!(node.node_type, NodeType::Processor) {
                 if input_flow_count != output_flow_count {
@@ -431,7 +438,7 @@ impl DataFlowGraph {
 ```rust
 use std::collections::HashMap;
 
-#[derive(Debug, Clone)]
+# [derive(Debug, Clone)]
 pub struct Rule {
     pub id: String,
     pub name: String,
@@ -441,7 +448,7 @@ pub struct Rule {
     pub enabled: bool,
 }
 
-#[derive(Debug, Clone)]
+# [derive(Debug, Clone)]
 pub enum Condition {
     Threshold {
         device_id: String,
@@ -459,7 +466,7 @@ pub enum Condition {
     },
 }
 
-#[derive(Debug, Clone)]
+# [derive(Debug, Clone)]
 pub enum ComparisonOperator {
     GreaterThan,
     LessThan,
@@ -467,7 +474,7 @@ pub enum ComparisonOperator {
     NotEqual,
 }
 
-#[derive(Debug, Clone)]
+# [derive(Debug, Clone)]
 pub enum Action {
     SendAlert {
         alert_type: String,
@@ -493,7 +500,7 @@ impl RuleEngine {
         if !rule.enabled {
             return false;
         }
-        
+
         for condition in &rule.conditions {
             if !self.evaluate_condition(condition, context) {
                 return false;
@@ -501,7 +508,7 @@ impl RuleEngine {
         }
         true
     }
-    
+
     /// 规则执行函数 E 的实现
     pub fn execute_rule(&self, rule: &Rule, context: &RuleContext) -> Vec<Action> {
         if self.evaluate_rule(rule, context) {
@@ -510,12 +517,12 @@ impl RuleEngine {
             Vec::new()
         }
     }
-    
+
     /// 定理 4.1 的验证：规则执行确定性
     pub fn verify_determinism(&self, rule: &Rule, context1: &RuleContext, context2: &RuleContext) -> bool {
         let result1 = self.evaluate_rule(rule, context1);
         let result2 = self.evaluate_rule(rule, context2);
-        
+
         if result1 == result2 {
             let actions1 = self.execute_rule(rule, context1);
             let actions2 = self.execute_rule(rule, context2);
@@ -524,7 +531,7 @@ impl RuleEngine {
             true // 如果条件评估结果不同，执行结果可以不同
         }
     }
-    
+
     fn evaluate_condition(&self, condition: &Condition, context: &RuleContext) -> bool {
         match condition {
             Condition::Threshold { device_id, sensor_type, operator, value } => {
@@ -553,7 +560,7 @@ impl RuleEngine {
     }
 }
 
-#[derive(Debug, Clone)]
+# [derive(Debug, Clone)]
 pub struct RuleContext {
     pub sensor_data: HashMap<(String, String), SensorData>,
     pub device_statuses: HashMap<String, DeviceStatus>,
@@ -565,7 +572,7 @@ pub struct RuleContext {
 ```rust
 use std::collections::VecDeque;
 
-#[derive(Debug, Clone)]
+# [derive(Debug, Clone)]
 pub struct Event {
     pub id: String,
     pub device_id: String,
@@ -575,7 +582,7 @@ pub struct Event {
     pub timestamp: SystemTime,
 }
 
-#[derive(Debug, Clone)]
+# [derive(Debug, Clone)]
 pub enum EventType {
     DataReceived,
     DeviceConnected,
@@ -592,7 +599,7 @@ impl EventProcessor {
     /// 事件处理函数 H_e 的实现
     pub fn process_event(&mut self, event: &Event) -> Vec<Action> {
         let mut all_actions = Vec::new();
-        
+
         for rule in &self.rule_engine.rules {
             if self.event_matches_rule(event, rule) {
                 let context = self.create_context_from_event(event);
@@ -600,42 +607,42 @@ impl EventProcessor {
                 all_actions.extend(actions);
             }
         }
-        
+
         all_actions
     }
-    
+
     /// 事件流函数 F_e 的实现
     pub fn process_event_stream(&mut self, events: Vec<Event>) -> Vec<Action> {
         let mut all_actions = Vec::new();
-        
+
         // 按时间戳排序事件
         let mut sorted_events = events;
         sorted_events.sort_by(|a, b| a.timestamp.cmp(&b.timestamp));
-        
+
         for event in sorted_events {
             let actions = self.process_event(&event);
             all_actions.extend(actions);
         }
-        
+
         all_actions
     }
-    
+
     /// 定理 5.1 的验证：事件处理完整性
     pub fn verify_completeness(&self, event: &Event) -> bool {
         let mut matched_rules = 0;
         let mut total_rules = 0;
-        
+
         for rule in &self.rule_engine.rules {
             total_rules += 1;
             if self.event_matches_rule(event, rule) {
                 matched_rules += 1;
             }
         }
-        
+
         // 每个事件都应该至少匹配一个规则，或者明确不匹配任何规则
         matched_rules > 0 || total_rules == 0
     }
-    
+
     /// 定理 5.2 的验证：事件处理顺序性
     pub fn verify_ordering(&self, events: &[Event]) -> bool {
         for i in 1..events.len() {
@@ -645,7 +652,7 @@ impl EventProcessor {
         }
         true
     }
-    
+
     fn event_matches_rule(&self, event: &Event, rule: &Rule) -> bool {
         // 检查事件类型是否匹配规则条件
         for condition in &rule.conditions {
@@ -666,14 +673,14 @@ impl EventProcessor {
         }
         false
     }
-    
+
     fn create_context_from_event(&self, event: &Event) -> RuleContext {
         let mut sensor_data = HashMap::new();
         sensor_data.insert(
             (event.device_id.clone(), event.sensor_id.clone()),
             event.data.clone(),
         );
-        
+
         RuleContext {
             sensor_data,
             device_statuses: HashMap::new(),
@@ -720,4 +727,4 @@ $$\text{Space Complexity} = O(n \times m + r + e)$$
 4. **可执行实现**：提供了完整的Rust实现示例
 5. **性能分析**：分析了时间和空间复杂度
 
-这个形式化体系为IoT系统的设计、实现和验证提供了坚实的理论基础，确保系统的正确性、可靠性和性能。 
+这个形式化体系为IoT系统的设计、实现和验证提供了坚实的理论基础，确保系统的正确性、可靠性和性能。

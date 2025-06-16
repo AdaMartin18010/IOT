@@ -13,7 +13,9 @@
 ## 概述与定义
 
 ### 定义 1.1 (IoT数学系统)
+
 IoT数学系统是一个五元组 $\mathcal{M} = (S, R, F, T, A)$，其中：
+
 - $S$ 是状态空间 $S = \mathbb{R}^n$
 - $R$ 是关系集合 $R = \{r_1, r_2, ..., r_m\}$
 - $F$ 是函数集合 $F = \{f_1, f_2, ..., f_k\}$
@@ -21,11 +23,13 @@ IoT数学系统是一个五元组 $\mathcal{M} = (S, R, F, T, A)$，其中：
 - $A$ 是算法集合 $A = \{a_1, a_2, ..., a_p\}$
 
 ### 定义 1.2 (IoT数学映射)
+
 IoT数学映射定义为：
 $$M: S \times T \times R \rightarrow F$$
 其中每个映射都对应一个IoT系统的数学描述。
 
 ### 定理 1.1 (IoT系统数学完备性)
+
 如果IoT系统 $\mathcal{I}$ 的所有组件都可以用数学函数表示，则系统是数学完备的。
 
 **证明**：
@@ -40,19 +44,23 @@ $\square$
 ## 集合论基础
 
 ### 定义 2.1 (IoT设备集合)
+
 IoT设备集合定义为：
 $$\mathcal{D} = \{d_i | i \in \mathbb{N}, d_i = (s_i, c_i, m_i, e_i)\}$$
 其中：
+
 - $s_i$ 是传感器集合
 - $c_i$ 是计算能力
 - $m_i$ 是内存容量
 - $e_i$ 是能量容量
 
 ### 定义 2.2 (设备关系)
+
 设备间的关系定义为：
 $$R_{ij} = \{(d_i, d_j) | d_i, d_j \in \mathcal{D}, \text{存在通信路径}\}$$
 
 ### 算法 2.1 (设备集合操作)
+
 ```rust
 pub struct DeviceSet {
     devices: HashSet<DeviceId>,
@@ -105,6 +113,7 @@ impl DeviceSet {
 ```
 
 ### 定理 2.1 (设备集合连通性)
+
 如果设备集合 $\mathcal{D}$ 的图是连通的，则任意两个设备间都存在通信路径。
 
 **证明**：
@@ -116,22 +125,27 @@ $\square$
 ## 图论与网络
 
 ### 定义 3.1 (IoT网络图)
+
 IoT网络图定义为：
 $$G = (V, E, W)$$
 其中：
+
 - $V$ 是节点集合（设备）
 - $E$ 是边集合（通信链路）
 - $W: E \rightarrow \mathbb{R}^+$ 是权重函数
 
 ### 定义 3.2 (网络拓扑)
+
 网络拓扑定义为：
 $$T = (G, P, C)$$
 其中：
+
 - $G$ 是网络图
 - $P$ 是协议集合
 - $C$ 是约束条件集合
 
 ### 算法 3.1 (最短路径算法)
+
 ```rust
 pub struct NetworkGraph {
     nodes: HashMap<NodeId, NodeInfo>,
@@ -226,6 +240,7 @@ impl NetworkGraph {
 ```
 
 ### 定理 3.1 (网络连通性)
+
 如果网络图 $G$ 的最小生成树包含所有节点，则网络是连通的。
 
 **证明**：
@@ -237,16 +252,19 @@ $\square$
 ## 概率论与统计
 
 ### 定义 4.1 (IoT随机过程)
+
 IoT随机过程定义为：
 $$X(t) = \{X_i(t) | i \in \mathcal{D}, t \in T\}$$
 其中 $X_i(t)$ 是设备 $i$ 在时间 $t$ 的随机状态。
 
 ### 定义 4.2 (传感器数据分布)
+
 传感器数据分布定义为：
 $$P(X_i(t) = x) = f_i(x, t)$$
 其中 $f_i$ 是设备 $i$ 的概率密度函数。
 
 ### 算法 4.1 (统计推断)
+
 ```rust
 pub struct StatisticalAnalyzer {
     data_buffer: VecDeque<DataPoint>,
@@ -337,6 +355,7 @@ impl StatisticalAnalyzer {
 ```
 
 ### 定理 4.1 (大数定律)
+
 对于独立同分布的随机变量序列 $\{X_i\}$，如果 $E[X_i] = \mu$，则：
 $$\lim_{n \rightarrow \infty} \frac{1}{n} \sum_{i=1}^n X_i = \mu \text{ a.s.}$$
 
@@ -347,16 +366,19 @@ $\square$
 ## 优化理论
 
 ### 定义 5.1 (IoT优化问题)
+
 IoT优化问题定义为：
 $$\min_{x \in \mathcal{X}} f(x)$$
 $$\text{s.t. } g_i(x) \leq 0, i = 1, 2, ..., m$$
 $$\text{s.t. } h_j(x) = 0, j = 1, 2, ..., p$$
 其中：
+
 - $f$ 是目标函数
 - $g_i$ 是不等式约束
 - $h_j$ 是等式约束
 
 ### 定义 5.2 (资源分配优化)
+
 资源分配优化定义为：
 $$\max \sum_{i=1}^n w_i U_i(x_i)$$
 $$\text{s.t. } \sum_{i=1}^n x_i \leq R$$
@@ -364,6 +386,7 @@ $$\text{s.t. } x_i \geq 0, i = 1, 2, ..., n$$
 其中 $U_i$ 是效用函数，$R$ 是总资源。
 
 ### 算法 5.1 (梯度下降优化)
+
 ```rust
 pub struct Optimizer {
     learning_rate: f64,
@@ -453,6 +476,7 @@ impl UtilityFunction for LogUtility {
 ```
 
 ### 定理 5.1 (KKT条件)
+
 如果 $x^*$ 是优化问题的局部最优解，且满足约束条件，则存在拉格朗日乘子 $\lambda_i \geq 0$ 和 $\mu_j$ 使得：
 $$\nabla f(x^*) + \sum_{i=1}^m \lambda_i \nabla g_i(x^*) + \sum_{j=1}^p \mu_j \nabla h_j(x^*) = 0$$
 $$\lambda_i g_i(x^*) = 0, i = 1, 2, ..., m$$
@@ -465,16 +489,19 @@ $\square$
 ## 信息论
 
 ### 定义 6.1 (IoT信息熵)
+
 IoT信息熵定义为：
 $$H(X) = -\sum_{i=1}^n p_i \log_2 p_i$$
 其中 $p_i$ 是事件 $i$ 的概率。
 
 ### 定义 6.2 (互信息)
+
 互信息定义为：
 $$I(X; Y) = H(X) + H(Y) - H(X, Y)$$
 其中 $H(X, Y)$ 是联合熵。
 
 ### 算法 6.1 (信息论分析)
+
 ```rust
 pub struct InformationAnalyzer {
     data_processor: DataProcessor,
@@ -564,6 +591,7 @@ impl InformationAnalyzer {
 ```
 
 ### 定理 6.1 (香农编码定理)
+
 对于离散无记忆信源，存在编码方案使得平均码长 $L$ 满足：
 $$H(X) \leq L < H(X) + 1$$
 
@@ -575,15 +603,18 @@ $\square$
 ## 实现架构
 
 ### 定义 7.1 (IoT数学架构)
+
 IoT数学架构实现定义为：
 $$\mathcal{A} = (Math, Algo, Comp, Int)$$
 其中：
+
 - $Math$ 是数学库
 - $Algo$ 是算法库
 - $Comp$ 是计算引擎
 - $Int$ 是集成接口
 
 ### 实现 7.1 (完整数学架构)
+
 ```rust
 pub struct IoTMathArchitecture {
     set_operations: SetOperations,
@@ -687,6 +718,7 @@ impl ComputationEngine {
 ```
 
 ### 定理 7.1 (数学架构正确性)
+
 如果所有数学组件都正确实现，且计算引擎可靠，则整个IoT数学架构是正确的。
 
 **证明**：
@@ -707,4 +739,4 @@ $\square$
 5. **信息论**：信息熵和编码理论
 6. **实现架构**：完整的数学计算架构
 
-这些数学理论为IoT系统的设计、分析和优化提供了坚实的理论基础。 
+这些数学理论为IoT系统的设计、分析和优化提供了坚实的理论基础。

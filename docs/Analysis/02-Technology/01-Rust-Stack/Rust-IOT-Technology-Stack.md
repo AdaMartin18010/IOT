@@ -1059,12 +1059,13 @@ pub fn init_logging() {
 
 **参考文献**
 
-1. The Rust Programming Language. https://doc.rust-lang.org/book/
-2. Tokio Documentation. https://tokio.rs/
-3. Embedded Rust Book. https://rust-embedded.github.io/book/
-4. Rust Security Guidelines. https://rust-lang.github.io/rust-security/
+1. The Rust Programming Language. <https://doc.rust-lang.org/book/>
+2. Tokio Documentation. <https://tokio.rs/>
+3. Embedded Rust Book. <https://rust-embedded.github.io/book/>
+4. Rust Security Guidelines. <https://rust-lang.github.io/rust-security/>
 
 **版本信息**
+
 - 版本：v1.0.0
 - 最后更新：2024年12月
-- 作者：AI Assistant 
+- 作者：AI Assistant
