@@ -123,14 +123,14 @@ impl StreamProcessor {
             last_aggregation: None,
         }
     }
-    
+
     pub fn process_data_point(&mut self, data_point: DataPoint) -> Result<Option<AggregatedData>, ProcessingError> {
         // 添加新数据点
         self.buffer.push_back(data_point);
-        
+
         // 移除过期数据点
         self.remove_expired_data();
-        
+
         // 检查是否需要聚合
         if self.should_aggregate() {
             let aggregated_data = self.perform_aggregation()?;
@@ -140,11 +140,11 @@ impl StreamProcessor {
             Ok(None)
         }
     }
-    
+
     fn remove_expired_data(&mut self) {
         let current_time = SystemTime::now();
         let cutoff_time = current_time - self.window_size;
-        
+
         while let Some(front) = self.buffer.front() {
             if front.timestamp < cutoff_time {
                 self.buffer.pop_front();
@@ -153,7 +153,7 @@ impl StreamProcessor {
             }
         }
     }
-    
+
     fn should_aggregate(&self) -> bool {
         // 基于时间间隔或数据点数量决定是否聚合
         if let Some(last) = &self.last_aggregation {
@@ -163,14 +163,14 @@ impl StreamProcessor {
             self.buffer.len() >= 100 // 或者数据点数量达到阈值
         }
     }
-    
+
     fn perform_aggregation(&self) -> Result<AggregatedData, ProcessingError> {
         if self.buffer.is_empty() {
             return Err(ProcessingError::NoDataToAggregate);
         }
-        
+
         let values: Vec<f64> = self.buffer.iter().map(|dp| dp.value).collect();
-        
+
         let aggregated_value = match self.aggregation_function {
             AggregationFunction::Mean => self.calculate_mean(&values),
             AggregationFunction::Median => self.calculate_median(&values),
@@ -178,7 +178,7 @@ impl StreamProcessor {
             AggregationFunction::Min => self.calculate_min(&values),
             AggregationFunction::StandardDeviation => self.calculate_std_dev(&values),
         };
-        
+
         Ok(AggregatedData {
             timestamp: SystemTime::now(),
             value: aggregated_value,
@@ -186,15 +186,15 @@ impl StreamProcessor {
             window_size: self.window_size,
         })
     }
-    
+
     fn calculate_mean(&self, values: &[f64]) -> f64 {
         values.iter().sum::<f64>() / values.len() as f64
     }
-    
+
     fn calculate_median(&self, values: &[f64]) -> f64 {
         let mut sorted_values = values.to_vec();
         sorted_values.sort_by(|a, b| a.partial_cmp(b).unwrap());
-        
+
         let len = sorted_values.len();
         if len % 2 == 0 {
             (sorted_values[len / 2 - 1] + sorted_values[len / 2]) / 2.0
@@ -202,15 +202,15 @@ impl StreamProcessor {
             sorted_values[len / 2]
         }
     }
-    
+
     fn calculate_max(&self, values: &[f64]) -> f64 {
         values.iter().fold(f64::NEG_INFINITY, |a, &b| a.max(b))
     }
-    
+
     fn calculate_min(&self, values: &[f64]) -> f64 {
         values.iter().fold(f64::INFINITY, |a, &b| a.min(b))
     }
-    
+
     fn calculate_std_dev(&self, values: &[f64]) -> f64 {
         let mean = self.calculate_mean(values);
         let variance = values.iter()
@@ -241,7 +241,7 @@ impl AnomalyDetector {
             model: None,
         }
     }
-    
+
     pub fn detect_anomaly(&mut self, data_point: &DataPoint) -> Result<AnomalyResult, DetectionError> {
         match self.detection_method {
             DetectionMethod::Statistical => self.statistical_detection(data_point),
@@ -250,18 +250,18 @@ impl AnomalyDetector {
             DetectionMethod::LSTM => self.lstm_detection(data_point),
         }
     }
-    
+
     fn statistical_detection(&self, data_point: &DataPoint) -> Result<AnomalyResult, DetectionError> {
         if self.historical_data.len() < 10 {
             return Ok(AnomalyResult::Normal);
         }
-        
+
         let values: Vec<f64> = self.historical_data.iter().map(|dp| dp.value).collect();
         let mean = self.calculate_mean(&values);
         let std_dev = self.calculate_std_dev(&values);
-        
+
         let z_score = (data_point.value - mean) / std_dev;
-        
+
         if z_score.abs() > self.threshold {
             Ok(AnomalyResult::Anomaly {
                 score: z_score.abs(),
@@ -271,16 +271,16 @@ impl AnomalyDetector {
             Ok(AnomalyResult::Normal)
         }
     }
-    
+
     fn distance_detection(&self, data_point: &DataPoint) -> Result<AnomalyResult, DetectionError> {
         if self.historical_data.is_empty() {
             return Ok(AnomalyResult::Normal);
         }
-        
+
         let min_distance = self.historical_data.iter()
             .map(|dp| (data_point.value - dp.value).abs())
             .fold(f64::INFINITY, |a, b| a.min(b));
-        
+
         if min_distance > self.threshold {
             Ok(AnomalyResult::Anomaly {
                 score: min_distance,
@@ -290,16 +290,16 @@ impl AnomalyDetector {
             Ok(AnomalyResult::Normal)
         }
     }
-    
+
     fn isolation_forest_detection(&mut self, data_point: &DataPoint) -> Result<AnomalyResult, DetectionError> {
         // 初始化隔离森林模型
         if self.model.is_none() {
             self.model = Some(IsolationForest::new(100, 256)); // 100棵树，256个样本
         }
-        
+
         if let Some(model) = &mut self.model {
             let anomaly_score = model.predict(data_point.value);
-            
+
             if anomaly_score > self.threshold {
                 Ok(AnomalyResult::Anomaly {
                     score: anomaly_score,
@@ -312,17 +312,17 @@ impl AnomalyDetector {
             Err(DetectionError::ModelNotInitialized)
         }
     }
-    
+
     fn lstm_detection(&mut self, data_point: &DataPoint) -> Result<AnomalyResult, DetectionError> {
         // LSTM异常检测实现
         if self.model.is_none() {
             self.model = Some(LSTMAnomalyDetector::new(64, 32)); // 64个隐藏单元，32个时间步
         }
-        
+
         if let Some(model) = &mut self.model {
             let prediction = model.predict(data_point.value);
             let reconstruction_error = (data_point.value - prediction).abs();
-            
+
             if reconstruction_error > self.threshold {
                 Ok(AnomalyResult::Anomaly {
                     score: reconstruction_error,
@@ -335,20 +335,20 @@ impl AnomalyDetector {
             Err(DetectionError::ModelNotInitialized)
         }
     }
-    
+
     fn calculate_confidence(&self, score: f64) -> f64 {
         // 基于分数计算置信度
         (score / (score + 1.0)).min(1.0)
     }
-    
+
     pub fn update_model(&mut self, data_point: DataPoint) {
         self.historical_data.push(data_point);
-        
+
         // 保持历史数据大小
         if self.historical_data.len() > 1000 {
             self.historical_data.remove(0);
         }
-        
+
         // 更新模型
         if let Some(model) = &mut self.model {
             model.update(&data_point);
@@ -377,12 +377,12 @@ impl TimeSeriesAnalyzer {
             trend_model: None,
         }
     }
-    
+
     pub fn analyze(&mut self, time_series: &[DataPoint]) -> Result<TimeSeriesAnalysis, AnalysisError> {
         if time_series.len() < self.window_size {
             return Err(AnalysisError::InsufficientData);
         }
-        
+
         match self.analysis_method {
             AnalysisMethod::MovingAverage => self.moving_average_analysis(time_series),
             AnalysisMethod::ExponentialSmoothing => self.exponential_smoothing_analysis(time_series),
@@ -390,17 +390,17 @@ impl TimeSeriesAnalyzer {
             AnalysisMethod::SeasonalDecomposition => self.seasonal_decomposition_analysis(time_series),
         }
     }
-    
+
     fn moving_average_analysis(&self, time_series: &[DataPoint]) -> Result<TimeSeriesAnalysis, AnalysisError> {
         let values: Vec<f64> = time_series.iter().map(|dp| dp.value).collect();
         let mut smoothed_values = Vec::new();
-        
+
         for i in self.window_size..values.len() {
             let window_sum: f64 = values[i - self.window_size..i].iter().sum();
             let average = window_sum / self.window_size as f64;
             smoothed_values.push(average);
         }
-        
+
         Ok(TimeSeriesAnalysis {
             trend: smoothed_values,
             seasonal: None,
@@ -408,24 +408,24 @@ impl TimeSeriesAnalyzer {
             forecast: self.generate_forecast(&smoothed_values),
         })
     }
-    
+
     fn exponential_smoothing_analysis(&self, time_series: &[DataPoint]) -> Result<TimeSeriesAnalysis, AnalysisError> {
         let values: Vec<f64> = time_series.iter().map(|dp| dp.value).collect();
         let alpha = 0.3; // 平滑参数
         let mut smoothed_values = Vec::new();
-        
+
         if values.is_empty() {
             return Err(AnalysisError::EmptyData);
         }
-        
+
         let mut current_smooth = values[0];
         smoothed_values.push(current_smooth);
-        
+
         for &value in values.iter().skip(1) {
             current_smooth = alpha * value + (1.0 - alpha) * current_smooth;
             smoothed_values.push(current_smooth);
         }
-        
+
         Ok(TimeSeriesAnalysis {
             trend: smoothed_values,
             seasonal: None,
@@ -433,19 +433,19 @@ impl TimeSeriesAnalyzer {
             forecast: self.generate_forecast(&smoothed_values),
         })
     }
-    
+
     fn arima_analysis(&mut self, time_series: &[DataPoint]) -> Result<TimeSeriesAnalysis, AnalysisError> {
         // ARIMA模型分析
         let values: Vec<f64> = time_series.iter().map(|dp| dp.value).collect();
-        
+
         // 初始化ARIMA模型
         if self.trend_model.is_none() {
             self.trend_model = Some(ARIMAModel::new(1, 1, 1)); // ARIMA(1,1,1)
         }
-        
+
         if let Some(model) = &mut self.trend_model {
             let (trend, seasonal, residual) = model.fit(&values)?;
-            
+
             Ok(TimeSeriesAnalysis {
                 trend,
                 seasonal: Some(seasonal),
@@ -456,24 +456,24 @@ impl TimeSeriesAnalyzer {
             Err(AnalysisError::ModelNotInitialized)
         }
     }
-    
+
     fn seasonal_decomposition_analysis(&self, time_series: &[DataPoint]) -> Result<TimeSeriesAnalysis, AnalysisError> {
         let values: Vec<f64> = time_series.iter().map(|dp| dp.value).collect();
-        
+
         if let Some(period) = self.seasonal_period {
             if values.len() < period * 2 {
                 return Err(AnalysisError::InsufficientDataForSeasonal);
             }
-            
+
             // 计算趋势（使用移动平均）
             let trend = self.calculate_trend(&values, period);
-            
+
             // 计算季节性
             let seasonal = self.calculate_seasonal(&values, &trend, period);
-            
+
             // 计算残差
             let residual = self.calculate_residual(&values, &trend, &seasonal);
-            
+
             Ok(TimeSeriesAnalysis {
                 trend,
                 seasonal: Some(seasonal),
@@ -484,23 +484,23 @@ impl TimeSeriesAnalyzer {
             Err(AnalysisError::SeasonalPeriodNotSet)
         }
     }
-    
+
     fn calculate_trend(&self, values: &[f64], period: usize) -> Vec<f64> {
         let mut trend = Vec::new();
-        
+
         for i in period..values.len() - period {
             let window_sum: f64 = values[i - period..i + period + 1].iter().sum();
             let average = window_sum / (2 * period + 1) as f64;
             trend.push(average);
         }
-        
+
         trend
     }
-    
+
     fn calculate_seasonal(&self, values: &[f64], trend: &[f64], period: usize) -> Vec<f64> {
         let mut seasonal = vec![0.0; period];
         let mut counts = vec![0; period];
-        
+
         for (i, &value) in values.iter().enumerate() {
             if i < trend.len() {
                 let seasonal_idx = i % period;
@@ -508,20 +508,20 @@ impl TimeSeriesAnalyzer {
                 counts[seasonal_idx] += 1;
             }
         }
-        
+
         // 计算平均值
         for i in 0..period {
             if counts[i] > 0 {
                 seasonal[i] /= counts[i] as f64;
             }
         }
-        
+
         seasonal
     }
-    
+
     fn calculate_residual(&self, values: &[f64], trend: &[f64], seasonal: &[f64]) -> Vec<f64> {
         let mut residual = Vec::new();
-        
+
         for (i, &value) in values.iter().enumerate() {
             if i < trend.len() {
                 let seasonal_idx = i % seasonal.len();
@@ -529,25 +529,25 @@ impl TimeSeriesAnalyzer {
                 residual.push(residual_value);
             }
         }
-        
+
         residual
     }
-    
+
     fn generate_forecast(&self, trend: &[f64]) -> Vec<f64> {
         if trend.len() < 2 {
             return Vec::new();
         }
-        
+
         // 简单的线性外推
         let last_value = trend[trend.len() - 1];
         let second_last_value = trend[trend.len() - 2];
         let slope = last_value - second_last_value;
-        
+
         let mut forecast = Vec::new();
         for i in 1..=10 {
             forecast.push(last_value + slope * i as f64);
         }
-        
+
         forecast
     }
 }
@@ -586,46 +586,46 @@ impl IoTDataProcessingPipeline {
             alert_manager: AlertManager::new(),
         }
     }
-    
+
     pub async fn process_data(&mut self, data_point: DataPoint) -> Result<ProcessingResult, PipelineError> {
         // 1. 流处理
         let aggregated_data = self.stream_processor.process_data_point(data_point.clone())?;
-        
+
         // 2. 异常检测
         let anomaly_result = self.anomaly_detector.detect_anomaly(&data_point)?;
-        
+
         // 3. 更新异常检测模型
         self.anomaly_detector.update_model(data_point.clone());
-        
+
         // 4. 存储数据
         self.data_storage.store_data_point(&data_point).await?;
-        
+
         // 5. 处理异常
         if let AnomalyResult::Anomaly { score, confidence } = anomaly_result {
             self.handle_anomaly(&data_point, score, confidence).await?;
         }
-        
+
         // 6. 定期时间序列分析
         if self.should_perform_analysis() {
             let historical_data = self.data_storage.get_recent_data(1000).await?;
             let analysis_result = self.time_series_analyzer.analyze(&historical_data)?;
-            
+
             // 存储分析结果
             self.data_storage.store_analysis_result(&analysis_result).await?;
-            
+
             // 生成预测
             if let Some(forecast) = analysis_result.forecast {
                 self.handle_forecast(&forecast).await?;
             }
         }
-        
+
         Ok(ProcessingResult {
             aggregated_data,
             anomaly_result,
             timestamp: SystemTime::now(),
         })
     }
-    
+
     async fn handle_anomaly(
         &self,
         data_point: &DataPoint,
@@ -639,12 +639,12 @@ impl IoTDataProcessingPipeline {
             message: format!("Anomaly detected with score {:.2} and confidence {:.2}", score, confidence),
             timestamp: SystemTime::now(),
         };
-        
+
         self.alert_manager.send_alert(&alert).await?;
-        
+
         Ok(())
     }
-    
+
     async fn handle_forecast(&self, forecast: &[f64]) -> Result<(), PipelineError> {
         // 检查预测值是否超过阈值
         for (i, &value) in forecast.iter().enumerate() {
@@ -656,20 +656,20 @@ impl IoTDataProcessingPipeline {
                     message: format!("Forecast value {:.2} at step {} exceeds threshold", value, i),
                     timestamp: SystemTime::now(),
                 };
-                
+
                 self.alert_manager.send_alert(&alert).await?;
             }
         }
-        
+
         Ok(())
     }
-    
+
     fn should_perform_analysis(&self) -> bool {
         // 基于时间间隔决定是否进行分析
         // 这里简化实现，实际应该基于配置
         true
     }
-    
+
     fn calculate_severity(&self, score: f64) -> AlertSeverity {
         if score > 3.0 {
             AlertSeverity::Critical
@@ -681,7 +681,7 @@ impl IoTDataProcessingPipeline {
             AlertSeverity::Low
         }
     }
-    
+
     fn get_threshold(&self) -> f64 {
         // 从配置或动态计算获取阈值
         100.0
@@ -711,20 +711,20 @@ impl DistributedDataProcessor {
             fault_tolerance: FaultTolerance::new(),
         }
     }
-    
+
     pub async fn start(&mut self) -> Result<(), ProcessorError> {
         info!("Starting distributed data processor: {}", self.node_id);
-        
+
         // 启动网络管理器
         self.network_manager.start().await?;
-        
+
         // 启动故障容错
         self.fault_tolerance.start().await?;
-        
+
         // 主处理循环
         self.processing_loop().await
     }
-    
+
     async fn processing_loop(&mut self) -> Result<(), ProcessorError> {
         loop {
             // 1. 接收数据
@@ -736,49 +736,49 @@ impl DistributedDataProcessor {
                     // 3. 本地处理
                     for data_point in data_batch {
                         let result = self.local_processor.process_data(data_point).await?;
-                        
+
                         // 4. 发送结果
                         self.network_manager.send_result(&result).await?;
                     }
                 }
             }
-            
+
             // 5. 健康检查
             if !self.is_healthy() {
                 error!("Processor {} is unhealthy", self.node_id);
                 break;
             }
-            
+
             tokio::time::sleep(Duration::from_millis(10)).await;
         }
-        
+
         Ok(())
     }
-    
+
     fn should_forward_data(&self, data_batch: &[DataPoint]) -> bool {
         // 基于负载和策略决定是否转发数据
         let current_load = self.get_current_load();
         let batch_size = data_batch.len();
-        
+
         current_load > 0.8 || batch_size > 1000
     }
-    
+
     async fn forward_data(&self, data_batch: Vec<DataPoint>) -> Result<(), ProcessorError> {
         // 选择目标节点
         let target_node = self.load_balancer.select_node(&data_batch).await?;
-        
+
         // 转发数据
         self.network_manager.forward_data(&data_batch, &target_node).await?;
-        
+
         Ok(())
     }
-    
+
     fn get_current_load(&self) -> f64 {
         // 计算当前负载
         // 这里简化实现，实际应该基于CPU、内存、队列长度等
         0.5
     }
-    
+
     fn is_healthy(&self) -> bool {
         self.local_processor.is_healthy() &&
         self.network_manager.is_connected() &&
@@ -862,16 +862,16 @@ impl SensorDataProcessor {
             data_quality_checker: DataQualityChecker::new(),
         }
     }
-    
+
     pub async fn process_sensor_data(&mut self, sensor_data: SensorData) -> Result<(), ProcessingError> {
         // 1. 数据质量检查
         if !self.data_quality_checker.check_quality(&sensor_data) {
             return Err(ProcessingError::PoorDataQuality);
         }
-        
+
         // 2. 数据预处理
         let processed_data = self.preprocess_sensor_data(sensor_data)?;
-        
+
         // 3. 转换为数据点
         let data_point = DataPoint {
             device_id: processed_data.sensor_id.clone(),
@@ -879,28 +879,28 @@ impl SensorDataProcessor {
             value: processed_data.value,
             metadata: processed_data.metadata,
         };
-        
+
         // 4. 通过处理管道
         let result = self.pipeline.process_data(data_point).await?;
-        
+
         // 5. 处理结果
         self.handle_processing_result(result).await?;
-        
+
         Ok(())
     }
-    
+
     fn preprocess_sensor_data(&self, sensor_data: SensorData) -> Result<ProcessedSensorData, ProcessingError> {
         // 数据清洗
         let cleaned_value = self.clean_value(sensor_data.value)?;
-        
+
         // 单位转换
         let converted_value = self.convert_unit(cleaned_value, &sensor_data.unit)?;
-        
+
         // 异常值检测
         if self.is_outlier(converted_value, &sensor_data.sensor_id) {
             return Err(ProcessingError::OutlierDetected);
         }
-        
+
         Ok(ProcessedSensorData {
             sensor_id: sensor_data.sensor_id,
             timestamp: sensor_data.timestamp,
@@ -908,20 +908,20 @@ impl SensorDataProcessor {
             metadata: sensor_data.metadata,
         })
     }
-    
+
     fn clean_value(&self, value: f64) -> Result<f64, ProcessingError> {
         if value.is_nan() || value.is_infinite() {
             return Err(ProcessingError::InvalidValue);
         }
-        
+
         // 范围检查
         if value < -1000.0 || value > 1000.0 {
             return Err(ProcessingError::ValueOutOfRange);
         }
-        
+
         Ok(value)
     }
-    
+
     fn convert_unit(&self, value: f64, unit: &str) -> Result<f64, ProcessingError> {
         match unit {
             "celsius" => Ok(value),
@@ -930,7 +930,7 @@ impl SensorDataProcessor {
             _ => Ok(value), // 默认不转换
         }
     }
-    
+
     fn is_outlier(&self, value: f64, sensor_id: &str) -> bool {
         // 基于历史数据判断是否为异常值
         // 这里简化实现
@@ -952,4 +952,4 @@ impl SensorDataProcessor {
 **版本**: 1.0  
 **最后更新**: 2024-12-19  
 **作者**: IoT算法分析团队  
-**状态**: 已完成 
+**状态**: 已完成

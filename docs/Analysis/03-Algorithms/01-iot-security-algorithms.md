@@ -21,6 +21,7 @@ IoT系统面临着独特的安全挑战，包括设备资源受限、网络环�
 
 **定义 1.1 (IoT安全威胁)**
 IoT安全威胁是一个四元组 $T = (A, V, I, R)$，其中：
+
 - $A$ 是攻击者能力集合
 - $V$ 是漏洞集合
 - $I$ 是影响程度函数
@@ -28,6 +29,7 @@ IoT安全威胁是一个四元组 $T = (A, V, I, R)$，其中：
 
 **定义 1.2 (安全属性)**
 IoT系统应满足的安全属性：
+
 - **机密性**：$\forall m \in M, \text{confidential}(m) \Rightarrow \text{encrypted}(m)$
 - **完整性**：$\forall m \in M, \text{integrity}(m) \Rightarrow \text{hash}(m) = \text{verify}(m)$
 - **可用性**：$\forall s \in S, \text{available}(s) \Rightarrow \text{response}(s) \leq \text{threshold}$
@@ -38,6 +40,7 @@ IoT系统应满足的安全属性：
 
 **定义 2.1 (对称加密)**
 对称加密是一个三元组 $SE = (K, E, D)$，其中：
+
 - $K$ 是密钥空间
 - $E: K \times M \rightarrow C$ 是加密函数
 - $D: K \times C \rightarrow M$ 是解密函数
@@ -87,6 +90,7 @@ impl AESCipher {
 
 **定义 2.2 (非对称加密)**
 非对称加密是一个五元组 $AE = (K, PK, SK, E, D)$，其中：
+
 - $K$ 是密钥生成算法
 - $PK$ 是公钥空间
 - $SK$ 是私钥空间
@@ -134,6 +138,7 @@ impl RSACipher {
 
 **定义 3.1 (数字签名)**
 数字签名是一个四元组 $DS = (K, S, V, M)$，其中：
+
 - $K$ 是密钥生成算法
 - $S: SK \times M \rightarrow \Sigma$ 是签名函数
 - $V: PK \times M \times \Sigma \rightarrow \{0,1\}$ 是验证函数
@@ -179,11 +184,13 @@ impl ECDSASigner {
 
 **定义 3.2 (零知识证明)**
 零知识证明是一个三元组 $ZKP = (P, V, \pi)$，其中：
+
 - $P$ 是证明者算法
 - $V$ 是验证者算法
 - $\pi$ 是证明协议
 
 满足：
+
 1. **完备性**：如果陈述为真，诚实验证者接受诚实证明者的证明
 2. **可靠性**：如果陈述为假，任何证明者都无法让诚实验证者接受
 3. **零知识性**：验证者无法从证明中获得除陈述为真外的任何信息
@@ -194,6 +201,7 @@ impl ECDSASigner {
 
 **定义 4.1 (RBAC模型)**
 RBAC模型是一个四元组 $RBAC = (U, R, P, PA)$，其中：
+
 - $U$ 是用户集合
 - $R$ 是角色集合
 - $P$ 是权限集合
@@ -281,6 +289,7 @@ impl RBACSystem {
 
 **定义 4.2 (ABAC模型)**
 ABAC模型是一个三元组 $ABAC = (S, O, E)$，其中：
+
 - $S$ 是主体属性集合
 - $O$ 是客体属性集合
 - $E$ 是环境属性集合
@@ -406,6 +415,7 @@ impl ABACSystem {
 
 **定义 5.1 (安全属性)**
 安全属性是系统必须满足的条件，包括：
+
 - **保密性**：$\forall m \in M, \text{confidential}(m) \Rightarrow \text{encrypted}(m)$
 - **完整性**：$\forall m \in M, \text{integrity}(m) \Rightarrow \text{hash}(m) = \text{verify}(m)$
 - **认证性**：$\forall u \in U, \text{authenticated}(u) \Rightarrow \text{verified}(u)$
@@ -437,6 +447,7 @@ fn verify_encryption_property() {
 
 **定义 5.2 (状态机模型)**
 安全状态机是一个四元组 $SM = (S, I, T, P)$，其中：
+
 - $S$ 是状态集合
 - $I \subseteq S$ 是初始状态集合
 - $T \subseteq S \times S$ 是转移关系
@@ -535,6 +546,7 @@ impl IoTSecuritySystem {
 ### 7.1 时间复杂度
 
 **定理 7.1 (加密算法复杂度)**
+
 - AES加密/解密：$O(n)$，其中 $n$ 是数据长度
 - RSA加密：$O(k^3)$，其中 $k$ 是密钥长度
 - ECDSA签名：$O(k^2)$，其中 $k$ 是密钥长度
@@ -542,6 +554,7 @@ impl IoTSecuritySystem {
 ### 7.2 空间复杂度
 
 **定理 7.2 (存储复杂度)**
+
 - 对称密钥：$O(1)$
 - 非对称密钥对：$O(k)$，其中 $k$ 是密钥长度
 - 数字签名：$O(k)$，其中 $k$ 是密钥长度
@@ -567,7 +580,8 @@ impl IoTSecuritySystem {
 ---
 
 **版本信息**
+
 - 版本：1.0
 - 创建时间：2024-12-19
 - 最后更新：2024-12-19
-- 状态：初始版本 
+- 状态：初始版本

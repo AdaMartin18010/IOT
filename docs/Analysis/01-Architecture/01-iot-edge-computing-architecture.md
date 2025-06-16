@@ -124,33 +124,33 @@ impl IoTEdgeNode {
             local_storage: LocalStorage::new(),
         }
     }
-    
+
     pub async fn run(&mut self) -> Result<(), EdgeError> {
         loop {
             // 1. 接收传感器数据
             let sensor_data = self.communication_manager.receive_data().await?;
-            
+
             // 2. 资源分配决策
             let allocation = self.allocate_resources_for_data(&sensor_data)?;
-            
+
             // 3. 本地数据处理
             let processed_data = self.process_data(&sensor_data).await?;
-            
+
             // 4. 本地存储
             self.local_storage.store(&processed_data).await?;
-            
+
             // 5. 决策是否需要上传到云端
             if self.should_upload_to_cloud(&processed_data) {
                 self.communication_manager.upload_data(&processed_data).await?;
             }
-            
+
             tokio::time::sleep(Duration::from_millis(100)).await;
         }
     }
-    
+
     fn should_upload_to_cloud(&self, data: &ProcessedData) -> bool {
         // 基于数据重要性、本地存储容量、网络状况等因素决策
-        data.importance > 0.7 || 
+        data.importance > 0.7 ||
         self.local_storage.usage_ratio() > 0.8 ||
         self.communication_manager.network_quality() > 0.6
     }
@@ -161,7 +161,7 @@ impl IoTEdgeNode {
 
 ```rust
 // 事件定义
-#[derive(Debug, Clone, Serialize, Deserialize)]
+# [derive(Debug, Clone, Serialize, Deserialize)]
 pub enum EdgeEvent {
     DataReceived(SensorData),
     ResourceAllocated(ResourceAllocation),
@@ -188,17 +188,17 @@ impl EdgeEventBus {
             event_queue: VecDeque::new(),
         }
     }
-    
+
     pub fn subscribe<T: 'static>(&mut self, handler: Box<dyn EventHandler>) {
         let type_id = TypeId::of::<T>();
         self.handlers.entry(type_id).or_insert_with(Vec::new).push(handler);
     }
-    
+
     pub async fn publish(&mut self, event: EdgeEvent) -> Result<(), EdgeError> {
         self.event_queue.push_back(event);
         self.process_events().await
     }
-    
+
     async fn process_events(&mut self) -> Result<(), EdgeError> {
         while let Some(event) = self.event_queue.pop_front() {
             let type_id = TypeId::of::<EdgeEvent>();
@@ -231,7 +231,7 @@ impl ResourceAllocationAlgorithm {
             constraints: Vec::new(),
         }
     }
-    
+
     pub fn allocate_resources(
         &self,
         tasks: &[Task],
@@ -239,23 +239,23 @@ impl ResourceAllocationAlgorithm {
     ) -> Result<Vec<ResourceAllocation>, AllocationError> {
         // 构建优化问题
         let mut problem = OptimizationProblem::new();
-        
+
         // 目标函数：最小化总延迟
         let objective = self.build_objective_function(tasks, nodes);
         problem.set_objective(objective, OptimizationDirection::Minimize);
-        
+
         // 添加约束条件
         for constraint in &self.constraints {
             problem.add_constraint(constraint.clone());
         }
-        
+
         // 求解优化问题
         let solution = self.optimization_model.solve(&problem)?;
-        
+
         // 转换为资源分配结果
         self.convert_solution_to_allocation(solution, tasks, nodes)
     }
-    
+
     fn build_objective_function(
         &self,
         tasks: &[Task],
@@ -263,7 +263,7 @@ impl ResourceAllocationAlgorithm {
     ) -> ObjectiveFunction {
         // 构建线性规划目标函数
         let mut objective = ObjectiveFunction::new();
-        
+
         for (i, task) in tasks.iter().enumerate() {
             for (j, node) in nodes.iter().enumerate() {
                 let coefficient = self.calculate_processing_cost(task, node);
@@ -271,7 +271,7 @@ impl ResourceAllocationAlgorithm {
                 objective.add_term(coefficient, variable);
             }
         }
-        
+
         objective
     }
 }
@@ -293,7 +293,7 @@ impl TaskScheduler {
             priority_queue: BinaryHeap::new(),
         }
     }
-    
+
     pub fn schedule_tasks(
         &mut self,
         tasks: Vec<Task>,
@@ -301,10 +301,10 @@ impl TaskScheduler {
     ) -> Result<Vec<ScheduledTask>, SchedulingError> {
         // 根据调度策略对任务进行排序
         let mut sorted_tasks = self.sort_tasks_by_policy(tasks);
-        
+
         let mut scheduled_tasks = Vec::new();
         let mut remaining_resources = available_resources.clone();
-        
+
         for task in sorted_tasks {
             if let Some(allocation) = self.find_feasible_allocation(&task, &remaining_resources) {
                 let scheduled_task = ScheduledTask {
@@ -313,7 +313,7 @@ impl TaskScheduler {
                     start_time: self.calculate_start_time(&allocation),
                     estimated_duration: self.estimate_duration(&task, &allocation),
                 };
-                
+
                 scheduled_tasks.push(scheduled_task.clone());
                 self.update_resource_usage(&mut remaining_resources, &allocation);
             } else {
@@ -321,10 +321,10 @@ impl TaskScheduler {
                 return Err(SchedulingError::InsufficientResources);
             }
         }
-        
+
         Ok(scheduled_tasks)
     }
-    
+
     fn sort_tasks_by_policy(&self, mut tasks: Vec<Task>) -> Vec<Task> {
         match self.scheduling_policy {
             SchedulingPolicy::EarliestDeadlineFirst => {
@@ -373,72 +373,72 @@ impl CompleteEdgeNode {
             local_storage: LocalStorage::new(),
             metrics_collector: MetricsCollector::new(),
         };
-        
+
         // 注册事件处理器
         node.register_event_handlers();
-        
+
         node
     }
-    
+
     fn register_event_handlers(&mut self) {
         // 注册数据接收处理器
         self.event_bus.subscribe::<SensorData>(Box::new(
             DataReceivedHandler::new(self.data_processor.clone())
         ));
-        
+
         // 注册任务完成处理器
         self.event_bus.subscribe::<TaskResult>(Box::new(
             TaskCompletedHandler::new(self.resource_manager.clone())
         ));
-        
+
         // 注册告警处理器
         self.event_bus.subscribe::<Alert>(Box::new(
             AlertHandler::new(self.communication_manager.clone())
         ));
     }
-    
+
     pub async fn start(&mut self) -> Result<(), EdgeError> {
         info!("Starting edge node: {}", self.id);
-        
+
         // 启动各个组件
         self.communication_manager.start().await?;
         self.local_storage.start().await?;
         self.metrics_collector.start().await?;
-        
+
         // 主事件循环
         self.event_loop().await
     }
-    
+
     async fn event_loop(&mut self) -> Result<(), EdgeError> {
         loop {
             // 处理通信事件
             if let Ok(data) = self.communication_manager.receive_data().await {
                 self.event_bus.publish(EdgeEvent::DataReceived(data)).await?;
             }
-            
+
             // 处理云端命令
             if let Ok(command) = self.communication_manager.receive_command().await {
                 self.event_bus.publish(EdgeEvent::CloudCommandReceived(command)).await?;
             }
-            
+
             // 更新资源状态
             self.resource_manager.update_status().await?;
-            
+
             // 收集性能指标
             self.metrics_collector.collect_metrics().await?;
-            
+
             // 检查节点健康状态
             if !self.is_healthy() {
                 error!("Edge node {} is unhealthy", self.id);
                 break;
             }
-            
+
             tokio::time::sleep(Duration::from_millis(10)).await;
         }
-        
+
         Ok(())
     }
-    
+
     fn is_healthy(&self) -> bool {
         self.resource_manager.cpu_usage() < 0.9 &&
         self.resource_manager.memory_usage() < 0.9 &&
@@ -467,44 +467,44 @@ impl EdgeOrchestrator {
             fault_detector: FaultDetector::new(),
         }
     }
-    
+
     pub async fn orchestrate(&mut self) -> Result<(), OrchestrationError> {
         loop {
             // 1. 检测故障节点
             let failed_nodes = self.fault_detector.detect_failures(&self.nodes).await?;
-            
+
             // 2. 处理故障恢复
             for failed_node in failed_nodes {
                 self.handle_node_failure(&failed_node).await?;
             }
-            
+
             // 3. 负载均衡
             let load_distribution = self.load_balancer.calculate_optimal_distribution(&self.nodes).await?;
             self.apply_load_distribution(load_distribution).await?;
-            
+
             // 4. 拓扑优化
             let topology_update = self.topology_manager.optimize_topology(&self.nodes).await?;
             self.apply_topology_update(topology_update).await?;
-            
+
             tokio::time::sleep(Duration::from_secs(30)).await;
         }
     }
-    
+
     async fn handle_node_failure(&mut self, failed_node: &NodeId) -> Result<(), OrchestrationError> {
         // 1. 将故障节点的任务迁移到其他节点
         let tasks = self.get_node_tasks(failed_node).await?;
         let target_nodes = self.find_available_nodes(&tasks).await?;
-        
+
         for (task, target_node) in tasks.into_iter().zip(target_nodes) {
             self.migrate_task(&task, &target_node).await?;
         }
-        
+
         // 2. 更新拓扑信息
         self.topology_manager.remove_node(failed_node).await?;
-        
+
         // 3. 尝试重启故障节点
         self.attempt_node_recovery(failed_node).await?;
-        
+
         Ok(())
     }
 }
@@ -583,4 +583,4 @@ $$\begin{align}
 **版本**: 1.0  
 **最后更新**: 2024-12-19  
 **作者**: IoT架构分析团队  
-**状态**: 已完成 
+**状态**: 已完成
