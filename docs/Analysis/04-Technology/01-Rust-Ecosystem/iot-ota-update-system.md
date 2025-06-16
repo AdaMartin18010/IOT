@@ -30,6 +30,7 @@ OTA (Over-the-Air) 更新系统是IoT设备软件维护的核心技术，它允�
 $$O = (S, C, P, M, \mathcal{P}, \mathcal{S})$$
 
 其中：
+
 - $S$ 是OTA服务器
 - $C$ 是设备客户端集合
 - $P$ 是更新包集合
@@ -44,6 +45,7 @@ $$O = (S, C, P, M, \mathcal{P}, \mathcal{S})$$
 $$p = (b, m, s, h)$$
 
 其中：
+
 - $b$ 是二进制载荷
 - $m$ 是元数据
 - $s$ 是签名
@@ -56,6 +58,7 @@ $$p = (b, m, s, h)$$
 $$m = (v_{new}, v_{req}, h_p, \sigma_m, R_c, I_s)$$
 
 其中：
+
 - $v_{new}$ 是新版本号
 - $v_{req}$ 是要求的当前版本
 - $h_p$ 是更新包哈希
@@ -72,6 +75,7 @@ $$\forall p \in P, \forall c \in C: \text{Apply}(p, c) \Rightarrow (\text{Succes
 则系统具有原子性。
 
 **证明**：
+
 1. 更新操作要么完全成功
 2. 要么完全失败并回滚
 3. 不存在中间状态
@@ -85,6 +89,7 @@ OTA状态机 $M_{OTA}$ 定义为：
 $$M_{OTA} = (Q, \Sigma, \delta, q_0, F)$$
 
 其中：
+
 - $Q = \{\text{IDLE}, \text{CHECKING}, \text{DOWNLOADING}, \text{VERIFYING}, \text{APPLYING}, \text{REPORTING}, \text{ERROR}\}$
 - $\Sigma$ 是事件集合
 - $\delta: Q \times \Sigma \rightarrow Q$ 是状态转换函数
@@ -647,6 +652,7 @@ pub enum OTAError {
 $$\sigma = \text{Sign}(sk, h(m))$$
 
 其中：
+
 - $sk$ 是私钥
 - $h(m)$ 是消息哈希
 - $\text{Sign}$ 是签名函数
@@ -793,4 +799,4 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 2. Apple. "iOS Update Process"
 3. Microsoft. "Windows Update Architecture"
 4. IETF. "RFC 8555: Automatic Certificate Management Environment"
-5. NIST. "Digital Signature Standard (DSS)" 
+5. NIST. "Digital Signature Standard (DSS)"

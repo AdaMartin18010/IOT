@@ -663,7 +663,7 @@ impl SecurityPolicy {
     pub fn check_access(&self, subject: &SubjectId, object: &ObjectId, action: &Action) -> bool {
         let subject_level = self.subjects.get(subject).map(|s| s.security_level);
         let object_level = self.objects.get(object).map(|o| o.security_level);
-        
+
         match (subject_level, object_level) {
             (Some(subj_level), Some(obj_level)) => {
                 subj_level >= obj_level && self.access_matrix.is_allowed(subject, object, action)
@@ -684,7 +684,7 @@ impl EncryptionMechanism {
         let key = self.key_manager.get_key(key_id).await?;
         self.algorithm.encrypt(data, &key).await
     }
-    
+
     pub async fn decrypt(&self, encrypted_data: &[u8], key_id: &KeyId) -> Result<Vec<u8>, EncryptionError> {
         let key = self.key_manager.get_key(key_id).await?;
         self.algorithm.decrypt(encrypted_data, &key).await
@@ -703,7 +703,7 @@ impl AuthenticationMechanism {
         let session = self.session_manager.create_session(&user).await?;
         Ok(session)
     }
-    
+
     pub async fn verify_session(&self, session_id: &SessionId) -> Result<bool, AuthenticationError> {
         self.session_manager.is_valid(session_id).await
     }
@@ -724,21 +724,21 @@ impl SecurityArchitecture {
         if !session {
             return Err(SecurityError::InvalidSession);
         }
-        
+
         // 2. 检查访问权限
         if !self.security_policy.check_access(&message.sender, &message.object, &message.action) {
             return Err(SecurityError::AccessDenied);
         }
-        
+
         // 3. 加密消息
         let encrypted_data = self.encryption.encrypt(&message.data, &message.key_id).await?;
-        
+
         // 4. 记录安全事件
         self.monitoring.log_security_event(SecurityEvent::MessageEncrypted {
             sender: message.sender.clone(),
             timestamp: SystemTime::now(),
         }).await?;
-        
+
         Ok(SecureMessage {
             encrypted_data,
             metadata: message.metadata.clone(),
@@ -793,10 +793,10 @@ impl<K: Clone + Eq + Hash, V: Clone> CacheManager<K, V> {
             statistics: CacheStatistics::new(),
         }
     }
-    
+
     pub async fn get(&self, key: &K) -> Option<V> {
         let mut cache = self.cache.lock().await;
-        
+
         if let Some(value) = cache.get(key) {
             self.statistics.record_hit();
             Some(value.clone())
@@ -805,12 +805,12 @@ impl<K: Clone + Eq + Hash, V: Clone> CacheManager<K, V> {
             None
         }
     }
-    
+
     pub async fn put(&self, key: K, value: V) {
         let mut cache = self.cache.lock().await;
         cache.put(key, value);
     }
-    
+
     pub fn get_statistics(&self) -> &CacheStatistics {
         &self.statistics
     }
@@ -826,15 +826,15 @@ impl AlgorithmOptimizer {
     pub async fn optimize_algorithm(&self, algorithm: &mut dyn Algorithm) -> Result<(), OptimizationError> {
         // 1. 分析当前性能
         let baseline_performance = self.performance_monitor.measure_performance(algorithm).await?;
-        
+
         // 2. 应用优化策略
         for optimization in &self.optimizations {
             if optimization.is_applicable(algorithm) {
                 optimization.apply(algorithm).await?;
-                
+
                 // 3. 验证优化效果
                 let optimized_performance = self.performance_monitor.measure_performance(algorithm).await?;
-                
+
                 if optimized_performance.is_better_than(&baseline_performance) {
                     println!("Optimization applied successfully: {:?}", optimization.name());
                 } else {
@@ -843,7 +843,7 @@ impl AlgorithmOptimizer {
                 }
             }
         }
-        
+
         Ok(())
     }
 }
@@ -862,16 +862,16 @@ impl ResourceManager {
         let available_cpu = self.cpu_pool.available_cpus();
         let available_memory = self.memory_pool.available_memory();
         let available_io = self.io_pool.available_bandwidth();
-        
+
         if available_cpu >= request.cpu_cores &&
            available_memory >= request.memory_mb &&
            available_io >= request.io_bandwidth {
-            
+
             // 2. 分配资源
             let cpu_allocation = self.cpu_pool.allocate(request.cpu_cores).await?;
             let memory_allocation = self.memory_pool.allocate(request.memory_mb).await?;
             let io_allocation = self.io_pool.allocate(request.io_bandwidth).await?;
-            
+
             Ok(ResourceAllocation {
                 cpu: cpu_allocation,
                 memory: memory_allocation,
@@ -881,7 +881,7 @@ impl ResourceManager {
             Err(ResourceError::InsufficientResources)
         }
     }
-    
+
     pub async fn release_resources(&self, allocation: &ResourceAllocation) -> Result<(), ResourceError> {
         self.cpu_pool.release(&allocation.cpu).await?;
         self.memory_pool.release(&allocation.memory).await?;
@@ -902,10 +902,10 @@ impl PerformanceOptimizationArchitecture {
     pub async fn optimize_system(&mut self) -> Result<(), OptimizationError> {
         // 1. 监控系统性能
         let current_performance = self.performance_monitor.get_system_performance().await?;
-        
+
         // 2. 识别性能瓶颈
         let bottlenecks = self.performance_monitor.identify_bottlenecks().await?;
-        
+
         // 3. 应用优化策略
         for bottleneck in bottlenecks {
             match bottleneck {
@@ -914,36 +914,36 @@ impl PerformanceOptimizationArchitecture {
                 Bottleneck::ResourceContention => self.optimize_resources().await?,
             }
         }
-        
+
         // 4. 验证优化效果
         let optimized_performance = self.performance_monitor.get_system_performance().await?;
-        
+
         if optimized_performance.is_better_than(&current_performance) {
             println!("System optimization successful");
         } else {
             println!("System optimization did not improve performance");
         }
-        
+
         Ok(())
     }
-    
+
     async fn optimize_cache(&self) -> Result<(), OptimizationError> {
         let stats = self.cache_manager.get_statistics();
-        
+
         if stats.hit_rate() < 0.8 {
             // 增加缓存大小或改进缓存策略
             println!("Optimizing cache strategy");
         }
-        
+
         Ok(())
     }
-    
+
     async fn optimize_algorithms(&self) -> Result<(), OptimizationError> {
         // 应用算法优化
         self.algorithm_optimizer.optimize_algorithm(&mut DummyAlgorithm).await?;
         Ok(())
     }
-    
+
     async fn optimize_resources(&self) -> Result<(), OptimizationError> {
         // 优化资源分配
         println!("Optimizing resource allocation");
@@ -978,33 +978,33 @@ impl IoTSystemArchitecture {
             performance: PerformanceOptimizationArchitecture::new(),
         }
     }
-    
+
     pub async fn run(&mut self) -> Result<(), ArchitectureError> {
         // 启动所有架构组件
         let layered_handle = tokio::spawn(async move {
             self.layered_architecture.run().await
         });
-        
+
         let edge_handle = tokio::spawn(async move {
             self.edge_computing.run().await
         });
-        
+
         let event_handle = tokio::spawn(async move {
             self.event_driven.run().await
         });
-        
+
         let distributed_handle = tokio::spawn(async move {
             self.distributed.run().await
         });
-        
+
         let security_handle = tokio::spawn(async move {
             self.security.run().await
         });
-        
+
         let performance_handle = tokio::spawn(async move {
             self.performance.run().await
         });
-        
+
         // 等待所有组件完成
         tokio::try_join!(
             layered_handle,
@@ -1014,44 +1014,44 @@ impl IoTSystemArchitecture {
             security_handle,
             performance_handle
         )?;
-        
+
         Ok(())
     }
-    
+
     pub async fn process_iot_data(&self, data: &IoTData) -> Result<ProcessedData, ArchitectureError> {
         // 1. 通过分层架构处理数据
         let layered_result = self.layered_architecture.process_data(&data.raw_data).await?;
-        
+
         // 2. 通过边缘计算进行本地处理
         let edge_result = self.edge_computing.process_data(&layered_result).await?;
-        
+
         // 3. 通过事件驱动架构处理事件
         let event = Event::from_data(&edge_result);
         self.event_driven.publish_event(event).await?;
-        
+
         // 4. 通过分布式系统进行协作
         let distributed_result = self.distributed.process_data(&edge_result).await?;
-        
+
         // 5. 应用安全策略
         let secure_result = self.security.secure_communication(&distributed_result).await?;
-        
+
         // 6. 优化性能
         self.performance.optimize_system().await?;
-        
+
         Ok(ProcessedData::from_secure_message(secure_result))
     }
 }
 
 // 主函数示例
-#[tokio::main]
+# [tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     println!("Starting IoT System Architecture...");
-    
+
     let mut iot_architecture = IoTSystemArchitecture::new();
-    
+
     // 运行IoT系统架构
     iot_architecture.run().await?;
-    
+
     println!("IoT System Architecture completed successfully");
     Ok(())
 }
@@ -1066,4 +1066,4 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 3. **Rust实现**：提供完整的代码实现示例
 4. **架构模式**：涵盖分层、边缘计算、事件驱动、分布式、安全和性能优化
 
-这些架构模式为IoT系统的设计、实现和优化提供了坚实的理论基础和实践指导。 
+这些架构模式为IoT系统的设计、实现和优化提供了坚实的理论基础和实践指导。
