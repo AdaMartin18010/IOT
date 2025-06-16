@@ -48,6 +48,7 @@ $$\mathcal{H} = \{\text{感知层}, \text{网络层}, \text{处理层}, \text{�
 
 **证明：**
 通过归纳法证明：
+
 - **基础情况**：$L_1$ 的行为由其接口 $I_1$ 完全定义
 - **归纳步骤**：假设 $L_k$ 的行为可预测，则 $L_{k+1}$ 通过 $I_k$ 与 $L_k$ 交互，行为可预测
 - **结论**：所有层次的行为都是可预测的
@@ -81,7 +82,7 @@ $$\llbracket e \rrbracket = \lambda h. h(e)$$
 - $P$ 是处理策略，$P: \mathcal{D} \rightarrow \mathcal{A}$
 - $A$ 是可用性，$A \in [0,1]$
 
-**算法 2.1 (边缘计算调度算法)**
+**算法 2.1 (边缘计算调度算法)**:
 
 ```rust
 pub struct EdgeScheduler {
@@ -136,6 +137,7 @@ impl EdgeScheduler {
 $$\mathcal{M}_1 \circ \mathcal{M}_2 = \mathcal{M}_{composite}$$
 
 其中 $\mathcal{M}_{composite}$ 满足：
+
 - $I_{composite} = I_1 \cup (I_2 \setminus O_1)$
 - $O_{composite} = O_2 \cup (O_1 \setminus I_2)$
 - $S_{composite} = S_1 \times S_2$
@@ -473,6 +475,7 @@ impl WasmRuntimeManager {
 $$P(\mathcal{I}) = \alpha \cdot T + \beta \cdot M + \gamma \cdot E$$
 
 其中：
+
 - $T$ 是吞吐量
 - $M$ 是内存使用
 - $E$ 是能耗
@@ -498,6 +501,7 @@ $$\phi_{security} = \forall t \in \mathbb{T}, \forall d \in \mathcal{D}: \text{s
 
 **证明：**
 通过不变式方法：
+
 1. **初始条件**：$\phi_{security}(t_0)$ 成立
 2. **保持条件**：$\forall t, \phi_{security}(t) \Rightarrow \phi_{security}(t+1)$
 3. **结论**：$\forall t, \phi_{security}(t)$ 成立
@@ -513,4 +517,4 @@ $$\phi_{security} = \forall t \in \mathbb{T}, \forall d \in \mathcal{D}: \text{s
 5. **工程实现**：展示了Rust和WebAssembly的具体实现
 6. **验证与证明**：证明了系统的正确性、性能和安全性
 
-该框架为IoT系统的设计、实现和验证提供了完整的理论基础和工程指导。 
+该框架为IoT系统的设计、实现和验证提供了完整的理论基础和工程指导。

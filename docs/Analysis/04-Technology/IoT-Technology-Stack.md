@@ -35,6 +35,7 @@ $$\mathcal{H}_{tech} = \{\text{硬件层}, \text{系统层}, \text{应用层}, \
 
 **定义 2.1 (微服务)**
 微服务是一个四元组 $\mathcal{M} = (I, O, S, D)$，其中：
+
 - $I$ 是输入接口
 - $O$ 是输出接口  
 - $S$ 是服务状态
@@ -73,6 +74,7 @@ impl MicroserviceDesigner {
 
 **定义 2.2 (服务网格)**
 服务网格是一个三元组 $\mathcal{M}_{grid} = (\mathcal{P}, \mathcal{C}, \mathcal{O})$，其中：
+
 - $\mathcal{P}$ 是代理集合
 - $\mathcal{C}$ 是控制平面
 - $\mathcal{O}$ 是观测平面

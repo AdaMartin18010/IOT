@@ -146,6 +146,7 @@ impl PerformanceModeler {
 $$\mathcal{P}_{net} = (B, L, J, P)$$
 
 其中：
+
 - $B$ 是带宽，$B \in \mathbb{R}^+$
 - $L$ 是延迟，$L \in \mathbb{R}^+$
 - $J$ 是抖动，$J \in \mathbb{R}^+$
@@ -593,4 +594,4 @@ impl PerformanceTestFramework {
 5. **监控与分析**：实现了性能监控和预测系统
 6. **工程实践**：提供了Rust性能优化和测试框架
 
-该性能分析体系为IoT系统的性能优化提供了完整的理论指导和工程实践。 
+该性能分析体系为IoT系统的性能优化提供了完整的理论指导和工程实践。

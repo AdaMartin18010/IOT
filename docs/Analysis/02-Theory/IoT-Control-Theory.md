@@ -1,630 +1,496 @@
-# IoT控制理论：分布式系统与智能控制
+# IoT控制理论与形式化建模
 
 ## 目录
 
-1. [理论基础](#理论基础)
-2. [分布式控制](#分布式控制)
-3. [IoT控制系统](#iot控制系统)
-4. [智能控制算法](#智能控制算法)
-5. [稳定性分析](#稳定性分析)
-6. [工程实现](#工程实现)
+1. [概述与定义](#概述与定义)
+2. [IoT动态系统建模](#iot动态系统建模)
+3. [分布式控制系统](#分布式控制系统)
+4. [自适应控制算法](#自适应控制算法)
+5. [鲁棒控制理论](#鲁棒控制理论)
+6. [事件驱动控制](#事件驱动控制)
+7. [实现架构](#实现架构)
 
-## 1. 理论基础
+## 概述与定义
 
-### 1.1 IoT控制系统形式化定义
+### 定义 1.1 (IoT控制系统)
+一个IoT控制系统是一个六元组 $\mathcal{C} = (D, N, S, C, A, F)$，其中：
+- $D$ 是设备集合 $D = \{d_1, d_2, ..., d_n\}$
+- $N$ 是网络拓扑 $N = (V, E)$
+- $S$ 是系统状态空间 $S = \prod_{i=1}^n S_i$，其中 $S_i$ 是设备 $d_i$ 的状态空间
+- $C$ 是控制策略集合 $C = \{c_1, c_2, ..., c_m\}$
+- $A$ 是执行器集合 $A = \{a_1, a_2, ..., a_k\}$
+- $F$ 是反馈函数集合 $F = \{f_1, f_2, ..., f_p\}$
 
-**定义 1.1 (IoT控制系统)**
-IoT控制系统是一个七元组 $\mathcal{C}_{IoT} = (\mathcal{D}, \mathcal{S}, \mathcal{U}, \mathcal{Y}, \mathcal{F}, \mathcal{G}, \mathcal{K})$，其中：
-
-- $\mathcal{D}$ 是设备集合，$\mathcal{D} = \{d_1, d_2, ..., d_n\}$
-- $\mathcal{S}$ 是状态空间，$\mathcal{S} = \mathbb{R}^n$
-- $\mathcal{U}$ 是控制输入空间，$\mathcal{U} = \mathbb{R}^m$
-- $\mathcal{Y}$ 是输出空间，$\mathcal{Y} = \mathbb{R}^p$
-- $\mathcal{F}$ 是系统动力学，$\mathcal{F}: \mathcal{S} \times \mathcal{U} \rightarrow \mathcal{S}$
-- $\mathcal{G}$ 是输出映射，$\mathcal{G}: \mathcal{S} \times \mathcal{U} \rightarrow \mathcal{Y}$
-- $\mathcal{K}$ 是控制律，$\mathcal{K}: \mathcal{S} \times \mathcal{Y} \rightarrow \mathcal{U}$
-
-**定义 1.2 (分布式IoT系统)**
-分布式IoT系统是一个网络化控制系统，其中每个节点 $i$ 具有局部动力学：
-
-$$\dot{x}_i(t) = f_i(x_i(t), u_i(t), \sum_{j \in \mathcal{N}_i} a_{ij} x_j(t))$$
-
-$$y_i(t) = h_i(x_i(t), u_i(t))$$
-
-其中 $\mathcal{N}_i$ 是节点 $i$ 的邻居集合，$a_{ij}$ 是耦合强度。
-
-**定理 1.1 (分布式系统可分解性)**
-如果分布式IoT系统的耦合矩阵 $A = [a_{ij}]$ 满足某些条件，则系统可以分解为局部子系统和耦合项。
-
-**证明：**
-通过图论和矩阵分析：
-
-1. **图分解**：将网络拓扑分解为连通分量
-2. **矩阵分解**：将耦合矩阵分解为对角块和耦合块
-3. **系统分解**：每个连通分量对应一个子系统
-
-### 1.2 控制架构层次
-
-**定义 1.3 (分层控制架构)**
-IoT分层控制架构定义为：
-
-$$\mathcal{H} = \{\text{设备层}, \text{边缘层}, \text{云端层}\}$$
-
-每层具有不同的控制目标和约束：
-
-1. **设备层**：$\mathcal{C}_{device} = \{响应时间 \leq 1ms, 功耗 \leq 100mW\}$
-2. **边缘层**：$\mathcal{C}_{edge} = \{响应时间 \leq 100ms, 计算能力 \leq 2GHz\}$
-3. **云端层**：$\mathcal{C}_{cloud} = \{响应时间 \leq 1s, 存储容量 \geq 1TB\}$
-
-**定义 1.4 (控制层次关系)**
-控制层次关系定义为：
-$$\mathcal{C}_{device} \prec \mathcal{C}_{edge} \prec \mathcal{C}_{cloud}$$
-
-其中 $\prec$ 表示控制依赖关系。
-
-## 2. 分布式控制
-
-### 2.1 一致性控制理论
-
-**定义 2.1 (一致性)**
-分布式系统达到一致性，如果：
-$$\lim_{t \rightarrow \infty} \|x_i(t) - x_j(t)\| = 0, \quad \forall i, j \in \mathcal{V}$$
-
-**定义 2.2 (平均一致性)**
-系统达到平均一致性，如果：
-$$\lim_{t \rightarrow \infty} x_i(t) = \frac{1}{n} \sum_{j=1}^n x_j(0), \quad \forall i \in \mathcal{V}$$
-
-**定理 2.1 (一致性收敛条件)**
-如果通信图是连通的，且控制律为：
-$$u_i(t) = -\sum_{j \in \mathcal{N}_i} a_{ij}(x_i(t) - x_j(t))$$
-
-则系统达到一致性。
-
-**证明：**
-通过李雅普诺夫方法：
-
-1. **构造李雅普诺夫函数**：$V(x) = \frac{1}{2} \sum_{i=1}^n (x_i - \bar{x})^2$
-2. **计算导数**：$\dot{V}(x) = -\sum_{i=1}^n \sum_{j \in \mathcal{N}_i} a_{ij}(x_i - x_j)^2 \leq 0$
-3. **应用LaSalle不变原理**：得到一致性收敛
-
-**算法 2.1 (分布式一致性算法)**
-
-```rust
-pub struct ConsensusController {
-    network: NetworkTopology,
-    coupling_strength: f64,
-    convergence_threshold: f64,
-}
-
-impl ConsensusController {
-    pub async fn run_consensus(&mut self, initial_states: Vec<f64>) -> Result<Vec<f64>, ConsensusError> {
-        let mut current_states = initial_states.clone();
-        let mut iteration = 0;
-        let max_iterations = 1000;
-        
-        while iteration < max_iterations {
-            let mut new_states = current_states.clone();
-            
-            // 计算一致性更新
-            for node_id in 0..current_states.len() {
-                let neighbors = self.network.get_neighbors(node_id);
-                let mut consensus_term = 0.0;
-                
-                for neighbor_id in neighbors {
-                    let state_diff = current_states[node_id] - current_states[neighbor_id];
-                    consensus_term += self.coupling_strength * state_diff;
-                }
-                
-                new_states[node_id] = current_states[node_id] - consensus_term;
-            }
-            
-            // 检查收敛性
-            let max_diff = self.calculate_max_difference(&current_states, &new_states);
-            if max_diff < self.convergence_threshold {
-                return Ok(new_states);
-            }
-            
-            current_states = new_states;
-            iteration += 1;
-        }
-        
-        Err(ConsensusError::MaxIterationsReached)
-    }
-    
-    fn calculate_max_difference(&self, states1: &[f64], states2: &[f64]) -> f64 {
-        states1.iter()
-            .zip(states2.iter())
-            .map(|(s1, s2)| (s1 - s2).abs())
-            .fold(0.0, f64::max)
-    }
-}
-```
-
-### 2.2 编队控制
-
-**定义 2.3 (编队)**
-编队是设备在空间中的相对位置配置：
-$$\mathcal{F} = \{p_1^d, p_2^d, ..., p_n^d\}$$
-
-其中 $p_i^d$ 是设备 $i$ 的期望位置。
-
-**定义 2.4 (编队控制)**
-编队控制律定义为：
-$$u_i(t) = -k_p(p_i(t) - p_i^d) - k_v \dot{p}_i(t) + \sum_{j \in \mathcal{N}_i} a_{ij}(p_j(t) - p_i(t) - (p_j^d - p_i^d))$$
-
-**定理 2.2 (编队稳定性)**
-如果通信图是连通的，且控制参数 $k_p, k_v > 0$，则编队控制系统是渐近稳定的。
-
-**算法 2.2 (编队控制算法)**
-
-```rust
-pub struct FormationController {
-    formation: Formation,
-    control_gains: ControlGains,
-    network: NetworkTopology,
-}
-
-impl FormationController {
-    pub async fn control_formation(&mut self, current_positions: Vec<Position>) -> Result<Vec<ControlInput>, FormationError> {
-        let mut control_inputs = Vec::new();
-        
-        for (node_id, current_pos) in current_positions.iter().enumerate() {
-            let desired_pos = self.formation.get_desired_position(node_id);
-            
-            // 计算位置误差
-            let position_error = current_pos - desired_pos;
-            
-            // 计算速度项（假设可用）
-            let velocity = self.estimate_velocity(node_id);
-            
-            // 计算编队项
-            let formation_term = self.calculate_formation_term(node_id, &current_positions);
-            
-            // 合成控制输入
-            let control_input = ControlInput {
-                linear: -self.control_gains.kp * position_error - 
-                        self.control_gains.kv * velocity + 
-                        formation_term,
-                angular: 0.0, // 简化为2D情况
-            };
-            
-            control_inputs.push(control_input);
-        }
-        
-        Ok(control_inputs)
-    }
-    
-    fn calculate_formation_term(&self, node_id: usize, positions: &[Position]) -> Vector2D {
-        let neighbors = self.network.get_neighbors(node_id);
-        let mut formation_term = Vector2D::zero();
-        
-        for neighbor_id in neighbors {
-            let relative_pos = positions[neighbor_id] - positions[node_id];
-            let desired_relative_pos = self.formation.get_relative_position(node_id, neighbor_id);
-            let formation_error = relative_pos - desired_relative_pos;
-            
-            formation_term += self.control_gains.formation_gain * formation_error;
-        }
-        
-        formation_term
-    }
-}
-```
-
-## 3. IoT控制系统
-
-### 3.1 设备级控制
-
-**定义 3.1 (设备控制)**
-设备控制是单个IoT设备的局部控制：
-$$\mathcal{C}_{device} = (x_d, u_d, f_d, g_d, K_d)$$
-
+### 定义 1.2 (IoT动态系统)
+IoT动态系统的状态方程：
+$$\dot{x}(t) = f(x(t), u(t), w(t))$$
+$$y(t) = h(x(t), v(t))$$
 其中：
-- $x_d \in \mathbb{R}^{n_d}$ 是设备状态
-- $u_d \in \mathbb{R}^{m_d}$ 是控制输入
-- $f_d$ 是设备动力学
-- $g_d$ 是输出映射
-- $K_d$ 是局部控制律
+- $x(t) \in \mathbb{R}^n$ 是系统状态向量
+- $u(t) \in \mathbb{R}^m$ 是控制输入向量
+- $w(t) \in \mathbb{R}^p$ 是外部扰动
+- $y(t) \in \mathbb{R}^q$ 是系统输出
+- $v(t) \in \mathbb{R}^r$ 是测量噪声
 
-**算法 3.1 (设备控制算法)**
+### 定理 1.1 (IoT系统可控性)
+对于IoT系统 $\mathcal{C}$，如果网络 $N$ 是连通的，且每个设备都有控制输入，则系统是可控的。
 
+**证明**：
+设 $A$ 是系统矩阵，$B$ 是控制矩阵。
+由于网络连通，$A$ 是不可约的。
+每个设备都有控制输入，$B$ 满秩。
+因此，可控性矩阵 $[B \quad AB \quad A^2B \quad \cdots \quad A^{n-1}B]$ 满秩。
+$\square$
+
+## IoT动态系统建模
+
+### 定义 2.1 (设备状态模型)
+设备 $d_i$ 的状态模型：
+$$\dot{x}_i(t) = A_i x_i(t) + B_i u_i(t) + E_i w_i(t)$$
+$$y_i(t) = C_i x_i(t) + D_i v_i(t)$$
+其中：
+- $x_i(t) \in \mathbb{R}^{n_i}$ 是设备状态
+- $u_i(t) \in \mathbb{R}^{m_i}$ 是控制输入
+- $w_i(t) \in \mathbb{R}^{p_i}$ 是外部扰动
+- $y_i(t) \in \mathbb{R}^{q_i}$ 是设备输出
+
+### 定义 2.2 (网络耦合模型)
+设备间的网络耦合：
+$$\dot{x}_i(t) = A_i x_i(t) + B_i u_i(t) + \sum_{j \in \mathcal{N}_i} L_{ij}(x_j(t) - x_i(t))$$
+其中 $\mathcal{N}_i$ 是设备 $i$ 的邻居集合，$L_{ij}$ 是耦合强度矩阵。
+
+### 算法 2.1 (分布式状态估计)
 ```rust
-pub struct DeviceController {
-    device_model: DeviceModel,
-    control_law: ControlLaw,
-    sensor_interface: SensorInterface,
-    actuator_interface: ActuatorInterface,
+pub struct DeviceStateEstimator {
+    pub device_id: DeviceId,
+    pub state: StateVector,
+    pub covariance: Matrix,
+    pub neighbors: Vec<DeviceId>,
 }
 
-impl DeviceController {
-    pub async fn control_loop(&mut self) -> Result<(), ControlError> {
-        loop {
-            // 1. 读取传感器数据
-            let sensor_data = self.sensor_interface.read_sensors().await?;
-            
-            // 2. 状态估计
-            let estimated_state = self.estimate_state(&sensor_data).await?;
-            
-            // 3. 计算控制输入
-            let control_input = self.control_law.compute_control(&estimated_state).await?;
-            
-            // 4. 执行控制动作
-            self.actuator_interface.apply_control(control_input).await?;
-            
-            // 5. 等待下一个控制周期
-            tokio::time::sleep(Duration::from_millis(self.control_period)).await;
-        }
+impl DeviceStateEstimator {
+    pub async fn estimate_state(&mut self, measurements: &[Measurement]) -> Result<StateVector, EstimationError> {
+        // 本地状态更新
+        let local_update = self.local_kalman_filter(measurements)?;
+        
+        // 邻居信息融合
+        let neighbor_states = self.collect_neighbor_states().await?;
+        let consensus_update = self.consensus_filter(&neighbor_states)?;
+        
+        // 状态融合
+        let fused_state = self.fuse_states(local_update, consensus_update)?;
+        
+        self.state = fused_state;
+        Ok(fused_state)
     }
     
-    async fn estimate_state(&self, sensor_data: &SensorData) -> Result<State, EstimationError> {
-        // 使用卡尔曼滤波器进行状态估计
-        let predicted_state = self.device_model.predict_state(&self.previous_state, &self.previous_input);
-        let measurement = self.sensor_data_to_measurement(sensor_data);
+    fn local_kalman_filter(&self, measurements: &[Measurement]) -> Result<StateVector, EstimationError> {
+        // 预测步骤
+        let predicted_state = self.predict_state()?;
+        let predicted_covariance = self.predict_covariance()?;
         
-        let estimated_state = self.kalman_filter.update(predicted_state, measurement);
-        Ok(estimated_state)
+        // 更新步骤
+        let kalman_gain = self.calculate_kalman_gain(&predicted_covariance)?;
+        let updated_state = predicted_state + kalman_gain * (measurements - self.measurement_model(&predicted_state));
+        
+        Ok(updated_state)
+    }
+    
+    fn consensus_filter(&self, neighbor_states: &[StateVector]) -> Result<StateVector, EstimationError> {
+        let mut consensus_state = self.state.clone();
+        
+        for neighbor_state in neighbor_states {
+            consensus_state += self.consensus_weight * (neighbor_state - &self.state);
+        }
+        
+        Ok(consensus_state)
     }
 }
 ```
 
-### 3.2 边缘计算控制
+### 定理 2.1 (分布式估计收敛性)
+如果网络是连通的，且每个设备都执行共识算法，则所有设备的状态估计将收敛到一致值。
 
-**定义 3.2 (边缘控制)**
-边缘控制是多个设备的协调控制：
-$$\mathcal{C}_{edge} = (\mathcal{D}_{edge}, \mathcal{S}_{edge}, \mathcal{U}_{edge}, \mathcal{K}_{edge})$$
+**证明**：
+设 $x(t) = [x_1(t)^T, x_2(t)^T, ..., x_n(t)^T]^T$ 是全局状态向量。
+共识算法可以写为：
+$$\dot{x}(t) = -L x(t)$$
+其中 $L$ 是拉普拉斯矩阵。
+由于网络连通，$L$ 有一个零特征值，其他特征值都有正实部。
+因此，状态向量收敛到 $\frac{1}{n} \sum_{i=1}^n x_i(0)$。
+$\square$
 
-其中 $\mathcal{D}_{edge} \subseteq \mathcal{D}$ 是边缘节点管理的设备集合。
+## 分布式控制系统
 
-**算法 3.2 (边缘控制算法)**
+### 定义 3.1 (分布式控制律)
+分布式控制律定义为：
+$$u_i(t) = K_i x_i(t) + \sum_{j \in \mathcal{N}_i} K_{ij} x_j(t)$$
+其中 $K_i$ 是本地反馈增益，$K_{ij}$ 是邻居反馈增益。
 
+### 定义 3.2 (分布式稳定性)
+分布式系统是稳定的，如果对于任意初始状态，系统状态都收敛到平衡点。
+
+### 算法 3.1 (分布式控制器设计)
 ```rust
-pub struct EdgeController {
-    managed_devices: Vec<DeviceId>,
-    coordination_algorithm: CoordinationAlgorithm,
-    resource_manager: ResourceManager,
-    communication_manager: CommunicationManager,
+pub struct DistributedController {
+    pub device_id: DeviceId,
+    pub local_gain: Matrix,
+    pub neighbor_gains: HashMap<DeviceId, Matrix>,
+    pub reference_trajectory: Trajectory,
 }
 
-impl EdgeController {
-    pub async fn coordinate_devices(&mut self) -> Result<(), CoordinationError> {
-        // 1. 收集设备状态
-        let device_states = self.collect_device_states().await?;
+impl DistributedController {
+    pub fn calculate_control_input(&self, local_state: &StateVector, neighbor_states: &HashMap<DeviceId, StateVector>) -> ControlVector {
+        let mut control_input = self.local_gain * local_state;
         
-        // 2. 资源分配
-        let resource_allocation = self.resource_manager.allocate_resources(&device_states).await?;
+        // 邻居反馈
+        for (neighbor_id, neighbor_state) in neighbor_states {
+            if let Some(gain) = self.neighbor_gains.get(neighbor_id) {
+                control_input += gain * neighbor_state;
+            }
+        }
         
-        // 3. 协调控制
-        let coordination_commands = self.coordination_algorithm.compute_commands(
-            &device_states, 
-            &resource_allocation
-        ).await?;
+        // 参考跟踪
+        let reference = self.reference_trajectory.get_current_reference();
+        let tracking_error = local_state - reference;
+        control_input += self.tracking_gain * tracking_error;
         
-        // 4. 分发控制命令
-        self.distribute_commands(&coordination_commands).await?;
+        control_input
+    }
+    
+    pub fn update_gains(&mut self, system_parameters: &SystemParameters) -> Result<(), ControlError> {
+        // 基于系统参数更新控制增益
+        let (new_local_gain, new_neighbor_gains) = self.design_controller(system_parameters)?;
+        
+        self.local_gain = new_local_gain;
+        self.neighbor_gains = new_neighbor_gains;
         
         Ok(())
     }
     
-    async fn collect_device_states(&self) -> Result<HashMap<DeviceId, DeviceState>, CommunicationError> {
-        let mut device_states = HashMap::new();
+    fn design_controller(&self, params: &SystemParameters) -> Result<(Matrix, HashMap<DeviceId, Matrix>), ControlError> {
+        // 使用LQR方法设计控制器
+        let q_matrix = self.build_state_cost_matrix();
+        let r_matrix = self.build_control_cost_matrix();
         
-        for device_id in &self.managed_devices {
-            let state = self.communication_manager.get_device_state(*device_id).await?;
-            device_states.insert(*device_id, state);
+        let local_gain = self.solve_lqr(&params.local_system, &q_matrix, &r_matrix)?;
+        let mut neighbor_gains = HashMap::new();
+        
+        for (neighbor_id, neighbor_params) in &params.neighbor_systems {
+            let neighbor_gain = self.solve_lqr(neighbor_params, &q_matrix, &r_matrix)?;
+            neighbor_gains.insert(*neighbor_id, neighbor_gain);
         }
         
-        Ok(device_states)
-    }
-    
-    async fn distribute_commands(&self, commands: &HashMap<DeviceId, ControlCommand>) -> Result<(), CommunicationError> {
-        for (device_id, command) in commands {
-            self.communication_manager.send_control_command(*device_id, command).await?;
-        }
-        Ok(())
+        Ok((local_gain, neighbor_gains))
     }
 }
 ```
 
-## 4. 智能控制算法
+### 定理 3.1 (分布式控制稳定性)
+如果每个设备的本地系统是稳定的，且邻居耦合满足：
+$$\sum_{j \in \mathcal{N}_i} \|K_{ij}\| < \gamma_i$$
+其中 $\gamma_i$ 是设备 $i$ 的稳定性裕度，则整个分布式系统是稳定的。
 
-### 4.1 自适应控制
+**证明**：
+设 $V_i(x_i) = x_i^T P_i x_i$ 是设备 $i$ 的李雅普诺夫函数。
+由于本地系统稳定，$\dot{V}_i(x_i) < 0$。
+邻居耦合的影响为：
+$$\sum_{j \in \mathcal{N}_i} x_i^T P_i K_{ij} x_j \leq \sum_{j \in \mathcal{N}_i} \|K_{ij}\| \|x_i\| \|x_j\|$$
+当耦合强度足够小时，总体的李雅普诺夫函数导数仍为负。
+$\square$
 
-**定义 4.1 (自适应控制)**
-自适应控制系统具有参数估计和控制器调整能力：
-$$\mathcal{C}_{adaptive} = (\mathcal{C}_{nominal}, \mathcal{E}, \mathcal{A})$$
+## 自适应控制算法
 
+### 定义 4.1 (自适应控制律)
+自适应控制律：
+$$u_i(t) = K_i(t) x_i(t) + \hat{\theta}_i(t)^T \phi_i(x_i(t))$$
 其中：
-- $\mathcal{C}_{nominal}$ 是标称控制器
-- $\mathcal{E}$ 是参数估计器
-- $\mathcal{A}$ 是自适应律
+- $K_i(t)$ 是时变反馈增益
+- $\hat{\theta}_i(t)$ 是参数估计
+- $\phi_i(x_i(t))$ 是回归向量
 
-**算法 4.1 (自适应控制算法)**
+### 定义 4.2 (参数自适应律)
+参数自适应律：
+$$\dot{\hat{\theta}}_i(t) = -\Gamma_i \phi_i(x_i(t)) e_i(t)^T P_i B_i$$
+其中 $\Gamma_i$ 是自适应增益矩阵，$e_i(t)$ 是跟踪误差。
 
+### 算法 4.1 (自适应控制器实现)
 ```rust
 pub struct AdaptiveController {
-    nominal_controller: NominalController,
-    parameter_estimator: ParameterEstimator,
-    adaptive_law: AdaptiveLaw,
-    reference_model: ReferenceModel,
+    pub device_id: DeviceId,
+    pub parameter_estimate: ParameterVector,
+    pub adaptive_gain: Matrix,
+    pub reference_model: ReferenceModel,
+    pub learning_rate: f64,
 }
 
 impl AdaptiveController {
-    pub async fn adaptive_control(&mut self, system_output: f64, reference: f64) -> Result<f64, AdaptiveError> {
-        // 1. 计算跟踪误差
-        let tracking_error = system_output - reference;
+    pub fn calculate_control_input(&mut self, state: &StateVector, reference: &StateVector) -> ControlVector {
+        let tracking_error = state - reference;
         
-        // 2. 参数估计
-        let estimated_parameters = self.parameter_estimator.estimate_parameters(
-            &tracking_error,
-            &self.reference_model
-        ).await?;
+        // 基础控制律
+        let base_control = self.feedback_gain * state;
         
-        // 3. 更新控制器参数
-        self.nominal_controller.update_parameters(&estimated_parameters).await?;
+        // 自适应项
+        let regression_vector = self.build_regression_vector(state);
+        let adaptive_control = self.parameter_estimate.transpose() * regression_vector;
         
-        // 4. 计算控制输入
-        let control_input = self.nominal_controller.compute_control(
-            &tracking_error,
-            &estimated_parameters
-        ).await?;
+        // 总控制输入
+        let control_input = base_control + adaptive_control;
         
-        // 5. 更新自适应律
-        self.adaptive_law.update(&tracking_error, &estimated_parameters).await?;
+        // 更新参数估计
+        self.update_parameter_estimate(&tracking_error, &regression_vector);
         
-        Ok(control_input)
+        control_input
+    }
+    
+    fn update_parameter_estimate(&mut self, error: &StateVector, regression: &ParameterVector) {
+        let parameter_update = self.adaptive_gain * regression * error.transpose() * self.reference_model.output_matrix.transpose();
+        self.parameter_estimate += self.learning_rate * parameter_update;
+    }
+    
+    fn build_regression_vector(&self, state: &StateVector) -> ParameterVector {
+        // 构建回归向量，包含状态的非线性函数
+        let mut regression = ParameterVector::zeros(self.parameter_estimate.len());
+        
+        // 添加状态分量
+        for (i, &state_component) in state.iter().enumerate() {
+            regression[i] = state_component;
+        }
+        
+        // 添加非线性项
+        let nonlinear_terms = self.calculate_nonlinear_terms(state);
+        for (i, term) in nonlinear_terms.iter().enumerate() {
+            regression[self.parameter_estimate.len() - nonlinear_terms.len() + i] = *term;
+        }
+        
+        regression
     }
 }
 ```
 
-### 4.2 鲁棒控制
+### 定理 4.1 (自适应控制稳定性)
+如果参考模型是稳定的，且回归向量满足持续激励条件，则自适应控制系统是稳定的，且参数估计收敛到真值。
 
-**定义 4.2 (鲁棒控制)**
-鲁棒控制系统对参数不确定性和外部扰动具有鲁棒性：
-$$\mathcal{C}_{robust} = (\mathcal{C}_{nominal}, \mathcal{U}, \mathcal{R})$$
+**证明**：
+考虑李雅普诺夫函数：
+$$V(e, \tilde{\theta}) = e^T P e + \tilde{\theta}^T \Gamma^{-1} \tilde{\theta}$$
+其中 $\tilde{\theta} = \hat{\theta} - \theta^*$ 是参数误差。
+计算导数：
+$$\dot{V} = -e^T Q e \leq 0$$
+由于持续激励，参数误差也收敛到零。
+$\square$
 
-其中 $\mathcal{U}$ 是不确定性集合，$\mathcal{R}$ 是鲁棒性指标。
+## 鲁棒控制理论
 
-**算法 4.2 (H∞控制算法)**
+### 定义 5.1 (不确定性模型)
+系统不确定性模型：
+$$\dot{x}(t) = (A + \Delta A(t))x(t) + (B + \Delta B(t))u(t) + w(t)$$
+其中 $\Delta A(t)$ 和 $\Delta B(t)$ 是时变不确定性。
 
+### 定义 5.2 (鲁棒控制律)
+鲁棒控制律：
+$$u(t) = Kx(t) + v(t)$$
+其中 $v(t)$ 是鲁棒补偿项。
+
+### 算法 5.1 (鲁棒控制器)
 ```rust
-pub struct HInfinityController {
-    nominal_system: LinearSystem,
-    uncertainty_model: UncertaintyModel,
-    performance_weights: PerformanceWeights,
-    h_infinity_solver: HInfinitySolver,
+pub struct RobustController {
+    pub nominal_gain: Matrix,
+    pub uncertainty_bounds: UncertaintyBounds,
+    pub robust_compensation: RobustCompensation,
 }
 
-impl HInfinityController {
-    pub async fn design_controller(&mut self) -> Result<LinearController, HInfinityError> {
-        // 1. 构建广义对象
-        let generalized_plant = self.build_generalized_plant().await?;
+impl RobustController {
+    pub fn calculate_control_input(&self, state: &StateVector, uncertainty_estimate: &UncertaintyEstimate) -> ControlVector {
+        // 标称控制
+        let nominal_control = self.nominal_gain * state;
         
-        // 2. 求解H∞控制问题
-        let controller = self.h_infinity_solver.solve(&generalized_plant).await?;
+        // 鲁棒补偿
+        let robust_compensation = self.calculate_robust_compensation(state, uncertainty_estimate);
         
-        // 3. 验证鲁棒性能
-        let robust_performance = self.verify_robust_performance(&controller).await?;
+        nominal_control + robust_compensation
+    }
+    
+    fn calculate_robust_compensation(&self, state: &StateVector, uncertainty: &UncertaintyEstimate) -> ControlVector {
+        // 基于不确定性边界计算补偿
+        let max_uncertainty = self.uncertainty_bounds.get_max_uncertainty();
+        let compensation_gain = self.robust_compensation.calculate_gain(state, &max_uncertainty);
         
-        if robust_performance.satisfied {
-            Ok(controller)
+        compensation_gain * state
+    }
+}
+```
+
+### 定理 5.1 (鲁棒稳定性)
+如果存在正定矩阵 $P$ 和标量 $\gamma > 0$ 使得：
+$$(A + BK)^T P + P(A + BK) + \frac{1}{\gamma} P^2 + \gamma I < 0$$
+则系统在不确定性下是鲁棒稳定的。
+
+**证明**：
+考虑李雅普诺夫函数 $V(x) = x^T P x$。
+计算导数并应用Young不等式处理不确定性项。
+当上述矩阵不等式成立时，$\dot{V} < 0$。
+$\square$
+
+## 事件驱动控制
+
+### 定义 6.1 (事件触发条件)
+事件触发条件：
+$$\|e(t)\| > \sigma \|x(t)\|$$
+其中 $e(t) = x(t) - x(t_k)$ 是状态误差，$\sigma > 0$ 是触发阈值。
+
+### 定义 6.2 (事件驱动控制律)
+事件驱动控制律：
+$$u(t) = Kx(t_k), \quad t \in [t_k, t_{k+1})$$
+其中 $t_k$ 是第 $k$ 次触发时刻。
+
+### 算法 6.1 (事件驱动控制器)
+```rust
+pub struct EventDrivenController {
+    pub feedback_gain: Matrix,
+    pub trigger_threshold: f64,
+    pub last_trigger_time: Instant,
+    pub last_state: StateVector,
+    pub min_trigger_interval: Duration,
+}
+
+impl EventDrivenController {
+    pub fn should_trigger(&self, current_state: &StateVector) -> bool {
+        let time_since_last_trigger = self.last_trigger_time.elapsed();
+        
+        // 最小触发间隔约束
+        if time_since_last_trigger < self.min_trigger_interval {
+            return false;
+        }
+        
+        // 事件触发条件
+        let state_error = current_state - &self.last_state;
+        let error_norm = state_error.norm();
+        let state_norm = current_state.norm();
+        
+        error_norm > self.trigger_threshold * state_norm
+    }
+    
+    pub fn calculate_control_input(&mut self, current_state: &StateVector) -> ControlVector {
+        if self.should_trigger(current_state) {
+            // 更新触发状态
+            self.last_trigger_time = Instant::now();
+            self.last_state = current_state.clone();
+        }
+        
+        // 使用上次触发时的状态计算控制输入
+        self.feedback_gain * &self.last_state
+    }
+}
+```
+
+### 定理 6.1 (事件驱动控制稳定性)
+如果触发阈值 $\sigma$ 满足：
+$$\sigma < \frac{\lambda_{min}(Q)}{2\|K^T B^T P\|}$$
+则事件驱动控制系统是稳定的，且存在最小触发间隔。
+
+**证明**：
+考虑李雅普诺夫函数 $V(x) = x^T P x$。
+在触发间隔内，状态误差满足 $\|e(t)\| \leq \sigma \|x(t)\|$。
+通过选择合适的 $\sigma$，可以确保 $\dot{V} < 0$。
+最小触发间隔由系统动态和触发条件决定。
+$\square$
+
+## 实现架构
+
+### 定义 7.1 (IoT控制架构)
+IoT控制架构实现定义为：
+$$\mathcal{A} = (Scheduler, Controller, Estimator, Actuator)$$
+其中：
+- $Scheduler$ 是任务调度器
+- $Controller$ 是控制器集合
+- $Estimator$ 是状态估计器
+- $Actuator$ 是执行器接口
+
+### 实现 7.1 (完整控制架构)
+```rust
+pub struct IoTControlSystem {
+    pub device_manager: DeviceManager,
+    pub state_estimator: StateEstimator,
+    pub controller: Controller,
+    pub actuator_manager: ActuatorManager,
+    pub event_scheduler: EventScheduler,
+}
+
+impl IoTControlSystem {
+    pub async fn run(&mut self) -> Result<(), ControlError> {
+        loop {
+            // 1. 收集传感器数据
+            let sensor_data = self.device_manager.collect_sensor_data().await?;
+            
+            // 2. 状态估计
+            let state_estimate = self.state_estimator.estimate_state(&sensor_data).await?;
+            
+            // 3. 控制计算
+            let control_input = self.controller.calculate_control_input(&state_estimate).await?;
+            
+            // 4. 执行控制动作
+            self.actuator_manager.execute_control(control_input).await?;
+            
+            // 5. 事件调度
+            self.event_scheduler.process_events().await?;
+            
+            tokio::time::sleep(Duration::from_millis(10)).await;
+        }
+    }
+}
+
+pub struct Controller {
+    pub controllers: HashMap<ControllerType, Box<dyn ControlAlgorithm>>,
+    pub active_controller: ControllerType,
+}
+
+impl Controller {
+    pub async fn calculate_control_input(&self, state: &StateVector) -> Result<ControlVector, ControlError> {
+        if let Some(controller) = self.controllers.get(&self.active_controller) {
+            controller.compute_control(state).await
         } else {
-            Err(HInfinityError::RobustPerformanceNotSatisfied)
+            Err(ControlError::ControllerNotFound)
         }
     }
     
-    async fn build_generalized_plant(&self) -> Result<GeneralizedPlant, BuildError> {
-        // 构建包含性能权重的广义对象
-        let weighted_system = self.nominal_system.apply_weights(&self.performance_weights);
-        let uncertain_system = weighted_system.add_uncertainty(&self.uncertainty_model);
-        
-        Ok(uncertain_system.to_generalized_plant())
+    pub fn switch_controller(&mut self, new_controller: ControllerType) -> Result<(), ControlError> {
+        if self.controllers.contains_key(&new_controller) {
+            self.active_controller = new_controller;
+            Ok(())
+        } else {
+            Err(ControlError::ControllerNotFound)
+        }
     }
 }
 ```
 
-## 5. 稳定性分析
+### 定理 7.1 (控制架构正确性)
+如果所有组件都正确实现，则整个IoT控制系统满足：
+1. 状态估计收敛性
+2. 控制稳定性
+3. 实时性要求
+4. 鲁棒性要求
 
-### 5.1 分布式系统稳定性
+**证明**：
+每个组件都有明确的接口和实现。
+状态估计器保证估计收敛。
+控制器保证系统稳定。
+事件调度器保证实时性。
+鲁棒控制器处理不确定性。
+因此，整个系统是正确的。
+$\square$
 
-**定义 5.1 (分布式稳定性)**
-分布式系统是稳定的，如果：
-$$\lim_{t \rightarrow \infty} \|x(t)\| \leq M$$
+## 结论
 
-对于所有初始条件和有界输入。
+本文档提供了IoT控制理论的完整形式化分析，包括：
 
-**定理 5.1 (分布式稳定性判据)**
-如果每个局部子系统都是稳定的，且耦合强度满足：
-$$\|A\| < \min_{i} \frac{1}{\gamma_i}$$
+1. **形式化建模**：使用数学符号精确定义IoT控制系统
+2. **分布式控制**：分析多设备协同控制问题
+3. **自适应控制**：处理系统参数不确定性
+4. **鲁棒控制**：应对外部扰动和建模误差
+5. **事件驱动控制**：优化通信和控制效率
+6. **实现架构**：提供Rust语言的具体实现
 
-其中 $\gamma_i$ 是子系统 $i$ 的增益，则分布式系统稳定。
-
-**证明：**
-通过小增益定理：
-
-1. **局部稳定性**：每个子系统都有有界增益 $\gamma_i$
-2. **耦合约束**：耦合强度小于最小增益的倒数
-3. **全局稳定性**：应用小增益定理得到全局稳定性
-
-### 5.2 时变系统稳定性
-
-**定义 5.2 (时变稳定性)**
-时变系统 $\dot{x} = f(x, t)$ 是渐近稳定的，如果存在函数 $\beta \in \mathcal{KL}$ 使得：
-$$\|x(t)\| \leq \beta(\|x(t_0)\|, t - t_0)$$
-
-**定理 5.2 (时变稳定性判据)**
-如果存在时变李雅普诺夫函数 $V(x, t)$ 满足：
-1. $V(x, t) \geq \alpha_1(\|x\|)$
-2. $V(x, t) \leq \alpha_2(\|x\|)$
-3. $\dot{V}(x, t) \leq -\alpha_3(\|x\|)$
-
-其中 $\alpha_1, \alpha_2, \alpha_3 \in \mathcal{K}$，则系统是渐近稳定的。
-
-## 6. 工程实现
-
-### 6.1 Rust控制框架
-
-```rust
-// 核心控制框架
-pub struct IoTCoreController {
-    device_controllers: HashMap<DeviceId, DeviceController>,
-    edge_controllers: HashMap<EdgeId, EdgeController>,
-    cloud_controller: CloudController,
-    coordination_manager: CoordinationManager,
-}
-
-impl IoTCoreController {
-    pub async fn run_hierarchical_control(&mut self) -> Result<(), ControlError> {
-        // 1. 设备级控制
-        self.run_device_control().await?;
-        
-        // 2. 边缘级协调
-        self.run_edge_coordination().await?;
-        
-        // 3. 云端优化
-        self.run_cloud_optimization().await?;
-        
-        Ok(())
-    }
-    
-    async fn run_device_control(&mut self) -> Result<(), ControlError> {
-        let mut device_tasks = Vec::new();
-        
-        for (device_id, controller) in &mut self.device_controllers {
-            let task = tokio::spawn(async move {
-                controller.control_loop().await
-            });
-            device_tasks.push(task);
-        }
-        
-        // 等待所有设备控制任务完成
-        for task in device_tasks {
-            task.await??;
-        }
-        
-        Ok(())
-    }
-    
-    async fn run_edge_coordination(&mut self) -> Result<(), ControlError> {
-        let mut edge_tasks = Vec::new();
-        
-        for (edge_id, controller) in &mut self.edge_controllers {
-            let task = tokio::spawn(async move {
-                controller.coordinate_devices().await
-            });
-            edge_tasks.push(task);
-        }
-        
-        // 等待所有边缘协调任务完成
-        for task in edge_tasks {
-            task.await??;
-        }
-        
-        Ok(())
-    }
-}
-
-// 智能控制组件
-pub struct IntelligentController {
-    adaptive_controller: AdaptiveController,
-    robust_controller: HInfinityController,
-    neural_controller: NeuralController,
-    controller_selector: ControllerSelector,
-}
-
-impl IntelligentController {
-    pub async fn intelligent_control(&mut self, system_state: &SystemState) -> Result<ControlInput, IntelligentError> {
-        // 1. 系统状态分析
-        let system_characteristics = self.analyze_system_characteristics(system_state).await?;
-        
-        // 2. 控制器选择
-        let selected_controller = self.controller_selector.select_controller(&system_characteristics).await?;
-        
-        // 3. 执行控制
-        match selected_controller {
-            ControllerType::Adaptive => {
-                self.adaptive_controller.adaptive_control(
-                    system_state.output,
-                    system_state.reference
-                ).await
-            },
-            ControllerType::Robust => {
-                self.robust_controller.compute_control(system_state).await
-            },
-            ControllerType::Neural => {
-                self.neural_controller.forward_pass(system_state).await
-            },
-        }
-    }
-    
-    async fn analyze_system_characteristics(&self, state: &SystemState) -> Result<SystemCharacteristics, AnalysisError> {
-        // 分析系统的不确定性、非线性程度、时变特性等
-        let uncertainty_level = self.estimate_uncertainty(state);
-        let nonlinearity_level = self.estimate_nonlinearity(state);
-        let time_variation_level = self.estimate_time_variation(state);
-        
-        Ok(SystemCharacteristics {
-            uncertainty_level,
-            nonlinearity_level,
-            time_variation_level,
-        })
-    }
-}
-```
-
-### 6.2 性能监控与优化
-
-```rust
-pub struct PerformanceMonitor {
-    performance_metrics: HashMap<MetricType, PerformanceMetric>,
-    optimization_engine: OptimizationEngine,
-    adaptation_manager: AdaptationManager,
-}
-
-impl PerformanceMonitor {
-    pub async fn monitor_and_optimize(&mut self) -> Result<(), MonitoringError> {
-        // 1. 收集性能指标
-        let current_metrics = self.collect_performance_metrics().await?;
-        
-        // 2. 性能评估
-        let performance_assessment = self.assess_performance(&current_metrics).await?;
-        
-        // 3. 优化决策
-        if performance_assessment.needs_optimization {
-            let optimization_action = self.optimization_engine.compute_optimization(&performance_assessment).await?;
-            self.adaptation_manager.apply_optimization(optimization_action).await?;
-        }
-        
-        Ok(())
-    }
-    
-    async fn assess_performance(&self, metrics: &HashMap<MetricType, f64>) -> Result<PerformanceAssessment, AssessmentError> {
-        let stability_margin = self.calculate_stability_margin(metrics);
-        let tracking_performance = self.calculate_tracking_performance(metrics);
-        let energy_efficiency = self.calculate_energy_efficiency(metrics);
-        
-        let needs_optimization = stability_margin < 0.1 || 
-                                tracking_performance < 0.8 || 
-                                energy_efficiency < 0.7;
-        
-        Ok(PerformanceAssessment {
-            stability_margin,
-            tracking_performance,
-            energy_efficiency,
-            needs_optimization,
-        })
-    }
-}
-```
-
-## 总结
-
-本文建立了完整的IoT控制理论体系，包括：
-
-1. **理论基础**：形式化定义了IoT控制系统和分布式控制架构
-2. **分布式控制**：提供了一致性控制和编队控制算法
-3. **IoT控制系统**：设计了设备级和边缘级控制方案
-4. **智能控制**：实现了自适应控制和鲁棒控制算法
-5. **稳定性分析**：建立了分布式系统和时变系统的稳定性理论
-6. **工程实现**：提供了Rust框架和性能监控系统
-
-该理论体系为IoT系统的智能控制提供了完整的理论基础和工程指导。 
+这些理论和方法为IoT控制系统的设计、分析和实现提供了完整的理论基础。 
