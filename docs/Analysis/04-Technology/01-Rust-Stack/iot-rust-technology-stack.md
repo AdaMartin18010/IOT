@@ -43,6 +43,7 @@ Rust类型系统是一个五元组 $\mathcal{T}_{Rust} = (T, L, B, R, E)$，其�
 $$\forall r \in R: \text{Valid}(r) \land \text{Unique}(r)$$
 
 其中：
+
 - $\text{Valid}(r)$ 表示引用有效
 - $\text{Unique}(r)$ 表示引用唯一
 
@@ -162,6 +163,7 @@ panic-halt = "0.2"
 $$\forall p \in P: \text{Valid}(p) \land \text{Accessible}(p)$$
 
 其中：
+
 - $P$ 是内存位置集合
 - $\text{Valid}(p)$ 表示位置有效
 - $\text{Accessible}(p)$ 表示访问安全
@@ -417,6 +419,7 @@ $$\text{Cost}(abstraction) = \text{Cost}(manual)$$
 ### 定义 5.2 (编译时优化)
 
 编译时优化包括：
+
 1. **内联优化**：函数内联
 2. **常量折叠**：编译时计算
 3. **死代码消除**：移除未使用代码
@@ -1042,4 +1045,4 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
 ---
 
-*参考：[Rust IoT生态系统](https://github.com/rust-embedded/awesome-embedded-rust) (访问日期: 2024-01-15)* 
+*参考：[Rust IoT生态系统](https://github.com/rust-embedded/awesome-embedded-rust) (访问日期: 2024-01-15)*

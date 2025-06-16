@@ -318,7 +318,7 @@ $$\forall c \in \mathcal{C}, \forall g_1, g_2 \in \mathcal{G} : \text{safe}(g_1,
 2. **类型安全**：编译时类型检查
 3. **内存安全**：运行时内存管理
 
-**算法 3.1 (Go调度器算法)**
+**算法 3.1 (Go调度器算法)**:
 
 ```go
 type Scheduler struct {
@@ -396,7 +396,7 @@ $$\mathcal{GC} = (\mathcal{W}, \mathcal{G}, \mathcal{B})$$
 - $\mathcal{G}$ 是灰色对象集合（已访问但子对象未访问）
 - $\mathcal{B}$ 是黑色对象集合（已访问且子对象已访问）
 
-**算法 3.2 (三色标记算法)**
+**算法 3.2 (三色标记算法)**:
 
 ```go
 type GarbageCollector struct {
@@ -707,7 +707,7 @@ $$D = \frac{F}{T \cdot C}$$
 - $T$ 是开发时间
 - $C$ 是代码复杂度
 
-**表 4.3: Rust vs Go 开发效率对比**
+**表 4.3: Rust vs Go 开发效率对比**:
 
 | 指标 | Rust | Go | 说明 |
 |------|------|----|----|
