@@ -19,6 +19,7 @@
 $$H: [0,1] \times [0,1] \rightarrow S$$
 
 使得：
+
 - $H(t,0) = \gamma_1(t)$
 - $H(t,1) = \gamma_2(t)$
 - $H(0,s) = \gamma_1(0) = \gamma_2(0)$
@@ -41,6 +42,7 @@ $$H: [0,1] \times [0,1] \rightarrow S$$
 $$\mathcal{W} = (W, \tau)$$
 
 其中：
+
 - $W$ 是工作流集合
 - $\tau$ 是拓扑结构
 
@@ -63,6 +65,7 @@ $$\mathcal{W} = (W, \tau)$$
 $$\mathcal{A} = (W, \circ, \parallel)$$
 
 其中：
+
 - $W$ 是工作流集合
 - $\circ$ 是顺序组合操作
 - $\parallel$ 是并行组合操作
@@ -647,4 +650,4 @@ impl WorkflowOptimizer {
 
 - [形式化理论基础](./../02-Theory/01-Formal-Theory-Foundation.md)
 - [IoT 架构模式](./../01-Architecture/01-IoT-Architecture-Patterns.md)
-- [Rust IoT 技术栈](./../04-Technology/01-Rust-IoT-Technology-Stack.md) 
+- [Rust IoT 技术栈](./../04-Technology/01-Rust-IoT-Technology-Stack.md)

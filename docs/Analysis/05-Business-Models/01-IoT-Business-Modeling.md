@@ -19,6 +19,7 @@ IoT 业务域是一个四元组：
 $$\mathcal{B}_{IoT} = (\mathcal{D}, \mathcal{S}, \mathcal{R}, \mathcal{E})$$
 
 其中：
+
 - $\mathcal{D}$ 是设备集合
 - $\mathcal{S}$ 是传感器数据集合
 - $\mathcal{R}$ 是规则集合
@@ -294,6 +295,7 @@ IoT 业务流程是一个有向图：
 $$\mathcal{W} = (V, E, \lambda, \mu)$$
 
 其中：
+
 - $V$ 是活动节点集合
 - $E$ 是边集合
 - $\lambda: V \rightarrow \mathcal{A}$ 是活动映射
@@ -436,6 +438,7 @@ impl DataProcessingWorkflow {
 $$\mathcal{R}_{engine} = (\mathcal{R}, \mathcal{C}, \mathcal{E})$$
 
 其中：
+
 - $\mathcal{R}$ 是规则集合
 - $\mathcal{C}$ 是条件评估器
 - $\mathcal{E}$ 是动作执行器
@@ -595,6 +598,7 @@ impl Rule {
 $$\mathcal{E}_{system} = (\mathcal{E}, \mathcal{H}, \mathcal{P}, \mathcal{Q})$$
 
 其中：
+
 - $\mathcal{E}$ 是事件集合
 - $\mathcal{H}$ 是事件处理器集合
 - $\mathcal{P}$ 是事件发布者集合
@@ -796,4 +800,4 @@ impl MetricsCollector {
 
 - [IoT 架构模式](./../01-Architecture/01-IoT-Architecture-Patterns.md)
 - [形式化理论基础](./../02-Theory/01-Formal-Theory-Foundation.md)
-- [Rust IoT 技术栈](./../04-Technology/01-Rust-IoT-Technology-Stack.md) 
+- [Rust IoT 技术栈](./../04-Technology/01-Rust-IoT-Technology-Stack.md)

@@ -37,6 +37,7 @@ Rust 的哲学基础可以形式化为：
 $$\mathcal{F}_{Rust} = (\mathcal{O}, \mathcal{T}, \mathcal{C}, \mathcal{S})$$
 
 其中：
+
 - $\mathcal{O}$ 是所有权系统
 - $\mathcal{T}$ 是类型系统
 - $\mathcal{C}$ 是并发模型
@@ -62,6 +63,7 @@ Rust 的所有权系统是一个三元组：
 $$\mathcal{O} = (V, R, \tau)$$
 
 其中：
+
 - $V$ 是值集合
 - $R$ 是所有权关系
 - $\tau$ 是转移函数
@@ -143,6 +145,7 @@ Rust 的类型系统是一个四元组：
 $$\mathcal{T} = (T, \Gamma, \vdash, \models)$$
 
 其中：
+
 - $T$ 是类型集合
 - $\Gamma$ 是类型环境
 - $\vdash$ 是类型推导关系
@@ -234,6 +237,7 @@ Rust 的异步执行模型基于 Future trait：
 $$\mathcal{A} = (\mathcal{F}, \mathcal{E}, \mathcal{P})$$
 
 其中：
+
 - $\mathcal{F}$ 是 Future 集合
 - $\mathcal{E}$ 是执行器
 - $\mathcal{P}$ 是轮询策略
@@ -359,6 +363,7 @@ IoT 设备架构基于 Rust 的所有权系统：
 $$\mathcal{A}_{device} = (\mathcal{H}, \mathcal{S}, \mathcal{C}, \mathcal{N})$$
 
 其中：
+
 - $\mathcal{H}$ 是硬件抽象层
 - $\mathcal{S}$ 是传感器层
 - $\mathcal{C}$ 是控制层
@@ -442,6 +447,7 @@ impl IoTDevice {
 $$\mathcal{A}_{edge} = (\mathcal{D}, \mathcal{P}, \mathcal{R}, \mathcal{S})$$
 
 其中：
+
 - $\mathcal{D}$ 是设备管理
 - $\mathcal{P}$ 是数据处理
 - $\mathcal{R}$ 是规则引擎
@@ -665,6 +671,7 @@ Rust 程序的形式化验证：
 $$\mathcal{V} = (\mathcal{P}, \mathcal{S}, \mathcal{C}, \mathcal{R})$$
 
 其中：
+
 - $\mathcal{P}$ 是程序集合
 - $\mathcal{S}$ 是规范集合
 - $\mathcal{C}$ 是检查器
@@ -823,4 +830,3 @@ impl ThreadSafeDeviceRegistry {
 - [IoT 架构模式](./../01-Architecture/01-IoT-Architecture-Patterns.md)
 - [形式化理论基础](./../02-Theory/01-Formal-Theory-Foundation.md)
 - [分布式算法](./../03-Algorithms/01-Distributed-Algorithms.md)
-
