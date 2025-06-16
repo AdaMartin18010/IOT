@@ -857,4 +857,4 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
 ---
 
-*参考：[IoT通信协议标准](https://www.ietf.org/rfc/rfc7252.txt) (访问日期: 2024-01-15)* 
+*参考：[IoT通信协议标准](https://www.ietf.org/rfc/rfc7252.txt) (访问日期: 2024-01-15)*

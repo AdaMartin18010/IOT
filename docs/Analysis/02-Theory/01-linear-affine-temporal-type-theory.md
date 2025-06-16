@@ -23,6 +23,7 @@
 
 **定义 1.1 (线性仿射时态类型系统)**
 线性仿射时态类型系统是一个五元组 $\mathcal{LAT} = (\mathcal{T}, \mathcal{R}, \mathcal{S}, \mathcal{L}, \mathcal{A})$，其中：
+
 - $\mathcal{T}$ 是类型集合
 - $\mathcal{R}$ 是类型规则
 - $\mathcal{S}$ 是语义解释
@@ -68,6 +69,7 @@ $$\frac{\Gamma_1 \vdash e : \tau_1 \otimes \tau_2 \quad \Gamma_2, x : \tau_1, y 
 
 **证明：**
 通过结构归纳法：
+
 1. **基础情况**：变量 $x$ 满足线性约束
 2. **归纳步骤**：
    - 抽象：$\lambda x.e$ 中 $x$ 恰好使用一次
@@ -86,6 +88,7 @@ $$\llbracket \tau_1 \multimap \tau_2 \rrbracket = \llbracket \tau_1 \rrbracket \
 
 **证明：**
 通过语义域的同构性和线性约束的保持性：
+
 1. 线性约束在语义解释下保持
 2. 类型规则对应语义域中的操作
 3. 语义解释是类型安全的
@@ -123,6 +126,7 @@ $$\frac{\Gamma \vdash e : \tau_1}{\Gamma \vdash \text{inl}(e) : \tau_1 \oplus \t
 
 **证明：**
 通过构造性证明：
+
 1. 资源类型 $\text{Resource}(\tau)$ 可以不被使用
 2. 资源分配和释放满足仿射约束
 3. 仿射类型系统支持可选资源管理
@@ -143,6 +147,7 @@ $$\frac{\Gamma \vdash e : \text{Resource}(\tau)}{\Gamma \vdash \text{release}(e)
 
 **证明：**
 通过仿射约束：
+
 1. 资源必须被使用或显式释放
 2. 仿射约束防止资源重复使用
 3. 类型系统确保资源安全
@@ -168,6 +173,7 @@ $$\frac{\Gamma^t, x : \tau_1^t \vdash e : \tau_2^{t+1}}{\Gamma^t \vdash \lambda 
 
 **证明：**
 通过时间标签的传递性：
+
 1. 时间标签在类型推导中保持
 2. 时间一致性检查确保时序正确
 3. 时态类型系统维护时间约束
@@ -185,6 +191,7 @@ $$\frac{\Gamma^t \vdash e : A^t \quad \Gamma^t, x : A^t \vdash B^{t+1} : \text{T
 
 **证明：**
 通过构造性证明：
+
 1. 时态依赖类型可以表达时间序列
 2. 时序约束可以通过类型系统检查
 3. 时态依赖类型支持复杂时序模式
@@ -203,6 +210,7 @@ $$\llbracket \tau_1^t \rightarrow \tau_2^{t+1} \rrbracket = \llbracket \tau_1 \r
 
 **证明：**
 通过时间标签的保持性：
+
 1. 语义域的时间索引保持
 2. 时间一致性在语义解释下保持
 3. 时态语义是类型安全的
@@ -218,6 +226,7 @@ $$\llbracket \tau_1^t \rightarrow \tau_2^{t+1} \rrbracket = \llbracket \tau_1 \r
 $$\frac{\Gamma^{t}_{la} \vdash e : \tau^{t}_{la} \quad \text{linear}(e) \quad \text{affine}(e) \quad \text{temporal}(e)}{\Gamma^{t}_{la} \vdash e : \tau^{t}_{la}}$$
 
 其中：
+
 - $\text{linear}(e)$ 表示 $e$ 满足线性约束
 - $\text{affine}(e)$ 表示 $e$ 满足仿射约束
 - $\text{temporal}(e)$ 表示 $e$ 满足时态约束
@@ -233,6 +242,7 @@ $$\llbracket \tau^{t}_{la} \rrbracket = \llbracket \tau \rrbracket_{linear} \oti
 
 **证明：**
 通过组合证明：
+
 1. 线性约束确保资源正确使用
 2. 仿射约束确保资源安全
 3. 时态约束确保时序正确
@@ -251,6 +261,7 @@ $$\text{IoTResource}(\tau) = \text{Resource}(\tau) \otimes \text{Time} \otimes \
 
 **证明：**
 通过类型系统约束：
+
 1. 线性约束确保资源正确使用
 2. 仿射约束确保资源安全释放
 3. 时态约束确保资源时序正确
@@ -266,6 +277,7 @@ $$\text{ConcurrentResource}(\tau) = \text{Resource}(\tau) \otimes \text{Mutex} \
 
 **证明：**
 通过类型系统约束：
+
 1. 线性约束确保互斥访问
 2. 仿射约束确保资源释放
 3. 时态约束确保时序正确
@@ -687,11 +699,13 @@ impl TypeChecker {
 
 **定理 9.1 (类型检查时间复杂度)**
 线性仿射时态类型检查的时间复杂度为 $O(n^2 + m + t)$，其中：
+
 - $n$ 是表达式大小
 - $m$ 是约束条件数量
 - $t$ 是时态约束数量
 
 **证明：**
+
 1. 表达式遍历：$O(n)$
 2. 约束检查：$O(m)$
 3. 时态检查：$O(t)$
@@ -702,6 +716,7 @@ impl TypeChecker {
 
 **定理 9.2 (语义解释空间复杂度)**
 线性仿射时态类型系统的语义解释空间复杂度为 $O(n + r + t)$，其中：
+
 - $n$ 是表达式大小
 - $r$ 是资源数量
 - $t$ 是时态状态数量
@@ -727,7 +742,8 @@ impl TypeChecker {
 ---
 
 **版本信息**
+
 - 版本：1.0
 - 创建时间：2024-12-19
 - 最后更新：2024-12-19
-- 状态：初始版本 
+- 状态：初始版本
