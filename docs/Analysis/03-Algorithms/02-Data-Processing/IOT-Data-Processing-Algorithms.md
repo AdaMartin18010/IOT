@@ -51,7 +51,7 @@ $$\forall t \in T, \text{latency}(P, t) \leq D(t)$$
 **定义 2.1 (时间序列)**
 时间序列是一个函数 $X: T \rightarrow \mathbb{R}$，其中 $T$ 是时间域。
 
-**算法 2.1 (差分编码压缩)**
+**算法 2.1 (差分编码压缩)**:
 
 ```rust
 use std::collections::VecDeque;
@@ -204,7 +204,7 @@ impl WaveletCompressor {
 **定义 2.2 (传感器数据)**
 传感器数据是一个三元组 $(t, v, q)$，其中 $t$ 是时间戳，$v$ 是数值，$q$ 是质量指标。
 
-**算法 2.2 (自适应压缩)**
+**算法 2.2 (自适应压缩)**:
 
 ```rust
 pub struct AdaptiveCompressor {
@@ -364,7 +364,7 @@ impl QualityMetrics {
 - $s$ 是滑动步长 $s \in \mathbb{N}$
 - $f$ 是聚合函数 $f: \mathbb{R}^w \rightarrow \mathbb{R}$
 
-**算法 3.1 (滑动窗口聚合)**
+**算法 3.1 (滑动窗口聚合)**:
 
 ```rust
 use std::collections::VecDeque;
@@ -503,7 +503,7 @@ $$A(x_1, x_2, ..., x_n) = f(A(x_1, x_2, ..., x_{n-1}), x_n)$$
 
 其中 $f$ 是增量更新函数。
 
-**算法 3.2 (增量聚合)**
+**算法 3.2 (增量聚合)**:
 
 ```rust
 pub struct IncrementalAggregator {
@@ -730,7 +730,7 @@ pub enum AnomalyResult {
 机器学习异常检测使用模型 $M$ 预测正常值，检测异常：
 $$\text{anomaly}(x) = |x - M(x)| > \theta$$
 
-**算法 4.2 (隔离森林异常检测)**
+**算法 4.2 (隔离森林异常检测)**:
 
 ```rust
 use std::collections::BinaryHeap;
@@ -915,7 +915,7 @@ impl IsolationNode {
 **定义 5.1 (传感器融合)**
 传感器融合是一个函数 $F: \mathbb{R}^n \rightarrow \mathbb{R}$，将多个传感器数据融合为单一估计值。
 
-**算法 5.1 (卡尔曼滤波融合)**
+**算法 5.1 (卡尔曼滤波融合)**:
 
 ```rust
 pub struct KalmanFilter {
@@ -1035,7 +1035,7 @@ impl Matrix<f64> {
 **定义 5.2 (数据质量)**
 数据质量是一个多维度的评估指标，包括准确性、完整性、一致性、及时性等。
 
-**算法 5.2 (数据质量评估)**
+**算法 5.2 (数据质量评估)**:
 
 ```rust
 pub struct DataQualityAssessor {
@@ -1224,14 +1224,14 @@ pub struct QualityScore {
 
 ---
 
-**参考文献**
+**参考文献**:
 
 1. Aggarwal, C. C. (2015). Data mining: the textbook. Springer.
 2. Chandola, V., Banerjee, A., & Kumar, V. (2009). Anomaly detection: A survey. ACM computing surveys (CSUR), 41(3), 1-58.
 3. Welch, G., & Bishop, G. (1995). An introduction to the Kalman filter.
 4. Liu, F. T., Ting, K. M., & Zhou, Z. H. (2008). Isolation forest. In 2008 eighth ieee international conference on data mining (pp. 413-422). IEEE.
 
-**版本信息**
+**版本信息**:
 
 - 版本：v1.0.0
 - 最后更新：2024年12月

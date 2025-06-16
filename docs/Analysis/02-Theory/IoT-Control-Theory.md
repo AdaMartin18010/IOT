@@ -1,626 +1,705 @@
-# IoT控制理论分析
+# IoT控制理论：形式化分析与算法设计
 
-## 1. IoT动态系统建模
+## 1. IoT控制系统基础理论
 
-### 1.1 分布式IoT系统模型
+### 1.1 IoT系统控制模型
 
-**定义 1.1** (分布式IoT系统)
-分布式IoT系统是一个四元组 $\mathcal{D} = (N, S, C, T)$，其中：
+**定义 1.1 (IoT控制系统)**
+IoT控制系统是一个七元组 $\mathcal{C} = (\mathcal{D}, \mathcal{S}, \mathcal{A}, \mathcal{U}, \mathcal{Y}, \mathcal{F}, \mathcal{G})$，其中：
 
-- $N = \{n_1, n_2, \ldots, n_k\}$ 是节点集合
-- $S = \{s_1, s_2, \ldots, s_m\}$ 是子系统集合
-- $C = \{c_{ij}\}$ 是通信矩阵，$c_{ij} \in \{0,1\}$ 表示节点 $i$ 和 $j$ 的连接状态
-- $T = \{t_1, t_2, \ldots, t_p\}$ 是时间约束集合
+- $\mathcal{D}$ 是设备集合
+- $\mathcal{S}$ 是状态空间
+- $\mathcal{A}$ 是动作空间
+- $\mathcal{U}$ 是控制输入空间
+- $\mathcal{Y}$ 是输出空间
+- $\mathcal{F}$ 是状态转移函数：$\mathcal{F}: \mathcal{S} \times \mathcal{U} \rightarrow \mathcal{S}$
+- $\mathcal{G}$ 是输出函数：$\mathcal{G}: \mathcal{S} \rightarrow \mathcal{Y}$
 
-**定义 1.2** (节点状态)
-节点 $n_i$ 在时间 $t$ 的状态定义为：
-$$x_i(t) = [s_i(t), l_i(t), p_i(t), e_i(t)]^T$$
-
-其中：
-- $s_i(t) \in \{0,1\}$ 是节点状态（0=离线，1=在线）
-- $l_i(t) \in \mathbb{R}^3$ 是位置向量
-- $p_i(t) \in \mathbb{R}^n$ 是性能指标向量
-- $e_i(t) \in \mathbb{R}^m$ 是能量状态向量
-
-**定理 1.1** (系统稳定性)
-如果分布式IoT系统 $\mathcal{D}$ 满足：
-1. 所有节点状态有界：$\|x_i(t)\| \leq M, \forall i, t$
-2. 通信拓扑连通：$\text{rank}(C) = k-1$
-3. 能量约束：$\sum_{i=1}^{k} e_i(t) \geq E_{min}, \forall t$
-
-则系统是稳定的。
-
-### 1.2 Rust实现
-
-```rust
-use nalgebra::{DMatrix, DVector};
-use std::collections::HashMap;
-use serde::{Deserialize, Serialize};
-
-/// 分布式IoT系统
-#[derive(Debug, Clone)]
-pub struct DistributedIoTSystem {
-    pub nodes: HashMap<String, IoTNode>,
-    pub communication_matrix: DMatrix<f64>,
-    pub time_constraints: Vec<TimeConstraint>,
-    pub system_state: SystemState,
-}
-
-#[derive(Debug, Clone)]
-pub struct IoTNode {
-    pub id: String,
-    pub state: NodeState,
-    pub location: Location,
-    pub performance: PerformanceMetrics,
-    pub energy: EnergyState,
-    pub controller: NodeController,
-}
-
-#[derive(Debug, Clone)]
-pub struct NodeState {
-    pub online: bool,
-    pub last_seen: f64,
-    pub health_score: f64,
-}
-
-#[derive(Debug, Clone)]
-pub struct Location {
-    pub x: f64,
-    pub y: f64,
-    pub z: f64,
-}
-
-#[derive(Debug, Clone)]
-pub struct PerformanceMetrics {
-    pub cpu_usage: f64,
-    pub memory_usage: f64,
-    pub network_throughput: f64,
-    pub response_time: f64,
-}
-
-#[derive(Debug, Clone)]
-pub struct EnergyState {
-    pub battery_level: f64,
-    pub power_consumption: f64,
-    pub energy_efficiency: f64,
-}
-
-#[derive(Debug, Clone)]
-pub struct NodeController {
-    pub control_law: ControlLaw,
-    pub parameters: ControllerParameters,
-    pub reference_trajectory: Vec<DVector<f64>>,
-}
-
-#[derive(Debug, Clone)]
-pub enum ControlLaw {
-    PID { kp: f64, ki: f64, kd: f64 },
-    LQR { gain_matrix: DMatrix<f64> },
-    Adaptive { learning_rate: f64 },
-}
-
-#[derive(Debug, Clone)]
-pub struct ControllerParameters {
-    pub sampling_time: f64,
-    pub control_horizon: usize,
-    pub prediction_horizon: usize,
-}
-
-impl DistributedIoTSystem {
-    /// 检查系统稳定性
-    pub fn is_stable(&self) -> bool {
-        // 检查节点状态有界性
-        let state_bounded = self.nodes.values().all(|node| {
-            let state_norm = self.calculate_state_norm(node);
-            state_norm <= 1000.0 // 假设边界值
-        });
-        
-        // 检查通信拓扑连通性
-        let communication_connected = self.check_connectivity();
-        
-        // 检查能量约束
-        let energy_sufficient = self.check_energy_constraints();
-        
-        state_bounded && communication_connected && energy_sufficient
-    }
-    
-    /// 计算节点状态范数
-    fn calculate_state_norm(&self, node: &IoTNode) -> f64 {
-        let state_vector = DVector::from_vec(vec![
-            node.state.health_score,
-            node.performance.cpu_usage,
-            node.performance.memory_usage,
-            node.energy.battery_level,
-        ]);
-        
-        state_vector.norm()
-    }
-    
-    /// 检查通信连通性
-    fn check_connectivity(&self) -> bool {
-        // 使用深度优先搜索检查连通性
-        let n = self.communication_matrix.nrows();
-        let mut visited = vec![false; n];
-        self.dfs(0, &mut visited);
-        
-        visited.iter().all(|&v| v)
-    }
-    
-    fn dfs(&self, node: usize, visited: &mut Vec<bool>) {
-        visited[node] = true;
-        for (i, &connected) in self.communication_matrix.row(node).iter().enumerate() {
-            if connected > 0.0 && !visited[i] {
-                self.dfs(i, visited);
-            }
-        }
-    }
-    
-    /// 检查能量约束
-    fn check_energy_constraints(&self) -> bool {
-        let total_energy: f64 = self.nodes.values()
-            .map(|node| node.energy.battery_level)
-            .sum();
-        
-        total_energy >= 100.0 // 最小能量阈值
-    }
-}
-```
-
-## 2. 自适应控制算法
-
-### 2.1 自适应控制理论
-
-**定义 2.1** (自适应控制器)
-自适应控制器是一个三元组 $\mathcal{A} = (P, E, U)$，其中：
-
-- $P$ 是参数估计器
-- $E$ 是误差计算器
-- $U$ 是控制律更新器
-
-**定义 2.2** (参数自适应律)
-参数自适应律定义为：
-$$\dot{\theta}(t) = -\gamma \phi(t) e(t)$$
+**定义 1.2 (IoT设备状态)**
+设备 $d \in \mathcal{D}$ 的状态 $s_d \in \mathcal{S}_d$ 是一个四元组：
+$$s_d = (position, energy, connectivity, data)$$
 
 其中：
-- $\theta(t)$ 是参数向量
-- $\gamma > 0$ 是学习率
-- $\phi(t)$ 是回归向量
-- $e(t)$ 是跟踪误差
+- $position$ 是设备位置
+- $energy$ 是能量状态
+- $connectivity$ 是连接状态
+- $data$ 是数据状态
 
-**定理 2.1** (自适应控制稳定性)
-如果自适应控制器满足：
-1. 参数有界：$\|\theta(t)\| \leq M, \forall t$
-2. 误差收敛：$\lim_{t \to \infty} e(t) = 0$
-3. 持续激励：$\int_0^T \phi(t)\phi^T(t)dt \geq \alpha I, \forall T > T_0$
+**定理 1.1 (IoT系统可控性)**
+如果IoT系统 $\mathcal{C}$ 满足以下条件，则系统是可控的：
 
-则系统是全局渐近稳定的。
+1. **设备可达性**：$\forall d_i, d_j \in \mathcal{D}, \exists \text{path}(d_i, d_j)$
+2. **状态可达性**：$\forall s_1, s_2 \in \mathcal{S}, \exists u \in \mathcal{U}: \mathcal{F}(s_1, u) = s_2$
+3. **控制连续性**：控制输入空间 $\mathcal{U}$ 是连续的
 
-### 2.2 Rust自适应控制实现
+**证明：**
+1. **网络连通性**：设备可达性确保网络连通
+2. **状态转移**：状态可达性确保任意状态转移
+3. **控制能力**：控制连续性确保精确控制
 
-```rust
-use nalgebra::{DMatrix, DVector};
-use std::collections::VecDeque;
+### 1.2 分层控制架构
 
-/// 自适应控制器
-pub struct AdaptiveController {
-    pub parameters: DVector<f64>,
-    pub learning_rate: f64,
-    pub parameter_bounds: (f64, f64),
-    pub error_history: VecDeque<f64>,
-    pub regression_history: VecDeque<DVector<f64>>,
-}
+**定义 1.3 (分层控制架构)**
+IoT分层控制架构是一个五层结构 $\mathcal{L} = (L_1, L_2, L_3, L_4, L_5)$，其中：
 
-impl AdaptiveController {
-    pub fn new(
-        parameter_dim: usize,
-        learning_rate: f64,
-        parameter_bounds: (f64, f64),
-    ) -> Self {
-        Self {
-            parameters: DVector::zeros(parameter_dim),
-            learning_rate,
-            parameter_bounds,
-            error_history: VecDeque::new(),
-            regression_history: VecDeque::new(),
-        }
-    }
-    
-    /// 更新控制参数
-    pub fn update_parameters(
-        &mut self,
-        regression_vector: &DVector<f64>,
-        tracking_error: f64,
-        dt: f64,
-    ) {
-        // 自适应律：θ̇ = -γ φ e
-        let parameter_update = -self.learning_rate * regression_vector * tracking_error * dt;
-        
-        // 更新参数
-        self.parameters += parameter_update;
-        
-        // 参数约束
-        for i in 0..self.parameters.len() {
-            self.parameters[i] = self.parameters[i]
-                .max(self.parameter_bounds.0)
-                .min(self.parameter_bounds.1);
-        }
-        
-        // 记录历史
-        self.error_history.push_back(tracking_error);
-        self.regression_history.push_back(regression_vector.clone());
-        
-        // 保持历史记录大小
-        if self.error_history.len() > 1000 {
-            self.error_history.pop_front();
-            self.regression_history.pop_front();
-        }
-    }
-    
-    /// 计算控制输入
-    pub fn compute_control(&self, reference: &DVector<f64>, current_state: &DVector<f64>) -> DVector<f64> {
-        let error = reference - current_state;
-        let regression_vector = self.compute_regression_vector(current_state);
-        
-        // 控制律：u = θ^T φ
-        self.parameters.dot(&regression_vector) * DVector::ones(current_state.len())
-    }
-    
-    /// 计算回归向量
-    fn compute_regression_vector(&self, state: &DVector<f64>) -> DVector<f64> {
-        // 简单的回归向量构造
-        let mut phi = DVector::zeros(self.parameters.len());
-        for i in 0..state.len().min(self.parameters.len()) {
-            phi[i] = state[i];
-        }
-        phi
-    }
-    
-    /// 检查持续激励条件
-    pub fn check_persistent_excitation(&self, window_size: usize) -> bool {
-        if self.regression_history.len() < window_size {
-            return false;
-        }
-        
-        let recent_regressions: Vec<&DVector<f64>> = self.regression_history
-            .iter()
-            .rev()
-            .take(window_size)
-            .collect();
-        
-        // 计算激励矩阵
-        let dim = recent_regressions[0].len();
-        let mut excitation_matrix = DMatrix::zeros(dim, dim);
-        
-        for phi in recent_regressions {
-            excitation_matrix += phi * phi.transpose();
-        }
-        
-        // 检查最小特征值
-        if let Some(eigenvalues) = excitation_matrix.eigenvalues() {
-            eigenvalues.min() > 0.1 // 最小特征值阈值
-        } else {
-            false
-        }
-    }
-    
-    /// 检查系统稳定性
-    pub fn is_stable(&self) -> bool {
-        // 检查参数有界性
-        let parameters_bounded = self.parameters.iter().all(|&p| {
-            p >= self.parameter_bounds.0 && p <= self.parameter_bounds.1
-        });
-        
-        // 检查误差收敛性
-        let error_converging = if self.error_history.len() >= 10 {
-            let recent_errors: Vec<f64> = self.error_history
-                .iter()
-                .rev()
-                .take(10)
-                .cloned()
-                .collect();
-            
-            let error_variance = self.calculate_variance(&recent_errors);
-            error_variance < 0.01 // 误差方差阈值
-        } else {
-            false
-        };
-        
-        // 检查持续激励
-        let persistent_excitation = self.check_persistent_excitation(50);
-        
-        parameters_bounded && error_converging && persistent_excitation
-    }
-    
-    fn calculate_variance(&self, values: &[f64]) -> f64 {
-        let mean = values.iter().sum::<f64>() / values.len() as f64;
-        let variance = values.iter()
-            .map(|&x| (x - mean).powi(2))
-            .sum::<f64>() / values.len() as f64;
-        variance
-    }
-}
-```
+- $L_1$：设备控制层（Device Control Layer）
+- $L_2$：网络控制层（Network Control Layer）
+- $L_3$：边缘控制层（Edge Control Layer）
+- $L_4$：云端控制层（Cloud Control Layer）
+- $L_5$：应用控制层（Application Control Layer）
 
-## 3. 鲁棒控制理论
+**定义 1.4 (层间控制关系)**
+层间控制关系定义为：
+$$R_{i,j}^c = \{(c_i, c_j) | c_i \in L_i, c_j \in L_j, c_i \text{ 控制 } c_j\}$$
 
-### 3.1 H∞控制理论
-
-**定义 3.1** (H∞性能指标)
-H∞性能指标定义为：
-$$J_{\infty} = \sup_{\omega} \|T_{zw}(j\omega)\|_{\infty}$$
-
-其中 $T_{zw}(s)$ 是从干扰 $w$ 到输出 $z$ 的传递函数。
-
-**定义 3.2** (鲁棒稳定性)
-系统在不确定性 $\Delta$ 下是鲁棒稳定的，如果：
-$$\|T_{zw}(s) \cdot \Delta(s)\|_{\infty} < 1$$
-
-**定理 3.1** (小增益定理)
-如果系统 $G_1$ 和 $G_2$ 都是稳定的，且：
-$$\|G_1\|_{\infty} \cdot \|G_2\|_{\infty} < 1$$
-
-则反馈连接 $G_1 \circ G_2$ 是稳定的。
-
-### 3.2 Rust鲁棒控制实现
+**算法 1.1 (分层控制算法)**
 
 ```rust
-use nalgebra::{DMatrix, DVector, Complex};
-use std::f64::consts::PI;
-
-/// 鲁棒控制器
-pub struct RobustController {
-    pub nominal_controller: DMatrix<f64>,
-    pub uncertainty_bound: f64,
-    pub performance_weight: DMatrix<f64>,
-    pub robustness_weight: DMatrix<f64>,
+pub struct HierarchicalController {
+    layers: Vec<ControlLayer>,
+    inter_layer_communication: InterLayerCommunication,
 }
 
-impl RobustController {
-    pub fn new(
-        controller_order: usize,
-        uncertainty_bound: f64,
-    ) -> Self {
-        Self {
-            nominal_controller: DMatrix::identity(controller_order, controller_order),
-            uncertainty_bound,
-            performance_weight: DMatrix::identity(controller_order, controller_order),
-            robustness_weight: DMatrix::identity(controller_order, controller_order),
+impl HierarchicalController {
+    pub async fn execute_control(&mut self, control_objective: ControlObjective) -> Result<(), ControlError> {
+        // 1. 目标分解
+        let layer_objectives = self.decompose_objective(control_objective);
+        
+        // 2. 自顶向下控制
+        for (layer_index, objective) in layer_objectives.iter().enumerate().rev() {
+            let layer = &mut self.layers[layer_index];
+            layer.execute_control(objective.clone()).await?;
         }
-    }
-    
-    /// 设计H∞控制器
-    pub fn design_h_infinity_controller(
-        &mut self,
-        plant: &TransferFunction,
-        performance_spec: &PerformanceSpecification,
-    ) -> Result<(), RobustControlError> {
-        // 构建广义对象
-        let generalized_plant = self.build_generalized_plant(plant, performance_spec);
         
-        // 求解H∞控制问题
-        let controller = self.solve_h_infinity_problem(&generalized_plant)?;
+        // 3. 自底向上反馈
+        for layer_index in 0..self.layers.len() {
+            let feedback = self.layers[layer_index].get_feedback().await?;
+            self.propagate_feedback(layer_index, feedback).await?;
+        }
         
-        self.nominal_controller = controller;
         Ok(())
     }
     
-    /// 构建广义对象
-    fn build_generalized_plant(
-        &self,
-        plant: &TransferFunction,
-        performance_spec: &PerformanceSpecification,
-    ) -> GeneralizedPlant {
-        // 构建包含性能权重的广义对象
-        let n_states = plant.a.nrows();
-        let n_inputs = plant.b.ncols();
-        let n_outputs = plant.c.nrows();
+    fn decompose_objective(&self, objective: ControlObjective) -> Vec<LayerObjective> {
+        // 将全局控制目标分解为各层目标
+        let mut layer_objectives = Vec::new();
         
-        let mut a_g = DMatrix::zeros(n_states + n_states, n_states + n_states);
-        let mut b_g = DMatrix::zeros(n_states + n_states, n_inputs + n_inputs);
-        let mut c_g = DMatrix::zeros(n_outputs + n_outputs, n_states + n_states);
-        let mut d_g = DMatrix::zeros(n_outputs + n_outputs, n_inputs + n_inputs);
+        match objective {
+            ControlObjective::EnergyOptimization => {
+                layer_objectives.push(LayerObjective::DevicePowerManagement);
+                layer_objectives.push(LayerObjective::NetworkPowerOptimization);
+                layer_objectives.push(LayerObjective::EdgeLoadBalancing);
+                layer_objectives.push(LayerObjective::CloudResourceOptimization);
+                layer_objectives.push(LayerObjective::ApplicationEfficiency);
+            }
+            ControlObjective::LatencyMinimization => {
+                layer_objectives.push(LayerObjective::DeviceFastResponse);
+                layer_objectives.push(LayerObjective::NetworkLowLatency);
+                layer_objectives.push(LayerObjective::EdgeLocalProcessing);
+                layer_objectives.push(LayerObjective::CloudQuickResponse);
+                layer_objectives.push(LayerObjective::ApplicationOptimization);
+            }
+        }
         
-        // 填充广义对象矩阵
-        a_g.fixed_view_mut::<nalgebra::Dynamic, nalgebra::Dynamic>(0, 0, n_states, n_states)
-            .copy_from(&plant.a);
+        layer_objectives
+    }
+}
+```
+
+## 2. 分布式控制理论
+
+### 2.1 分布式控制系统模型
+
+**定义 2.1 (分布式IoT控制系统)**
+分布式IoT控制系统是一个四元组 $\mathcal{D} = (N, E, C, P)$，其中：
+
+- $N$ 是节点集合
+- $E$ 是边集合（通信链路）
+- $C$ 是局部控制器集合
+- $P$ 是协调协议集合
+
+**定义 2.2 (局部控制器)**
+局部控制器 $c_i \in C$ 是一个三元组 $c_i = (s_i, u_i, f_i)$，其中：
+
+- $s_i$ 是局部状态
+- $u_i$ 是局部控制输入
+- $f_i$ 是局部控制律：$f_i: s_i \times \mathcal{N}_i \rightarrow u_i$
+
+其中 $\mathcal{N}_i$ 是节点 $i$ 的邻居集合。
+
+**定理 2.1 (分布式控制稳定性)**
+如果所有局部控制器都是稳定的，且满足协调条件，则分布式控制系统稳定。
+
+**证明：** 通过李雅普诺夫方法：
+
+1. **局部稳定性**：每个局部控制器都有李雅普诺夫函数 $V_i(s_i)$
+2. **协调条件**：$\sum_{i=1}^n V_i(s_i)$ 是全局李雅普诺夫函数
+3. **全局稳定性**：$\dot{V} = \sum_{i=1}^n \dot{V}_i \leq 0$
+
+**算法 2.1 (分布式一致性算法)**
+
+```rust
+pub struct DistributedConsensus {
+    node_id: NodeId,
+    neighbors: Vec<NodeId>,
+    local_state: f64,
+    consensus_threshold: f64,
+}
+
+impl DistributedConsensus {
+    pub async fn run_consensus(&mut self, network: &Network) -> Result<f64, ConsensusError> {
+        let mut iteration = 0;
+        let max_iterations = 100;
         
-        b_g.fixed_view_mut::<nalgebra::Dynamic, nalgebra::Dynamic>(0, 0, n_states, n_inputs)
-            .copy_from(&plant.b);
+        while iteration < max_iterations {
+            // 1. 收集邻居状态
+            let neighbor_states = self.collect_neighbor_states(network).await?;
+            
+            // 2. 更新本地状态
+            let new_state = self.update_state(neighbor_states);
+            
+            // 3. 检查收敛性
+            if (new_state - self.local_state).abs() < self.consensus_threshold {
+                break;
+            }
+            
+            self.local_state = new_state;
+            iteration += 1;
+        }
         
-        c_g.fixed_view_mut::<nalgebra::Dynamic, nalgebra::Dynamic>(0, 0, n_outputs, n_states)
-            .copy_from(&plant.c);
-        
-        GeneralizedPlant { a: a_g, b: b_g, c: c_g, d: d_g }
+        Ok(self.local_state)
     }
     
-    /// 求解H∞控制问题
-    fn solve_h_infinity_problem(
-        &self,
-        generalized_plant: &GeneralizedPlant,
-    ) -> Result<DMatrix<f64>, RobustControlError> {
-        // 使用代数Riccati方程求解H∞控制器
-        let (x, y) = self.solve_coupled_riccati_equations(generalized_plant)?;
+    fn update_state(&self, neighbor_states: Vec<f64>) -> f64 {
+        // 使用平均一致性算法
+        let total_states: f64 = neighbor_states.iter().sum::<f64>() + self.local_state;
+        let total_nodes = neighbor_states.len() + 1;
         
-        // 构造控制器
-        let controller = self.construct_controller_from_riccati_solutions(&x, &y);
-        
-        Ok(controller)
+        total_states / total_nodes as f64
     }
     
-    /// 求解耦合Riccati方程
-    fn solve_coupled_riccati_equations(
-        &self,
-        plant: &GeneralizedPlant,
-    ) -> Result<(DMatrix<f64>, DMatrix<f64>), RobustControlError> {
-        // 简化的Riccati方程求解
-        let n = plant.a.nrows();
-        let mut x = DMatrix::identity(n, n);
-        let mut y = DMatrix::identity(n, n);
+    async fn collect_neighbor_states(&self, network: &Network) -> Result<Vec<f64>, ConsensusError> {
+        let mut states = Vec::new();
         
-        // 迭代求解
-        for _ in 0..100 {
-            let x_new = self.solve_riccati_equation(&plant, &y);
-            let y_new = self.solve_riccati_equation(&plant, &x);
+        for neighbor_id in &self.neighbors {
+            let state = network.get_node_state(*neighbor_id).await?;
+            states.push(state);
+        }
+        
+        Ok(states)
+    }
+}
+```
+
+### 2.2 多智能体控制
+
+**定义 2.3 (IoT多智能体系统)**
+IoT多智能体系统是一个三元组 $\mathcal{M} = (A, G, T)$，其中：
+
+- $A$ 是智能体集合
+- $G$ 是通信图
+- $T$ 是任务分配
+
+**定义 2.4 (智能体控制律)**
+智能体 $a_i \in A$ 的控制律定义为：
+$$u_i(t) = K_i \sum_{j \in \mathcal{N}_i} (x_j(t) - x_i(t)) + K_p e_i(t)$$
+
+其中：
+- $K_i$ 是协调增益
+- $K_p$ 是比例增益
+- $e_i(t)$ 是跟踪误差
+
+**算法 2.2 (多智能体协调控制)**
+
+```rust
+pub struct MultiAgentController {
+    agents: Vec<Agent>,
+    communication_graph: CommunicationGraph,
+    task_allocation: TaskAllocation,
+}
+
+impl MultiAgentController {
+    pub async fn coordinate_agents(&mut self, global_objective: GlobalObjective) -> Result<(), ControlError> {
+        // 1. 任务分解
+        let agent_tasks = self.decompose_tasks(global_objective);
+        
+        // 2. 分配任务
+        for (agent_id, task) in agent_tasks {
+            self.agents[agent_id].assign_task(task).await?;
+        }
+        
+        // 3. 协调执行
+        loop {
+            // 收集所有智能体状态
+            let agent_states: Vec<AgentState> = self.collect_agent_states().await?;
             
-            let x_diff = (&x_new - &x).norm();
-            let y_diff = (&y_new - &y).norm();
+            // 计算协调控制输入
+            let control_inputs = self.compute_coordination_control(agent_states);
             
-            x = x_new;
-            y = y_new;
+            // 应用控制输入
+            for (agent_id, control_input) in control_inputs {
+                self.agents[agent_id].apply_control(control_input).await?;
+            }
             
-            if x_diff < 1e-6 && y_diff < 1e-6 {
+            // 检查收敛性
+            if self.check_convergence().await? {
                 break;
             }
         }
         
-        Ok((x, y))
+        Ok(())
     }
     
-    /// 求解单个Riccati方程
-    fn solve_riccati_equation(
-        &self,
-        plant: &GeneralizedPlant,
-        other_solution: &DMatrix<f64>,
-    ) -> DMatrix<f64> {
-        // 简化的Riccati方程求解
-        let n = plant.a.nrows();
-        let mut solution = DMatrix::identity(n, n);
+    fn compute_coordination_control(&self, agent_states: Vec<AgentState>) -> HashMap<AgentId, ControlInput> {
+        let mut control_inputs = HashMap::new();
         
-        // 这里应该实现完整的Riccati方程求解算法
-        // 为了简化，使用迭代方法
-        
-        solution
-    }
-    
-    /// 从Riccati解构造控制器
-    fn construct_controller_from_riccati_solutions(
-        &self,
-        x: &DMatrix<f64>,
-        y: &DMatrix<f64>,
-    ) -> DMatrix<f64> {
-        // 使用Riccati解构造H∞控制器
-        let n = x.nrows();
-        let controller = DMatrix::identity(n, n);
-        
-        controller
-    }
-    
-    /// 检查鲁棒稳定性
-    pub fn check_robust_stability(&self, plant: &TransferFunction) -> bool {
-        // 计算闭环传递函数
-        let closed_loop_tf = self.compute_closed_loop_transfer_function(plant);
-        
-        // 计算H∞范数
-        let h_infinity_norm = self.compute_h_infinity_norm(&closed_loop_tf);
-        
-        // 检查鲁棒稳定性条件
-        h_infinity_norm < 1.0 / self.uncertainty_bound
-    }
-    
-    /// 计算闭环传递函数
-    fn compute_closed_loop_transfer_function(
-        &self,
-        plant: &TransferFunction,
-    ) -> TransferFunction {
-        // 计算闭环传递函数
-        let n = plant.a.nrows();
-        let a_cl = plant.a.clone() - plant.b.clone() * &self.nominal_controller * plant.c.clone();
-        let b_cl = plant.b.clone();
-        let c_cl = plant.c.clone();
-        let d_cl = DMatrix::zeros(plant.c.nrows(), plant.b.ncols());
-        
-        TransferFunction { a: a_cl, b: b_cl, c: c_cl, d: d_cl }
-    }
-    
-    /// 计算H∞范数
-    fn compute_h_infinity_norm(&self, tf: &TransferFunction) -> f64 {
-        // 使用频率响应计算H∞范数
-        let mut max_norm = 0.0;
-        let frequencies = self.generate_frequency_grid();
-        
-        for &omega in &frequencies {
-            let s = Complex::new(0.0, omega);
-            let frequency_response = self.evaluate_transfer_function(tf, s);
-            let norm = frequency_response.norm();
-            max_norm = max_norm.max(norm);
+        for (agent_id, state) in agent_states.iter().enumerate() {
+            let neighbors = self.communication_graph.get_neighbors(agent_id);
+            let neighbor_states: Vec<&AgentState> = neighbors.iter()
+                .map(|&n| &agent_states[n])
+                .collect();
+            
+            let control_input = self.compute_agent_control(state, &neighbor_states);
+            control_inputs.insert(agent_id, control_input);
         }
         
-        max_norm
+        control_inputs
     }
     
-    /// 生成频率网格
-    fn generate_frequency_grid(&self) -> Vec<f64> {
-        let mut frequencies = Vec::new();
-        let start_freq = 0.01;
-        let end_freq = 100.0;
-        let num_points = 1000;
+    fn compute_agent_control(&self, state: &AgentState, neighbor_states: &[&AgentState]) -> ControlInput {
+        // 计算协调控制律
+        let mut coordination_term = Vector3::zeros();
         
-        for i in 0..num_points {
-            let freq = start_freq * (end_freq / start_freq).powf(i as f64 / (num_points - 1) as f64);
-            frequencies.push(freq);
+        for neighbor_state in neighbor_states {
+            coordination_term += neighbor_state.position - state.position;
         }
         
-        frequencies
-    }
-    
-    /// 评估传递函数
-    fn evaluate_transfer_function(
-        &self,
-        tf: &TransferFunction,
-        s: Complex<f64>,
-    ) -> DMatrix<Complex<f64>> {
-        let n = tf.a.nrows();
-        let s_i = DMatrix::identity(n, n) * s;
-        let denominator = s_i - &tf.a;
+        let coordination_gain = 0.5;
+        let proportional_gain = 1.0;
         
-        // 计算逆矩阵
-        if let Some(denominator_inv) = denominator.try_inverse() {
-            let numerator = &tf.c * &denominator_inv * &tf.b + &tf.d;
-            numerator
-        } else {
-            DMatrix::zeros(tf.c.nrows(), tf.b.ncols())
+        ControlInput {
+            force: coordination_gain * coordination_term + proportional_gain * state.tracking_error,
+            torque: Vector3::zeros(), // 简化处理
         }
     }
-}
-
-#[derive(Debug)]
-pub struct TransferFunction {
-    pub a: DMatrix<f64>,
-    pub b: DMatrix<f64>,
-    pub c: DMatrix<f64>,
-    pub d: DMatrix<f64>,
-}
-
-#[derive(Debug)]
-pub struct GeneralizedPlant {
-    pub a: DMatrix<f64>,
-    pub b: DMatrix<f64>,
-    pub c: DMatrix<f64>,
-    pub d: DMatrix<f64>,
-}
-
-#[derive(Debug)]
-pub struct PerformanceSpecification {
-    pub tracking_error_weight: f64,
-    pub control_effort_weight: f64,
-    pub disturbance_rejection_weight: f64,
-}
-
-#[derive(Debug)]
-pub enum RobustControlError {
-    RiccatiEquationError,
-    SingularMatrixError,
-    ConvergenceError,
 }
 ```
 
-## 4. 总结
+## 3. 自适应控制理论
 
-本文档提供了IoT控制理论的完整形式化分析，包括：
+### 3.1 自适应控制模型
 
-1. **分布式系统建模**：形式化定义IoT系统的动态特性
-2. **自适应控制**：参数自适应算法和稳定性分析
-3. **鲁棒控制**：H∞控制理论和不确定性处理
-4. **Rust实现**：完整的代码实现和算法验证
+**定义 3.1 (自适应控制系统)**
+自适应控制系统是一个五元组 $\mathcal{A} = (P, C, I, E, U)$，其中：
 
-所有内容都包含严格的数学证明和形式化定义，为IoT系统的控制设计提供了理论基础和实践指导。
+- $P$ 是受控对象
+- $C$ 是控制器
+- $I$ 是辨识器
+- $E$ 是评估器
+- $U$ 是更新律
+
+**定义 3.2 (参数自适应律)**
+参数自适应律定义为：
+$$\dot{\theta}(t) = -\gamma \phi(t) e(t)$$
+
+其中：
+- $\theta(t)$ 是参数估计
+- $\gamma$ 是学习率
+- $\phi(t)$ 是回归向量
+- $e(t)$ 是跟踪误差
+
+**定理 3.1 (自适应控制稳定性)**
+如果自适应控制系统满足持续激励条件，则参数估计收敛到真值。
+
+**证明：** 通过李雅普诺夫方法：
+
+1. **李雅普诺夫函数**：$V(e, \tilde{\theta}) = \frac{1}{2}e^2 + \frac{1}{2\gamma}\tilde{\theta}^T\tilde{\theta}$
+2. **导数计算**：$\dot{V} = e\dot{e} + \frac{1}{\gamma}\tilde{\theta}^T\dot{\tilde{\theta}}$
+3. **稳定性**：$\dot{V} \leq 0$ 确保系统稳定
+
+**算法 3.1 (自适应控制算法)**
+
+```rust
+pub struct AdaptiveController {
+    parameter_estimates: Vec<f64>,
+    learning_rate: f64,
+    reference_model: ReferenceModel,
+    plant_model: PlantModel,
+}
+
+impl AdaptiveController {
+    pub async fn control(&mut self, reference: f64, plant_output: f64) -> Result<f64, ControlError> {
+        // 1. 计算跟踪误差
+        let tracking_error = reference - plant_output;
+        
+        // 2. 更新参数估计
+        self.update_parameters(tracking_error, plant_output).await?;
+        
+        // 3. 计算控制输入
+        let control_input = self.compute_control_input(reference, plant_output).await?;
+        
+        Ok(control_input)
+    }
+    
+    async fn update_parameters(&mut self, error: f64, output: f64) -> Result<(), ControlError> {
+        // 计算回归向量
+        let regression_vector = self.compute_regression_vector(output);
+        
+        // 更新参数估计
+        for (i, phi_i) in regression_vector.iter().enumerate() {
+            self.parameter_estimates[i] -= self.learning_rate * phi_i * error;
+        }
+        
+        Ok(())
+    }
+    
+    async fn compute_control_input(&self, reference: f64, output: f64) -> Result<f64, ControlError> {
+        // 使用估计参数计算控制输入
+        let error = reference - output;
+        
+        // 比例-积分-微分控制
+        let kp = self.parameter_estimates[0];
+        let ki = self.parameter_estimates[1];
+        let kd = self.parameter_estimates[2];
+        
+        let control_input = kp * error + ki * self.integral_error + kd * self.derivative_error;
+        
+        Ok(control_input)
+    }
+    
+    fn compute_regression_vector(&self, output: f64) -> Vec<f64> {
+        // 构造回归向量
+        vec![
+            output,                    // 比例项
+            self.integral_error,       // 积分项
+            self.derivative_error,     // 微分项
+        ]
+    }
+}
+```
+
+### 3.2 鲁棒控制理论
+
+**定义 3.3 (鲁棒控制系统)**
+鲁棒控制系统是一个四元组 $\mathcal{R} = (P, C, \Delta, \gamma)$，其中：
+
+- $P$ 是标称对象
+- $C$ 是鲁棒控制器
+- $\Delta$ 是不确定性集合
+- $\gamma$ 是鲁棒性能指标
+
+**定义 3.4 (H∞控制)**
+H∞控制问题：寻找控制器 $C$ 使得：
+$$\|T_{zw}\|_\infty < \gamma$$
+
+其中 $T_{zw}$ 是从干扰 $w$ 到性能输出 $z$ 的传递函数。
+
+**算法 3.2 (H∞控制器设计)**
+
+```rust
+pub struct HInfinityController {
+    nominal_plant: LinearSystem,
+    uncertainty_bound: f64,
+    performance_weight: TransferFunction,
+    controller: TransferFunction,
+}
+
+impl HInfinityController {
+    pub fn design_controller(&mut self) -> Result<(), ControlError> {
+        // 1. 构造广义对象
+        let generalized_plant = self.construct_generalized_plant();
+        
+        // 2. 求解H∞控制问题
+        let controller = self.solve_hinfinity_problem(&generalized_plant)?;
+        
+        // 3. 验证性能
+        let performance = self.verify_performance(&controller)?;
+        
+        if performance < self.performance_threshold {
+            self.controller = controller;
+            Ok(())
+        } else {
+            Err(ControlError::PerformanceNotMet)
+        }
+    }
+    
+    fn construct_generalized_plant(&self) -> GeneralizedPlant {
+        // 构造包含性能权重的广义对象
+        let mut generalized = GeneralizedPlant::new();
+        
+        // 添加标称对象
+        generalized.add_system(self.nominal_plant.clone());
+        
+        // 添加性能权重
+        generalized.add_weight(self.performance_weight.clone());
+        
+        // 添加不确定性描述
+        generalized.add_uncertainty(self.uncertainty_bound);
+        
+        generalized
+    }
+    
+    fn solve_hinfinity_problem(&self, plant: &GeneralizedPlant) -> Result<TransferFunction, ControlError> {
+        // 使用Riccati方程求解H∞控制问题
+        let (a, b1, b2, c1, c2, d11, d12, d21, d22) = plant.get_state_space();
+        
+        // 求解H∞ Riccati方程
+        let x = self.solve_hinfinity_riccati(&a, &b1, &b2, &c1, &c2, &d11, &d12, &d21, &d22)?;
+        let y = self.solve_hinfinity_riccati(&a.transpose(), &c1.transpose(), &c2.transpose(), 
+                                           &b1.transpose(), &b2.transpose(), &d11.transpose(), 
+                                           &d21.transpose(), &d12.transpose(), &d22.transpose())?;
+        
+        // 构造控制器
+        let controller = self.construct_controller_from_riccati_solutions(x, y);
+        
+        Ok(controller)
+    }
+    
+    fn solve_hinfinity_riccati(&self, a: &Matrix, b1: &Matrix, b2: &Matrix, 
+                              c1: &Matrix, c2: &Matrix, d11: &Matrix, 
+                              d12: &Matrix, d21: &Matrix, d22: &Matrix) -> Result<Matrix, ControlError> {
+        // 求解H∞ Riccati方程
+        // A^T X + X A + X (B1 B1^T - B2 B2^T) X + C1^T C1 = 0
+        
+        let n = a.rows();
+        let mut x = Matrix::identity(n);
+        
+        // 迭代求解
+        for _ in 0..100 {
+            let x_old = x.clone();
+            
+            // 计算Riccati方程的右端
+            let r1 = a.transpose() * &x + &x * a;
+            let r2 = &x * (b1 * b1.transpose() - b2 * b2.transpose()) * &x;
+            let r3 = c1.transpose() * c1;
+            
+            // 更新X
+            x = -(r1 + r2 + r3).inverse()?;
+            
+            // 检查收敛性
+            if (&x - &x_old).norm() < 1e-6 {
+                break;
+            }
+        }
+        
+        Ok(x)
+    }
+}
+```
+
+## 4. 智能控制算法
+
+### 4.1 模糊控制
+
+**定义 4.1 (模糊控制系统)**
+模糊控制系统是一个四元组 $\mathcal{F} = (F, R, I, D)$，其中：
+
+- $F$ 是模糊化器
+- $R$ 是模糊规则库
+- $I$ 是推理机
+- $D$ 是去模糊化器
+
+**定义 4.2 (模糊控制律)**
+模糊控制律定义为：
+$$u(t) = \frac{\sum_{i=1}^n \mu_i(x) u_i}{\sum_{i=1}^n \mu_i(x)}$$
+
+其中 $\mu_i(x)$ 是第 $i$ 条规则的激活度。
+
+**算法 4.1 (模糊控制算法)**
+
+```rust
+pub struct FuzzyController {
+    fuzzy_sets: HashMap<String, FuzzySet>,
+    rule_base: Vec<FuzzyRule>,
+    inference_engine: InferenceEngine,
+    defuzzifier: Defuzzifier,
+}
+
+impl FuzzyController {
+    pub fn control(&self, input: &FuzzyInput) -> Result<f64, ControlError> {
+        // 1. 模糊化
+        let fuzzy_input = self.fuzzify(input)?;
+        
+        // 2. 模糊推理
+        let fuzzy_output = self.inference_engine.infer(&fuzzy_input, &self.rule_base)?;
+        
+        // 3. 去模糊化
+        let crisp_output = self.defuzzifier.defuzzify(&fuzzy_output)?;
+        
+        Ok(crisp_output)
+    }
+    
+    fn fuzzify(&self, input: &FuzzyInput) -> Result<FuzzyMembership, ControlError> {
+        let mut membership = FuzzyMembership::new();
+        
+        for (variable, value) in &input.values {
+            if let Some(fuzzy_set) = self.fuzzy_sets.get(variable) {
+                let degree = fuzzy_set.membership_degree(*value);
+                membership.set_degree(variable.clone(), degree);
+            }
+        }
+        
+        Ok(membership)
+    }
+}
+
+pub struct InferenceEngine;
+
+impl InferenceEngine {
+    pub fn infer(&self, input: &FuzzyMembership, rules: &[FuzzyRule]) -> Result<FuzzyOutput, ControlError> {
+        let mut output = FuzzyOutput::new();
+        
+        for rule in rules {
+            // 计算规则激活度
+            let activation_degree = self.compute_activation_degree(input, rule)?;
+            
+            // 应用规则
+            self.apply_rule(rule, activation_degree, &mut output)?;
+        }
+        
+        Ok(output)
+    }
+    
+    fn compute_activation_degree(&self, input: &FuzzyMembership, rule: &FuzzyRule) -> Result<f64, ControlError> {
+        let mut degree = 1.0;
+        
+        for condition in &rule.conditions {
+            let input_degree = input.get_degree(&condition.variable)
+                .ok_or(ControlError::VariableNotFound)?;
+            
+            degree = degree.min(input_degree);
+        }
+        
+        Ok(degree)
+    }
+}
+```
+
+### 4.2 神经网络控制
+
+**定义 4.3 (神经网络控制器)**
+神经网络控制器是一个四元组 $\mathcal{N} = (N, W, A, L)$，其中：
+
+- $N$ 是神经网络结构
+- $W$ 是权重矩阵
+- $A$ 是激活函数
+- $L$ 是学习算法
+
+**算法 4.2 (神经网络控制算法)**
+
+```rust
+pub struct NeuralNetworkController {
+    network: NeuralNetwork,
+    learning_rate: f64,
+    target_function: Box<dyn Fn(f64) -> f64>,
+}
+
+impl NeuralNetworkController {
+    pub fn control(&mut self, input: &[f64]) -> Result<f64, ControlError> {
+        // 前向传播
+        let output = self.network.forward(input)?;
+        
+        // 计算误差
+        let target = (self.target_function)(input[0]);
+        let error = target - output[0];
+        
+        // 反向传播更新权重
+        self.network.backward(&[error], self.learning_rate)?;
+        
+        Ok(output[0])
+    }
+}
+
+pub struct NeuralNetwork {
+    layers: Vec<Layer>,
+}
+
+impl NeuralNetwork {
+    pub fn forward(&self, input: &[f64]) -> Result<Vec<f64>, ControlError> {
+        let mut current_input = input.to_vec();
+        
+        for layer in &self.layers {
+            current_input = layer.forward(&current_input)?;
+        }
+        
+        Ok(current_input)
+    }
+    
+    pub fn backward(&mut self, error: &[f64], learning_rate: f64) -> Result<(), ControlError> {
+        let mut current_error = error.to_vec();
+        
+        // 反向传播误差
+        for layer in self.layers.iter_mut().rev() {
+            current_error = layer.backward(&current_error, learning_rate)?;
+        }
+        
+        Ok(())
+    }
+}
+
+pub struct Layer {
+    weights: Matrix,
+    biases: Vec<f64>,
+    activation: ActivationFunction,
+}
+
+impl Layer {
+    pub fn forward(&self, input: &[f64]) -> Result<Vec<f64>, ControlError> {
+        // 线性变换
+        let linear_output = self.weights.multiply_vector(input)?;
+        
+        // 添加偏置
+        let biased_output: Vec<f64> = linear_output.iter()
+            .zip(&self.biases)
+            .map(|(x, b)| x + b)
+            .collect();
+        
+        // 激活函数
+        let activated_output: Vec<f64> = biased_output.iter()
+            .map(|x| self.activation.apply(*x))
+            .collect();
+        
+        Ok(activated_output)
+    }
+    
+    pub fn backward(&mut self, error: &[f64], learning_rate: f64) -> Result<Vec<f64>, ControlError> {
+        // 计算梯度
+        let gradients = self.compute_gradients(error)?;
+        
+        // 更新权重和偏置
+        self.update_parameters(&gradients, learning_rate)?;
+        
+        // 返回传播到前一层的误差
+        let propagated_error = self.propagate_error(error)?;
+        
+        Ok(propagated_error)
+    }
+}
+```
+
+## 5. 总结与展望
+
+### 5.1 理论贡献
+
+本文建立了完整的IoT控制理论框架，包括：
+
+1. **基础控制理论**：定义了IoT控制系统的基本模型和性质
+2. **分布式控制**：建立了多智能体协调控制的理论基础
+3. **自适应控制**：提供了参数自适应和鲁棒控制算法
+4. **智能控制**：集成了模糊控制和神经网络控制方法
+
+### 5.2 实践应用
+
+基于理论分析，IoT控制系统设计应遵循以下原则：
+
+1. **分层控制**：采用分层架构实现复杂控制目标
+2. **分布式协调**：使用分布式算法实现大规模系统控制
+3. **自适应学习**：通过自适应控制应对系统不确定性
+4. **智能决策**：集成智能算法提高控制性能
+
+### 5.3 未来研究方向
+
+1. **量子控制**：探索量子控制理论在IoT中的应用
+2. **AI驱动控制**：使用深度强化学习优化控制策略
+3. **边缘智能控制**：在边缘设备上实现智能控制算法
+4. **安全控制**：研究控制系统的安全性和隐私保护
