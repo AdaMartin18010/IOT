@@ -68,7 +68,7 @@ $$\max V(\mathcal{B}) \text{ s.t. } R(\mathcal{B}) \leq R_{max}$$
 - $\mathcal{S}$ 是服务集合
 - $\mathcal{I}$ 是接口集合
 
-**算法 2.1 (领域模型构建)**
+**算法 2.1 (领域模型构建)**:
 
 ```rust
 pub struct DomainModel {
@@ -195,7 +195,7 @@ $$S = \langle E_1, E_2, ..., E_n \rangle$$
 
 其中 $E_i$ 是领域事件。
 
-**算法 3.1 (事件发布订阅)**
+**算法 3.1 (事件发布订阅)**:
 
 ```rust
 pub struct EventBus {
@@ -296,7 +296,7 @@ $$\forall t: \text{State}(t) = \text{Reconstruct}(\text{Events}(0..t))$$
 - $events$ 是事件集合
 - $resources$ 是资源集合
 
-**算法 4.1 (流程引擎)**
+**算法 4.1 (流程引擎)**:
 
 ```rust
 pub struct ProcessEngine {
@@ -446,7 +446,7 @@ $$\max E(\mathcal{P}) \text{ s.t. } C(\mathcal{P}) \leq C_{max}$$
 - $\mathcal{R}$ 是关系集合
 - $\mathcal{C}$ 是约束集合
 
-**算法 5.1 (数据建模)**
+**算法 5.1 (数据建模)**:
 
 ```rust
 pub struct DataModel {
@@ -573,7 +573,7 @@ $$Q(D) = \alpha \cdot A(D) + \beta \cdot C(D) + \gamma \cdot T(D) + \delta \cdot
 - $priority$ 是优先级
 - $metadata$ 是元数据
 
-**算法 6.1 (规则引擎)**
+**算法 6.1 (规则引擎)**:
 
 ```rust
 pub struct RuleEngine {
@@ -787,7 +787,7 @@ $$\max \sum_{i=1}^n E(R_i) \text{ s.t. } \text{Conflicts}(R) = \emptyset$$
 
 $$ROI = \frac{\text{Net Benefit}}{\text{Investment}} \times 100\%$$
 
-**算法 7.1 (价值分析)**
+**算法 7.1 (价值分析)**:
 
 ```rust
 pub struct ValueAnalyzer {

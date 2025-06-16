@@ -30,6 +30,7 @@ IoT系统范畴 $\mathcal{IoT}$ 定义为：
 $$\mathcal{IoT} = (\text{Ob}(\mathcal{IoT}), \text{Mor}(\mathcal{IoT}), \circ, \text{id})$$
 
 其中：
+
 - $\text{Ob}(\mathcal{IoT})$ 是IoT对象集合（设备、网络、平台等）
 - $\text{Mor}(\mathcal{IoT})$ 是态射集合（通信、控制、数据处理等）
 - $\circ$ 是态射复合
@@ -42,6 +43,7 @@ $$\mathcal{IoT} = (\text{Ob}(\mathcal{IoT}), \text{Mor}(\mathcal{IoT}), \circ, \
 $$D = (S_D, \Sigma_D, \delta_D)$$
 
 其中：
+
 - $S_D$ 是设备状态集合
 - $\Sigma_D$ 是输入字母表
 - $\delta_D: S_D \times \Sigma_D \rightarrow S_D$ 是状态转换函数
@@ -60,6 +62,7 @@ $$f(s_1, \sigma_1) = (s_2, \sigma_2)$$
 存在函子 $F: \mathcal{IoT} \rightarrow \mathcal{Set}$ 将IoT系统映射到集合范畴。
 
 **证明**：
+
 1. 对象映射：$F(D) = S_D$
 2. 态射映射：$F(f) = f_S: S_{D_1} \rightarrow S_{D_2}$
 3. 保持复合：$F(g \circ f) = F(g) \circ F(f)$
@@ -260,6 +263,7 @@ IoT形式语言 $L$ 定义为：
 $$L = (V, T, P, S)$$
 
 其中：
+
 - $V$ 是非终结符集合（设备类型、状态等）
 - $T$ 是终结符集合（传感器数据、控制命令等）
 - $P$ 是产生式规则集合
@@ -306,24 +310,24 @@ impl IoTSyntaxAnalyzer {
     // 构建解析表
     fn build_parsing_table(grammar: &IoTGrammar) -> HashMap<String, HashMap<String, Vec<String>>> {
         let mut table = HashMap::new();
-        
+
         for rule in &grammar.rules {
             let first_set = Self::compute_first_set(grammar, &rule.right);
-            
+
             for terminal in first_set {
                 table.entry(rule.left.clone())
                     .or_insert_with(HashMap::new)
                     .insert(terminal, rule.right.clone());
             }
         }
-        
+
         table
     }
 
     // 计算First集
     fn compute_first_set(grammar: &IoTGrammar, symbols: &[String]) -> Vec<String> {
         let mut first_set = Vec::new();
-        
+
         for symbol in symbols {
             if grammar.is_terminal(symbol) {
                 first_set.push(symbol.clone());
@@ -331,27 +335,27 @@ impl IoTSyntaxAnalyzer {
             } else {
                 let symbol_first = Self::compute_symbol_first(grammar, symbol);
                 first_set.extend(symbol_first);
-                
+
                 if !symbol_first.contains(&"ε".to_string()) {
                     break;
                 }
             }
         }
-        
+
         first_set
     }
 
     // 计算符号的First集
     fn compute_symbol_first(grammar: &IoTGrammar, symbol: &str) -> Vec<String> {
         let mut first_set = Vec::new();
-        
+
         for rule in &grammar.rules {
             if rule.left == symbol {
                 let rule_first = Self::compute_first_set(grammar, &rule.right);
                 first_set.extend(rule_first);
             }
         }
-        
+
         first_set
     }
 
@@ -360,13 +364,13 @@ impl IoTSyntaxAnalyzer {
         let mut stack = vec!["$".to_string()];
         let mut input_tokens = input.to_vec();
         input_tokens.push("$".to_string());
-        
+
         let mut parse_tree = ParseTree::new(self.grammar.start_symbol.clone());
-        
+
         while !stack.is_empty() && !input_tokens.is_empty() {
             let top = stack.last().unwrap();
             let current_input = input_tokens.first().unwrap();
-            
+
             if top == current_input {
                 stack.pop();
                 input_tokens.remove(0);
@@ -375,14 +379,14 @@ impl IoTSyntaxAnalyzer {
             } else {
                 if let Some(production) = self.parsing_table.get(top)
                     .and_then(|row| row.get(current_input)) {
-                    
+
                     stack.pop();
                     for symbol in production.iter().rev() {
                         if symbol != "ε" {
                             stack.push(symbol.clone());
                         }
                     }
-                    
+
                     // 更新解析树
                     parse_tree.add_production(top, production);
                 } else {
@@ -390,7 +394,7 @@ impl IoTSyntaxAnalyzer {
                 }
             }
         }
-        
+
         if stack.is_empty() && input_tokens.len() == 1 && input_tokens[0] == "$" {
             Ok(parse_tree)
         } else {
@@ -400,7 +404,7 @@ impl IoTSyntaxAnalyzer {
 }
 
 // IoT语法
-#[derive(Debug, Clone)]
+# [derive(Debug, Clone)]
 pub struct IoTGrammar {
     pub non_terminals: Vec<String>,
     pub terminals: Vec<String>,
@@ -408,7 +412,7 @@ pub struct IoTGrammar {
     pub start_symbol: String,
 }
 
-#[derive(Debug, Clone)]
+# [derive(Debug, Clone)]
 pub struct ProductionRule {
     pub left: String,
     pub right: Vec<String>,
@@ -422,23 +426,23 @@ impl IoTGrammar {
             rules: Vec::new(),
             start_symbol: "S".to_string(),
         };
-        
+
         // 添加产生式规则
         grammar.rules.push(ProductionRule {
             left: "S".to_string(),
             right: vec!["Device".to_string(), "Sensor".to_string()],
         });
-        
+
         grammar.rules.push(ProductionRule {
             left: "Device".to_string(),
             right: vec!["data".to_string()],
         });
-        
+
         grammar.rules.push(ProductionRule {
             left: "Sensor".to_string(),
             right: vec!["value".to_string()],
         });
-        
+
         grammar
     }
 
@@ -452,7 +456,7 @@ impl IoTGrammar {
 }
 
 // 解析树
-#[derive(Debug, Clone)]
+# [derive(Debug, Clone)]
 pub struct ParseTree {
     pub root: String,
     pub children: Vec<ParseTree>,
@@ -480,7 +484,7 @@ impl ParseTree {
 }
 
 // 语法错误
-#[derive(Debug, thiserror::Error)]
+# [derive(Debug, thiserror::Error)]
 pub enum SyntaxError {
     #[error("Unexpected token")]
     UnexpectedToken,
@@ -590,7 +594,7 @@ impl IoTLogicEngine {
 }
 
 // 逻辑公式
-#[derive(Debug, Clone)]
+# [derive(Debug, Clone)]
 pub enum LogicalFormula {
     Proposition(String),
     And(Box<LogicalFormula>, Box<LogicalFormula>),
@@ -600,7 +604,7 @@ pub enum LogicalFormula {
 }
 
 // 推理规则
-#[derive(Debug, Clone)]
+# [derive(Debug, Clone)]
 pub struct InferenceRule {
     pub name: String,
     pub premises: Vec<LogicalFormula>,
@@ -624,7 +628,7 @@ impl InferenceRule {
 }
 
 // 逻辑错误
-#[derive(Debug, thiserror::Error)]
+# [derive(Debug, thiserror::Error)]
 pub enum LogicError {
     #[error("Inference failed")]
     InferenceFailed,
@@ -693,24 +697,24 @@ impl IoTOptimizer {
         let mut current_solution = initial_solution.to_vec();
         let learning_rate = 0.01;
         let max_iterations = 1000;
-        
+
         for iteration in 0..max_iterations {
             // 计算梯度
             let gradient = self.compute_gradient(&current_solution)?;
-            
+
             // 更新解
             for i in 0..current_solution.len() {
                 current_solution[i] -= learning_rate * gradient[i];
             }
-            
+
             // 检查约束
             if !self.check_constraints(&current_solution) {
                 return Err(OptimizationError::ConstraintViolation);
             }
         }
-        
+
         let objective_value = self.objective_function.evaluate(&current_solution)?;
-        
+
         Ok(OptimizationResult {
             solution: current_solution,
             objective_value,
@@ -722,17 +726,17 @@ impl IoTOptimizer {
     fn compute_gradient(&self, solution: &[f64]) -> Result<Vec<f64>, OptimizationError> {
         let epsilon = 1e-6;
         let mut gradient = Vec::new();
-        
+
         for i in 0..solution.len() {
             let mut perturbed_solution = solution.to_vec();
             perturbed_solution[i] += epsilon;
-            
+
             let f_plus = self.objective_function.evaluate(&perturbed_solution)?;
             let f_minus = self.objective_function.evaluate(solution)?;
-            
+
             gradient.push((f_plus - f_minus) / epsilon);
         }
-        
+
         Ok(gradient)
     }
 
@@ -793,7 +797,7 @@ impl Constraint for ResourceConstraint {
 }
 
 // 优化算法
-#[derive(Debug, Clone)]
+# [derive(Debug, Clone)]
 pub enum OptimizationAlgorithm {
     GradientDescent,
     GeneticAlgorithm,
@@ -801,7 +805,7 @@ pub enum OptimizationAlgorithm {
 }
 
 // 优化结果
-#[derive(Debug, Clone)]
+# [derive(Debug, Clone)]
 pub struct OptimizationResult {
     pub solution: Vec<f64>,
     pub objective_value: f64,
@@ -809,7 +813,7 @@ pub struct OptimizationResult {
 }
 
 // 优化错误
-#[derive(Debug, thiserror::Error)]
+# [derive(Debug, thiserror::Error)]
 pub enum OptimizationError {
     #[error("Objective function evaluation failed")]
     ObjectiveEvaluationFailed,
@@ -825,11 +829,11 @@ pub enum OptimizationError {
 ### 主程序示例
 
 ```rust
-#[tokio::main]
+# [tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // 创建IoT系统范畴
     let iot_category = IoTCategory::new();
-    
+
     // 添加设备对象
     let sensor = IoTObject {
         id: "sensor_001".to_string(),
@@ -838,7 +842,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         inputs: vec!["data".to_string()],
         outputs: vec!["measurement".to_string()],
     };
-    
+
     let actuator = IoTObject {
         id: "actuator_001".to_string(),
         object_type: ObjectType::Actuator,
@@ -846,53 +850,53 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         inputs: vec!["command".to_string()],
         outputs: vec!["action".to_string()],
     };
-    
+
     iot_category.add_object(sensor).await?;
     iot_category.add_object(actuator).await?;
-    
+
     // 创建语法分析器
     let grammar = IoTGrammar::new();
     let syntax_analyzer = IoTSyntaxAnalyzer::new(grammar);
-    
+
     // 分析IoT数据流
     let input_tokens = vec!["data".to_string(), "value".to_string()];
     let parse_tree = syntax_analyzer.parse(&input_tokens)?;
     println!("Parse tree: {:?}", parse_tree);
-    
+
     // 创建逻辑推理引擎
     let mut logic_engine = IoTLogicEngine::new();
-    
+
     // 添加IoT知识
     logic_engine.add_knowledge("device_online(sensor_001)".to_string(), true);
     logic_engine.add_knowledge("data_valid(sensor_001)".to_string(), true);
-    
+
     // 推理
     let goal = LogicalFormula::And(
         Box::new(LogicalFormula::Proposition("device_online(sensor_001)".to_string())),
         Box::new(LogicalFormula::Proposition("data_valid(sensor_001)".to_string())),
     );
-    
+
     let result = logic_engine.infer(&goal)?;
     println!("Logical inference result: {}", result);
-    
+
     // 创建优化器
     let objective_function = Box::new(EnergyOptimizationObjective);
     let constraints = vec![
         Box::new(ResourceConstraint { max_resources: 100.0 }) as Box<dyn Constraint>,
     ];
-    
+
     let optimizer = IoTOptimizer::new(
         objective_function,
         constraints,
         OptimizationAlgorithm::GradientDescent,
     );
-    
+
     // 执行优化
     let initial_solution = vec![50.0, 30.0, 20.0];
     let optimization_result = optimizer.optimize(&initial_solution)?;
-    
+
     println!("Optimization result: {:?}", optimization_result);
-    
+
     Ok(())
 }
 ```
@@ -915,4 +919,4 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 2. Hopcroft, J.E. "Introduction to Automata Theory, Languages, and Computation"
 3. Enderton, H.B. "A Mathematical Introduction to Logic"
 4. Boyd, S. "Convex Optimization"
-5. Russell, S. "Artificial Intelligence: A Modern Approach" 
+5. Russell, S. "Artificial Intelligence: A Modern Approach"

@@ -281,7 +281,7 @@ $$L: \mathcal{N} \rightarrow \mathbb{R}^+$$
 
 其中 $\mathcal{N}$ 是节点集合。
 
-**算法 3.2 (一致性哈希)**
+**算法 3.2 (一致性哈希)**:
 
 ```rust
 use std::collections::hash_map::DefaultHasher;
@@ -355,7 +355,7 @@ impl ConsistentHash {
 - $\mathcal{M}$ 是明文空间
 - $\mathcal{C}$ 是密文空间
 
-**算法 4.1 (AES加密)**
+**算法 4.1 (AES加密)**:
 
 ```rust
 use aes::Aes128;
@@ -411,7 +411,7 @@ impl AESCipher {
 **定义 4.2 (哈希函数)**
 哈希函数 $H: \mathcal{M} \rightarrow \mathcal{H}$，其中 $\mathcal{H}$ 是哈希空间。
 
-**算法 4.2 (SHA-256哈希)**
+**算法 4.2 (SHA-256哈希)**:
 
 ```rust
 use sha2::{Sha256, Digest};
@@ -445,7 +445,7 @@ impl SHA256Hasher {
 - $\mathcal{C}$ 是交叉算子
 - $\mathcal{M}$ 是变异算子
 
-**算法 5.1 (IoT资源优化)**
+**算法 5.1 (IoT资源优化)**:
 
 ```rust
 #[derive(Clone, Debug)]
@@ -600,7 +600,7 @@ $$f: \mathcal{X} \rightarrow \{normal, anomaly\}$$
 
 其中 $\mathcal{X}$ 是特征空间。
 
-**算法 6.1 (隔离森林)**
+**算法 6.1 (隔离森林)**:
 
 ```rust
 pub struct IsolationForest {
@@ -756,7 +756,7 @@ $$f: \mathcal{T} \rightarrow \mathbb{R}$$
 
 其中 $\mathcal{T}$ 是时间序列。
 
-**算法 6.2 (ARIMA模型)**
+**算法 6.2 (ARIMA模型)**:
 
 ```rust
 pub struct ARIMAModel {
@@ -908,4 +908,4 @@ impl ARIMAModel {
 5. **优化算法**：提供了遗传算法等优化方法
 6. **机器学习算法**：实现了异常检测和预测算法
 
-该算法框架为IoT系统的数据处理、通信、安全和优化提供了完整的算法支撑，确保系统的高效性和可靠性。 
+该算法框架为IoT系统的数据处理、通信、安全和优化提供了完整的算法支撑，确保系统的高效性和可靠性。

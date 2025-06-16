@@ -31,6 +31,7 @@ IoT系统控制理论是物联网技术的核心理论基础，它结合了传�
 $$C = (D, N, \Sigma, \delta, \lambda, \gamma)$$
 
 其中：
+
 - $D = \{d_1, d_2, \ldots, d_n\}$ 是设备集合
 - $N = (V, E, w)$ 是通信网络图
 - $\Sigma$ 是系统状态空间
@@ -46,6 +47,7 @@ $$\dot{x}_i(t) = f_i(x_i(t), u_i(t), w_i(t))$$
 $$y_i(t) = h_i(x_i(t), v_i(t))$$
 
 其中：
+
 - $x_i(t) \in \mathbb{R}^{n_i}$ 是设备状态
 - $u_i(t) \in \mathbb{R}^{m_i}$ 是控制输入
 - $y_i(t) \in \mathbb{R}^{p_i}$ 是测量输出
@@ -61,6 +63,7 @@ IoT系统 $C$ 是可控的，当且仅当：
 3. 控制律 $\gamma$ 满足一致性条件
 
 **证明**：
+
 1. 局部可控性确保每个设备可以独立控制
 2. 网络连通性确保控制信息可以传播
 3. 一致性条件确保分布式控制收敛
@@ -92,6 +95,7 @@ $$\dot{x}_i(t) = \sum_{j \in \mathcal{N}_i} a_{ij}(x_j(t) - x_i(t))$$
 如果通信图是连通的，则系统渐近收敛到一致性状态。
 
 **证明**：
+
 1. 将系统写为矩阵形式：$\dot{x}(t) = -L x(t)$
 2. 拉普拉斯矩阵 $L$ 的特征值分析
 3. 连通性确保零特征值重数为1
@@ -106,6 +110,7 @@ $$\dot{x}_i(t) = \sum_{j \in \mathcal{N}_i} a_{ij}(x_j(t) - x_i(t))$$
 $$u_i(t) = \hat{\theta}_i^T(t) \phi_i(x_i(t)) + K_i e_i(t)$$
 
 其中：
+
 - $\hat{\theta}_i(t)$ 是参数估计
 - $\phi_i(x_i(t))$ 是回归向量
 - $K_i$ 是反馈增益
@@ -183,7 +188,7 @@ impl DistributedControlSystem {
     pub async fn execute_control(&self, dt: f64) -> Result<(), ControlError> {
         let mut devices = self.devices.write().await;
         let network = self.network.read().await;
-        
+
         // 计算每个设备的控制输入
         for (device_id, device_state) in devices.iter_mut() {
             let neighbors = network.get_neighbors(device_id);
@@ -191,16 +196,16 @@ impl DistributedControlSystem {
                 .iter()
                 .filter_map(|id| devices.get(id).cloned())
                 .collect();
-            
+
             let control_input = self.control_law.compute_control(
                 device_state,
                 &neighbor_states,
             )?;
-            
+
             // 更新设备状态
             self.update_device_state(device_state, &control_input, dt)?;
         }
-        
+
         Ok(())
     }
 
@@ -210,18 +215,18 @@ impl DistributedControlSystem {
         let states: Vec<f64> = devices.values()
             .map(|d| d.state[0]) // 检查第一个状态分量
             .collect();
-        
+
         let mean = states.iter().sum::<f64>() / states.len() as f64;
         let max_deviation = states.iter()
             .map(|s| (s - mean).abs())
             .fold(0.0, f64::max);
-        
+
         max_deviation < tolerance
     }
 }
 
 // 设备状态
-#[derive(Debug, Clone)]
+# [derive(Debug, Clone)]
 pub struct DeviceState {
     pub id: String,
     pub state: Vec<f64>,
@@ -241,7 +246,7 @@ impl DeviceState {
 }
 
 // 控制输入
-#[derive(Debug, Clone)]
+# [derive(Debug, Clone)]
 pub struct ControlInput {
     pub values: Vec<f64>,
     pub dimension: usize,
@@ -268,15 +273,15 @@ impl ControlLaw for ConsensusControlLaw {
         neighbor_states: &[DeviceState],
     ) -> Result<ControlInput, ControlError> {
         let mut control_values = vec![0.0; device_state.state_dimension];
-        
+
         // 计算与邻居的状态差
         for neighbor in neighbor_states {
             for i in 0..device_state.state_dimension {
-                control_values[i] += self.coupling_strength * 
+                control_values[i] += self.coupling_strength *
                     (neighbor.state[i] - device_state.state[i]);
             }
         }
-        
+
         Ok(ControlInput {
             values: control_values,
             dimension: device_state.state_dimension,
@@ -312,7 +317,7 @@ impl NetworkTopology {
 }
 
 // 错误类型
-#[derive(Debug, thiserror::Error)]
+# [derive(Debug, thiserror::Error)]
 pub enum ControlError {
     #[error("Invalid control input")]
     InvalidControlInput,
@@ -342,4 +347,4 @@ pub enum ControlError {
 2. Sontag, E.D. "Mathematical Control Theory"
 3. Astrom, K.J. "Adaptive Control"
 4. Zhou, K. "Robust and Optimal Control"
-5. Tabuada, P. "Event-Triggered Real-Time Scheduling" 
+5. Tabuada, P. "Event-Triggered Real-Time Scheduling"

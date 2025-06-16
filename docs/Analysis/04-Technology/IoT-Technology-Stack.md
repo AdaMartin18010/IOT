@@ -613,7 +613,7 @@ $$P = \alpha \cdot T + \beta \cdot M + \gamma \cdot E$$
 - $E$ 是能耗
 - $\alpha, \beta, \gamma$ 是权重系数
 
-**表 4.1: Rust vs Go 性能对比**
+**表 4.1: Rust vs Go 性能对比**:
 
 | 指标 | Rust | Go | 优势 |
 |------|------|----|----|
@@ -623,7 +623,7 @@ $$P = \alpha \cdot T + \beta \cdot M + \gamma \cdot E$$
 | 并发性能 | 优秀 | 优秀 | 相当 |
 | 编译时间 | 慢 | 快 | Go |
 
-**算法 4.1 (性能基准测试算法)**
+**算法 4.1 (性能基准测试算法)**:
 
 ```rust
 pub struct PerformanceBenchmark {

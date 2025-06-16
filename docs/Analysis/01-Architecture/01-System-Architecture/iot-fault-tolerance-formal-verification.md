@@ -30,6 +30,7 @@ IoT系统的容错性和形式化验证是确保系统可靠性和安全性的�
 $$F = (S, \mathcal{F}, \mathcal{D}, \mathcal{R}, \mathcal{C})$$
 
 其中：
+
 - $S$ 是系统状态空间
 - $\mathcal{F}$ 是故障集合
 - $\mathcal{D}$ 是故障检测机制
@@ -113,20 +114,20 @@ impl FaultTolerantSystem {
     pub async fn fault_detection_loop(&self) -> Result<(), FaultError> {
         loop {
             let components = self.components.read().await;
-            
+
             for (id, component) in components.iter() {
                 // 检查组件健康状态
                 let health_status = self.fault_detector.check_health(component).await?;
-                
+
                 if health_status.is_faulty() {
                     // 触发故障恢复
                     self.recovery_manager.handle_fault(id, &health_status).await?;
-                    
+
                     // 激活冗余组件
                     self.redundancy_manager.activate_redundancy(id).await?;
                 }
             }
-            
+
             tokio::time::sleep(Duration::from_secs(1)).await;
         }
     }
@@ -135,18 +136,18 @@ impl FaultTolerantSystem {
     pub async fn calculate_reliability(&self) -> f64 {
         let components = self.components.read().await;
         let mut system_reliability = 1.0;
-        
+
         for component in components.values() {
             let component_reliability = component.calculate_reliability();
             system_reliability *= component_reliability;
         }
-        
+
         1.0 - system_reliability
     }
 }
 
 // 组件定义
-#[derive(Debug, Clone, Serialize, Deserialize)]
+# [derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Component {
     pub id: String,
     pub component_type: ComponentType,
@@ -157,7 +158,7 @@ pub struct Component {
     pub failure_rate: f64,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+# [derive(Debug, Clone, Serialize, Deserialize)]
 pub enum ComponentType {
     Sensor,
     Actuator,
@@ -166,7 +167,7 @@ pub enum ComponentType {
     Storage,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+# [derive(Debug, Clone, Serialize, Deserialize)]
 pub enum ComponentStatus {
     Normal,
     Degraded,
@@ -175,7 +176,7 @@ pub enum ComponentStatus {
     Failed,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+# [derive(Debug, Clone, Serialize, Deserialize)]
 pub struct HealthMetrics {
     pub cpu_usage: f64,
     pub memory_usage: f64,
@@ -264,7 +265,7 @@ impl FaultDetector {
 }
 
 // 健康状态
-#[derive(Debug, Clone)]
+# [derive(Debug, Clone)]
 pub enum HealthStatus {
     Normal,
     Degraded(FaultType),
@@ -278,7 +279,7 @@ impl HealthStatus {
 }
 
 // 故障类型
-#[derive(Debug, Clone)]
+# [derive(Debug, Clone)]
 pub enum FaultType {
     HeartbeatTimeout,
     HighCpuUsage,
@@ -309,7 +310,7 @@ impl AnomalyDetector {
     // 检测异常
     pub async fn detect_anomaly(&mut self, metrics: &HealthMetrics) -> Result<bool, FaultError> {
         self.historical_data.push(metrics.clone());
-        
+
         if self.historical_data.len() > self.window_size {
             self.historical_data.remove(0);
         }
@@ -322,7 +323,7 @@ impl AnomalyDetector {
         let cpu_values: Vec<f64> = self.historical_data.iter()
             .map(|m| m.cpu_usage)
             .collect();
-        
+
         let mean = cpu_values.iter().sum::<f64>() / cpu_values.len() as f64;
         let variance = cpu_values.iter()
             .map(|x| (x - mean).powi(2))
@@ -331,7 +332,7 @@ impl AnomalyDetector {
 
         // 检查当前值是否异常
         let z_score = (metrics.cpu_usage - mean) / std_dev;
-        
+
         Ok(z_score.abs() > self.threshold)
     }
 }
@@ -348,7 +349,7 @@ impl RecoveryManager {
         strategies.insert(FaultType::HighCpuUsage, Box::new(LoadBalancingStrategy));
         strategies.insert(FaultType::MemoryExhaustion, Box::new(MemoryCleanupStrategy));
         strategies.insert(FaultType::Overheating, Box::new(CoolingStrategy));
-        
+
         Self { recovery_strategies: strategies }
     }
 
@@ -364,7 +365,7 @@ impl RecoveryManager {
 }
 
 // 恢复策略trait
-#[async_trait::async_trait]
+# [async_trait::async_trait]
 pub trait RecoveryStrategy: Send + Sync {
     async fn execute(&self, component_id: &str) -> Result<(), FaultError>;
 }
@@ -372,7 +373,7 @@ pub trait RecoveryStrategy: Send + Sync {
 // 重启策略
 pub struct RestartStrategy;
 
-#[async_trait::async_trait]
+# [async_trait::async_trait]
 impl RecoveryStrategy for RestartStrategy {
     async fn execute(&self, component_id: &str) -> Result<(), FaultError> {
         println!("Restarting component: {}", component_id);
@@ -385,7 +386,7 @@ impl RecoveryStrategy for RestartStrategy {
 // 负载均衡策略
 pub struct LoadBalancingStrategy;
 
-#[async_trait::async_trait]
+# [async_trait::async_trait]
 impl RecoveryStrategy for LoadBalancingStrategy {
     async fn execute(&self, component_id: &str) -> Result<(), FaultError> {
         println!("Redistributing load from component: {}", component_id);
@@ -397,7 +398,7 @@ impl RecoveryStrategy for LoadBalancingStrategy {
 // 内存清理策略
 pub struct MemoryCleanupStrategy;
 
-#[async_trait::async_trait]
+# [async_trait::async_trait]
 impl RecoveryStrategy for MemoryCleanupStrategy {
     async fn execute(&self, component_id: &str) -> Result<(), FaultError> {
         println!("Cleaning memory for component: {}", component_id);
@@ -409,7 +410,7 @@ impl RecoveryStrategy for MemoryCleanupStrategy {
 // 冷却策略
 pub struct CoolingStrategy;
 
-#[async_trait::async_trait]
+# [async_trait::async_trait]
 impl RecoveryStrategy for CoolingStrategy {
     async fn execute(&self, component_id: &str) -> Result<(), FaultError> {
         println!("Activating cooling for component: {}", component_id);
@@ -451,7 +452,7 @@ impl RedundancyManager {
 }
 
 // 错误类型
-#[derive(Debug, thiserror::Error)]
+# [derive(Debug, thiserror::Error)]
 pub enum FaultError {
     #[error("Component not found")]
     ComponentNotFound,
@@ -540,12 +541,12 @@ impl ModelChecker {
     fn verify_eventually(&self, condition: &Condition) -> VerificationResult {
         let mut reachable_states = std::collections::HashSet::new();
         let mut to_visit = vec![self.state_space[0].clone()];
-        
+
         while let Some(state) = to_visit.pop() {
             if condition.evaluate(&state) {
                 return VerificationResult::Satisfied;
             }
-            
+
             if reachable_states.insert(state.clone()) {
                 for transition in &self.transitions {
                     if transition.from == state {
@@ -554,7 +555,7 @@ impl ModelChecker {
                 }
             }
         }
-        
+
         VerificationResult::Violated {
             state: self.state_space[0].clone(),
             counterexample: Vec::new(),
@@ -575,21 +576,21 @@ impl ModelChecker {
 }
 
 // 系统状态
-#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+# [derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct SystemState {
     pub id: String,
     pub component_states: HashMap<String, ComponentStatus>,
     pub global_state: GlobalState,
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+# [derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct GlobalState {
     pub system_health: SystemHealth,
     pub active_faults: Vec<FaultType>,
     pub recovery_in_progress: bool,
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+# [derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum SystemHealth {
     Healthy,
     Degraded,
@@ -598,14 +599,14 @@ pub enum SystemHealth {
 }
 
 // 状态转换
-#[derive(Debug, Clone)]
+# [derive(Debug, Clone)]
 pub struct StateTransition {
     pub from: SystemState,
     pub to: SystemState,
     pub event: TransitionEvent,
 }
 
-#[derive(Debug, Clone)]
+# [derive(Debug, Clone)]
 pub enum TransitionEvent {
     ComponentFailure(String),
     ComponentRecovery(String),
@@ -614,14 +615,14 @@ pub enum TransitionEvent {
 }
 
 // 属性
-#[derive(Debug, Clone)]
+# [derive(Debug, Clone)]
 pub enum Property {
     Always(Condition),
     Eventually(Condition),
     Until(Condition, Condition),
 }
 
-#[derive(Debug, Clone)]
+# [derive(Debug, Clone)]
 pub enum Condition {
     ComponentHealthy(String),
     ComponentFaulty(String),
@@ -665,7 +666,7 @@ impl Condition {
 }
 
 // 验证结果
-#[derive(Debug, Clone)]
+# [derive(Debug, Clone)]
 pub enum VerificationResult {
     Satisfied,
     Violated {
@@ -715,16 +716,16 @@ impl MetaModelReasoner {
     pub fn transform_model(&self, source_model: &Model, target_metamodel: &str) -> Result<Model, ReasoningError> {
         let source_metamodel = self.get_metamodel(&source_model.metamodel_id)?;
         let target_metamodel = self.get_metamodel(target_metamodel)?;
-        
+
         // 查找适用的转换规则
         let applicable_rules = self.find_applicable_rules(source_metamodel, target_metamodel);
-        
+
         // 执行转换
         let mut transformed_model = source_model.clone();
         for rule in applicable_rules {
             transformed_model = rule.apply(&transformed_model)?;
         }
-        
+
         Ok(transformed_model)
     }
 
@@ -732,7 +733,7 @@ impl MetaModelReasoner {
     pub fn validate_model(&self, model: &Model) -> Result<ValidationResult, ReasoningError> {
         let metamodel = self.get_metamodel(&model.metamodel_id)?;
         let mut violations = Vec::new();
-        
+
         // 检查结构约束
         for constraint in &metamodel.constraints {
             if !constraint.evaluate(model) {
@@ -743,7 +744,7 @@ impl MetaModelReasoner {
                 });
             }
         }
-        
+
         // 检查元素约束
         for element in &model.elements {
             for constraint in &metamodel.element_constraints {
@@ -756,7 +757,7 @@ impl MetaModelReasoner {
                 }
             }
         }
-        
+
         Ok(ValidationResult {
             is_valid: violations.is_empty(),
             violations,
@@ -765,7 +766,7 @@ impl MetaModelReasoner {
 }
 
 // 元模型
-#[derive(Debug, Clone)]
+# [derive(Debug, Clone)]
 pub struct MetaModel {
     pub id: String,
     pub elements: Vec<ElementDefinition>,
@@ -774,14 +775,14 @@ pub struct MetaModel {
     pub element_constraints: Vec<ElementConstraint>,
 }
 
-#[derive(Debug, Clone)]
+# [derive(Debug, Clone)]
 pub struct ElementDefinition {
     pub name: String,
     pub attributes: Vec<AttributeDefinition>,
     pub super_types: Vec<String>,
 }
 
-#[derive(Debug, Clone)]
+# [derive(Debug, Clone)]
 pub struct RelationshipDefinition {
     pub name: String,
     pub source: String,
@@ -789,14 +790,14 @@ pub struct RelationshipDefinition {
     pub cardinality: Cardinality,
 }
 
-#[derive(Debug, Clone)]
+# [derive(Debug, Clone)]
 pub struct Cardinality {
     pub min: u32,
     pub max: Option<u32>,
 }
 
 // 模型
-#[derive(Debug, Clone)]
+# [derive(Debug, Clone)]
 pub struct Model {
     pub id: String,
     pub metamodel_id: String,
@@ -804,14 +805,14 @@ pub struct Model {
     pub relationships: Vec<Relationship>,
 }
 
-#[derive(Debug, Clone)]
+# [derive(Debug, Clone)]
 pub struct Element {
     pub id: String,
     pub type_name: String,
     pub attributes: HashMap<String, Value>,
 }
 
-#[derive(Debug, Clone)]
+# [derive(Debug, Clone)]
 pub enum Value {
     String(String),
     Integer(i64),
@@ -820,7 +821,7 @@ pub enum Value {
     List(Vec<Value>),
 }
 
-#[derive(Debug, Clone)]
+# [derive(Debug, Clone)]
 pub struct Relationship {
     pub id: String,
     pub type_name: String,
@@ -829,20 +830,20 @@ pub struct Relationship {
 }
 
 // 约束
-#[derive(Debug, Clone)]
+# [derive(Debug, Clone)]
 pub struct Constraint {
     pub name: String,
     pub condition: ConstraintCondition,
 }
 
-#[derive(Debug, Clone)]
+# [derive(Debug, Clone)]
 pub struct ElementConstraint {
     pub name: String,
     pub element_type: String,
     pub condition: ConstraintCondition,
 }
 
-#[derive(Debug, Clone)]
+# [derive(Debug, Clone)]
 pub enum ConstraintCondition {
     Unique(String),
     Required(String),
@@ -874,7 +875,7 @@ impl ElementConstraint {
         if element.type_name != self.element_type {
             return true;
         }
-        
+
         match &self.condition {
             ConstraintCondition::Required(attribute) => {
                 element.attributes.contains_key(attribute)
@@ -885,7 +886,7 @@ impl ElementConstraint {
 }
 
 // 转换规则
-#[derive(Debug, Clone)]
+# [derive(Debug, Clone)]
 pub struct TransformationRule {
     pub name: String,
     pub source_pattern: Pattern,
@@ -893,19 +894,19 @@ pub struct TransformationRule {
     pub conditions: Vec<Condition>,
 }
 
-#[derive(Debug, Clone)]
+# [derive(Debug, Clone)]
 pub struct Pattern {
     pub elements: Vec<ElementPattern>,
     pub relationships: Vec<RelationshipPattern>,
 }
 
-#[derive(Debug, Clone)]
+# [derive(Debug, Clone)]
 pub struct ElementPattern {
     pub type_name: String,
     pub attributes: HashMap<String, String>,
 }
 
-#[derive(Debug, Clone)]
+# [derive(Debug, Clone)]
 pub struct RelationshipPattern {
     pub type_name: String,
     pub source: String,
@@ -920,13 +921,13 @@ impl TransformationRule {
 }
 
 // 验证结果
-#[derive(Debug, Clone)]
+# [derive(Debug, Clone)]
 pub struct ValidationResult {
     pub is_valid: bool,
     pub violations: Vec<Violation>,
 }
 
-#[derive(Debug, Clone)]
+# [derive(Debug, Clone)]
 pub struct Violation {
     pub constraint: Constraint,
     pub element: Option<Element>,
@@ -934,7 +935,7 @@ pub struct Violation {
 }
 
 // 错误类型
-#[derive(Debug, thiserror::Error)]
+# [derive(Debug, thiserror::Error)]
 pub enum ReasoningError {
     #[error("Metamodel not found")]
     MetamodelNotFound,
@@ -986,16 +987,16 @@ impl ModelInferenceEngine {
     pub async fn infer(&self, model_id: &str, input_data: &InputData) -> Result<InferenceResult, InferenceError> {
         let model = self.models.get(model_id)
             .ok_or(InferenceError::ModelNotFound)?;
-        
+
         // 数据预处理
         let processed_data = self.data_preprocessor.preprocess(input_data).await?;
-        
+
         // 模型推理
         let raw_result = model.predict(&processed_data).await?;
-        
+
         // 结果后处理
         let final_result = self.result_postprocessor.postprocess(&raw_result).await?;
-        
+
         Ok(final_result)
     }
 
@@ -1006,7 +1007,7 @@ impl ModelInferenceEngine {
 }
 
 // 推理模型trait
-#[async_trait::async_trait]
+# [async_trait::async_trait]
 pub trait InferenceModel: Send + Sync {
     async fn predict(&self, data: &ProcessedData) -> Result<RawResult, InferenceError>;
 }
@@ -1018,20 +1019,20 @@ pub struct PredictiveMaintenanceModel {
     threshold: f64,
 }
 
-#[async_trait::async_trait]
+# [async_trait::async_trait]
 impl InferenceModel for PredictiveMaintenanceModel {
     async fn predict(&self, data: &ProcessedData) -> Result<RawResult, InferenceError> {
         let mut score = 0.0;
-        
+
         for (i, feature) in self.features.iter().enumerate() {
             if let Some(value) = data.features.get(feature) {
                 score += self.weights[i] * value;
             }
         }
-        
+
         let probability = 1.0 / (1.0 + (-score).exp());
         let prediction = probability > self.threshold;
-        
+
         Ok(RawResult {
             predictions: vec![prediction],
             probabilities: vec![probability],
@@ -1046,19 +1047,19 @@ pub struct AnomalyDetectionModel {
     threshold: f64,
 }
 
-#[async_trait::async_trait]
+# [async_trait::async_trait]
 impl InferenceModel for AnomalyDetectionModel {
     async fn predict(&self, data: &ProcessedData) -> Result<RawResult, InferenceError> {
         let features: Vec<f64> = data.features.values().cloned().collect();
-        
+
         // 计算与正常模式的距离
         let min_distance = self.normal_patterns.iter()
             .map(|pattern| self.calculate_distance(&features, pattern))
             .fold(f64::INFINITY, f64::min);
-        
+
         let is_anomaly = min_distance > self.threshold;
         let anomaly_score = min_distance / self.threshold;
-        
+
         Ok(RawResult {
             predictions: vec![is_anomaly],
             probabilities: vec![anomaly_score],
@@ -1091,7 +1092,7 @@ impl DataPreprocessor {
 
     pub async fn preprocess(&self, input_data: &InputData) -> Result<ProcessedData, InferenceError> {
         let mut features = HashMap::new();
-        
+
         for (key, value) in &input_data.raw_data {
             if let Some((mean, std)) = self.normalization_params.get(key) {
                 let normalized_value = (value - mean) / std;
@@ -1100,7 +1101,7 @@ impl DataPreprocessor {
                 features.insert(key.clone(), *value);
             }
         }
-        
+
         Ok(ProcessedData { features })
     }
 }
@@ -1124,25 +1125,25 @@ impl ResultPostprocessor {
 }
 
 // 数据类型
-#[derive(Debug, Clone)]
+# [derive(Debug, Clone)]
 pub struct InputData {
     pub raw_data: HashMap<String, f64>,
     pub timestamp: chrono::DateTime<chrono::Utc>,
 }
 
-#[derive(Debug, Clone)]
+# [derive(Debug, Clone)]
 pub struct ProcessedData {
     pub features: HashMap<String, f64>,
 }
 
-#[derive(Debug, Clone)]
+# [derive(Debug, Clone)]
 pub struct RawResult {
     pub predictions: Vec<bool>,
     pub probabilities: Vec<f64>,
     pub confidence: f64,
 }
 
-#[derive(Debug, Clone)]
+# [derive(Debug, Clone)]
 pub struct InferenceResult {
     pub predictions: Vec<bool>,
     pub probabilities: Vec<f64>,
@@ -1151,7 +1152,7 @@ pub struct InferenceResult {
 }
 
 // 错误类型
-#[derive(Debug, thiserror::Error)]
+# [derive(Debug, thiserror::Error)]
 pub enum InferenceError {
     #[error("Model not found")]
     ModelNotFound,
@@ -1169,20 +1170,20 @@ pub enum InferenceError {
 ### 主程序示例
 
 ```rust
-#[tokio::main]
+# [tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // 创建容错系统
     let fault_tolerant_system = FaultTolerantSystem::new();
-    
+
     // 添加组件
     let sensor = Component::new("sensor_001".to_string(), ComponentType::Sensor);
     let actuator = Component::new("actuator_001".to_string(), ComponentType::Actuator);
     let processor = Component::new("processor_001".to_string(), ComponentType::Processor);
-    
+
     fault_tolerant_system.add_component(sensor).await?;
     fault_tolerant_system.add_component(actuator).await?;
     fault_tolerant_system.add_component(processor).await?;
-    
+
     // 启动故障检测循环
     let fault_detection_handle = tokio::spawn({
         let system = fault_tolerant_system.clone();
@@ -1190,33 +1191,33 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             system.fault_detection_loop().await
         }
     });
-    
+
     // 创建模型检查器
     let model_checker = ModelChecker::new();
-    
+
     // 定义系统属性
     let no_faults_property = Property::Always(Condition::NoActiveFaults);
     let recovery_property = Property::Eventually(Condition::NoActiveFaults);
-    
+
     // 验证属性
     let result1 = model_checker.verify_property(&no_faults_property);
     let result2 = model_checker.verify_property(&recovery_property);
-    
+
     println!("No faults property: {:?}", result1);
     println!("Recovery property: {:?}", result2);
-    
+
     // 创建推理引擎
     let mut inference_engine = ModelInferenceEngine::new();
-    
+
     // 添加预测性维护模型
     let maintenance_model = PredictiveMaintenanceModel {
         weights: vec![0.5, -0.3, 0.2],
         features: vec!["temperature".to_string(), "vibration".to_string(), "pressure".to_string()],
         threshold: 0.7,
     };
-    
+
     inference_engine.add_model("maintenance".to_string(), Box::new(maintenance_model));
-    
+
     // 执行推理
     let input_data = InputData {
         raw_data: {
@@ -1228,13 +1229,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         },
         timestamp: chrono::Utc::now(),
     };
-    
+
     let result = inference_engine.infer("maintenance", &input_data).await?;
     println!("Maintenance prediction: {:?}", result);
-    
+
     // 等待故障检测循环
     fault_detection_handle.await??;
-    
+
     Ok(())
 }
 ```
@@ -1257,4 +1258,4 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 2. Clarke, E.M. "Model Checking"
 3. Object Management Group. "Meta Object Facility (MOF)"
 4. Bishop, C.M. "Pattern Recognition and Machine Learning"
-5. Chandola, V. "Anomaly Detection: A Survey" 
+5. Chandola, V. "Anomaly Detection: A Survey"
