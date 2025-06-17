@@ -40,6 +40,7 @@ IoT系统的可观测性具有特殊意义：
 $$O = (M, L, T, P)$$
 
 其中：
+
 - $M$ 是指标集合
 - $L$ 是日志集合
 - $T$ 是追踪集合
@@ -52,6 +53,7 @@ $$O = (M, L, T, P)$$
 $$m = (name, value, timestamp, labels, type)$$
 
 其中：
+
 - $name$ 是指标名称
 - $value$ 是数值
 - $timestamp$ 是时间戳
@@ -65,6 +67,7 @@ $$m = (name, value, timestamp, labels, type)$$
 $$l = (timestamp, level, message, context, metadata)$$
 
 其中：
+
 - $timestamp$ 是时间戳
 - $level$ 是日志级别
 - $message$ 是日志消息
@@ -78,6 +81,7 @@ $$l = (timestamp, level, message, context, metadata)$$
 $$t = (trace_id, span_id, parent_id, operation, start_time, end_time, attributes)$$
 
 其中：
+
 - $trace_id$ 是追踪标识符
 - $span_id$ 是跨度标识符
 - $parent_id$ 是父跨度标识符
@@ -95,6 +99,7 @@ $$t = (trace_id, span_id, parent_id, operation, start_time, end_time, attributes
 $$SM = (S, \Sigma, \delta, s_0, F)$$
 
 其中：
+
 - $S$ 是状态集合（正常、警告、错误、未知）
 - $\Sigma$ 是输入字母表（指标、日志、追踪事件）
 - $\delta: S \times \Sigma \rightarrow S$ 是状态转换函数
@@ -826,4 +831,4 @@ impl AccessControl {
 2. **性能优化**: 通过采样和批处理优化性能
 3. **安全保障**: 实施数据加密和访问控制
 4. **IoT适配**: 针对IoT特点进行优化设计
-5. **最佳实践**: 遵循可观测性设计原则 
+5. **最佳实践**: 遵循可观测性设计原则

@@ -20,6 +20,7 @@ IoT认证系统可以形式化为：
 $$Auth_{IoT} = (E, C, V, P, S)$$
 
 其中：
+
 - $E$ 是实体集合（设备、用户、服务）
 - $C$ 是凭证集合
 - $V$ 是验证机制
@@ -45,6 +46,7 @@ IoT认证系统面临特殊挑战：
 $$Entity = (id, type, capabilities, credentials)$$
 
 其中：
+
 - $id$ 是唯一标识符
 - $type$ 是实体类型（设备、用户、服务）
 - $capabilities$ 是能力集合
@@ -57,6 +59,7 @@ $$Entity = (id, type, capabilities, credentials)$$
 $$Credential = (type, value, issuer, validity, scope)$$
 
 其中：
+
 - $type$ 是凭证类型（密码、证书、令牌）
 - $value$ 是凭证值
 - $issuer$ 是颁发者
@@ -70,6 +73,7 @@ $$Credential = (type, value, issuer, validity, scope)$$
 $$Protocol = (S, \Sigma, \delta, s_0, F)$$
 
 其中：
+
 - $S$ 是协议状态集合
 - $\Sigma$ 是消息集合
 - $\delta: S \times \Sigma \rightarrow S$ 是状态转换函数
@@ -85,6 +89,7 @@ $$Protocol = (S, \Sigma, \delta, s_0, F)$$
 $$Auth_{SM} = (Q, \Sigma, \delta, q_0, F)$$
 
 其中：
+
 - $Q = \{UNKNOWN, AUTHENTICATING, AUTHENTICATED, REJECTED, EXPIRED\}$
 - $\Sigma$ 是认证事件集合
 - $\delta: Q \times \Sigma \rightarrow Q$ 是状态转换函数
@@ -106,6 +111,7 @@ $$Auth_{SM} = (Q, \Sigma, \delta, q_0, F)$$
 $$Trust = (V, E, w)$$
 
 其中：
+
 - $V$ 是实体集合
 - $E$ 是信任关系边
 - $w: E \rightarrow [0, 1]$ 是信任权重函数
@@ -895,4 +901,4 @@ IoT认证系统是确保IoT系统安全的关键组件，通过形式化的方�
 2. **安全机制**: 实施多层次的安全保护措施
 3. **性能优化**: 通过缓存和并发提高认证效率
 4. **IoT适配**: 针对IoT特点进行优化设计
-5. **最佳实践**: 遵循认证系统设计原则 
+5. **最佳实践**: 遵循认证系统设计原则

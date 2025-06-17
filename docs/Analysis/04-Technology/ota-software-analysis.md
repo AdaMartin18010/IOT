@@ -36,6 +36,7 @@ OTA更新在IoT系统中具有关键作用：
 $$OTA = (P, M, D, S, V)$$
 
 其中：
+
 - $P$ 是更新包(Payload)
 - $M$ 是清单(Manifest)
 - $D$ 是目标设备集合
@@ -49,6 +50,7 @@ $$OTA = (P, M, D, S, V)$$
 $$P = (B, S, M_p, V_p)$$
 
 其中：
+
 - $B$ 是二进制数据
 - $S$ 是脚本文件
 - $M_p$ 是包元数据
@@ -61,6 +63,7 @@ $$P = (B, S, M_p, V_p)$$
 $$M = (V_n, V_r, H_p, Sig_M, C, I)$$
 
 其中：
+
 - $V_n$ 是新版本号
 - $V_r$ 是要求的当前版本
 - $H_p$ 是包哈希值
@@ -75,6 +78,7 @@ $$M = (V_n, V_r, H_p, Sig_M, C, I)$$
 $$D_{state} = (V_c, H, S, R)$$
 
 其中：
+
 - $V_c$ 是当前版本
 - $H$ 是硬件信息
 - $S$ 是系统状态
@@ -89,6 +93,7 @@ OTA更新过程可以建模为状态机：
 $$SM_{OTA} = (S, \Sigma, \delta, s_0, F)$$
 
 其中：
+
 - $S = \{IDLE, CHECKING, DOWNLOADING, VERIFYING, APPLYING, REPORTING, ERROR\}$
 - $\Sigma$ 是事件集合
 - $\delta: S \times \Sigma \rightarrow S$ 是状态转换函数
@@ -102,6 +107,7 @@ $$SM_{OTA} = (S, \Sigma, \delta, s_0, F)$$
 $$Verify(P, M, D) = Verify_{sig}(M) \land Verify_{hash}(P, M.H_p) \land Verify_{compat}(D, M.C)$$
 
 其中：
+
 - $Verify_{sig}(M)$ 验证清单签名
 - $Verify_{hash}(P, H_p)$ 验证包完整性
 - $Verify_{compat}(D, C)$ 验证兼容性
@@ -925,4 +931,4 @@ OTA软件实现是IoT系统中的关键技术，通过形式化的方法可以�
 2. **安全机制**: 实施多层次的安全保护措施
 3. **性能优化**: 通过并发和缓存提高更新效率
 4. **IoT适配**: 针对IoT特点进行优化设计
-5. **最佳实践**: 遵循OTA设计原则和最佳实践 
+5. **最佳实践**: 遵循OTA设计原则和最佳实践
