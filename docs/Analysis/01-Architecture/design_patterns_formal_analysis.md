@@ -540,6 +540,7 @@ impl ModernDevice for DeviceAdapter {
 装饰器模式动态地给对象添加额外的职责。
 
 **形式化定义**：
+
 $$\text{Decorator}(T) = \{d: T \rightarrow T | d \text{ 是装饰函数}\}$$
 
 #### 定理 3.2.1 (装饰器组合性)
