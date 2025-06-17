@@ -628,26 +628,6 @@ impl ServiceDiscovery {
             .ok_or(ServiceError::ServiceNotFound)
     }
 }
-
-pub struct LoadBalancer {
-    strategy: LoadBalancingStrategy,
-}
-
-impl LoadBalancer {
-    pub fn select_endpoint(&self, service: &Microservice) -> Result<&Endpoint, ServiceError> {
-        match self.strategy {
-            LoadBalancingStrategy::RoundRobin => self.round_robin_select(service),
-            LoadBalancingStrategy::LeastConnections => self.least_connections_select(service),
-            LoadBalancingStrategy::Weighted => self.weighted_select(service),
-        }
-    }
-    
-    fn round_robin_select(&self, service: &Microservice) -> Result<&Endpoint, ServiceError> {
-        // 实现轮询选择逻辑
-        service.endpoints.first()
-            .ok_or(ServiceError::NoEndpointsAvailable)
-    }
-}
 ```
 
 ## 7. 安全架构理论
