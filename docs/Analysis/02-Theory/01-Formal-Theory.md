@@ -12,11 +12,13 @@
 ## 形式化理论概述
 
 ### 定义 1.1 (IoT形式化理论)
+
 IoT形式化理论是一个五元组：
 
 $$\mathcal{F}_{IoT} = (\mathcal{S}, \mathcal{L}, \mathcal{T}, \mathcal{V}, \mathcal{P})$$
 
 其中：
+
 - $\mathcal{S}$ 是系统模型集合
 - $\mathcal{L}$ 是语言理论集合
 - $\mathcal{T}$ 是类型理论集合
@@ -24,6 +26,7 @@ $$\mathcal{F}_{IoT} = (\mathcal{S}, \mathcal{L}, \mathcal{T}, \mathcal{V}, \math
 - $\mathcal{P}$ 是证明理论集合
 
 ### 定理 1.1 (形式化理论完备性)
+
 IoT形式化理论对于IoT系统的建模和验证是完备的：
 
 $$\forall S \in \text{IoTSystem}: \exists M \in \mathcal{S}: \text{Model}(S, M)$$
@@ -37,11 +40,13 @@ $$\forall S \in \text{IoTSystem}: \exists M \in \mathcal{S}: \text{Model}(S, M)$
 ## IoT系统形式化建模
 
 ### 定义 2.1 (IoT系统模型)
+
 IoT系统模型是一个七元组：
 
 $$M = (D, N, P, C, S, T, F)$$
 
 其中：
+
 - $D$ 是设备集合
 - $N$ 是网络拓扑
 - $P$ 是协议集合
@@ -51,11 +56,13 @@ $$M = (D, N, P, C, S, T, F)$$
 - $F$ 是故障模型
 
 ### 定义 2.2 (设备模型)
+
 设备模型是一个五元组：
 
 $$d = (id, cap, state, behavior, interface)$$
 
 其中：
+
 - $id$ 是设备标识符
 - $cap$ 是设备能力集合
 - $state$ 是设备状态
@@ -91,6 +98,7 @@ pub struct BehaviorFunction {
 ```
 
 ### 定理 2.1 (设备行为确定性)
+
 如果设备行为函数是确定性的，则设备状态转移也是确定性的：
 
 $$\text{Deterministic}(behavior) \Rightarrow \text{Deterministic}(state\_transition)$$
@@ -102,11 +110,13 @@ $$\text{Deterministic}(behavior) \Rightarrow \text{Deterministic}(state\_transit
 3. **组合确定性**：确定性函数的组合仍然是确定性的
 
 ### 定义 2.3 (网络拓扑模型)
+
 网络拓扑模型是一个四元组：
 
 $$N = (V, E, W, R)$$
 
 其中：
+
 - $V$ 是节点集合（设备）
 - $E$ 是边集合（连接）
 - $W: E \rightarrow \mathbb{R}^+$ 是权重函数（带宽、延迟）
@@ -144,16 +154,19 @@ pub struct NetworkWeight {
 ## 语言理论与自动机
 
 ### 定义 3.1 (IoT协议语言)
+
 IoT协议语言是描述设备间通信的形式语言：
 
 $$\mathcal{L}_{IoT} = \mathcal{L}_{MQTT} \cup \mathcal{L}_{CoAP} \cup \mathcal{L}_{HTTP} \cup \mathcal{L}_{Custom}$$
 
 ### 定义 3.2 (MQTT协议自动机)
+
 MQTT协议自动机是一个五元组：
 
 $$A_{MQTT} = (Q, \Sigma, \delta, q_0, F)$$
 
 其中：
+
 - $Q = \{CONNECT, CONNACK, PUBLISH, PUBACK, SUBSCRIBE, SUBACK, DISCONNECT\}$
 - $\Sigma$ 是MQTT消息集合
 - $\delta: Q \times \Sigma \rightarrow Q$ 是状态转移函数
@@ -206,6 +219,7 @@ impl MqttAutomaton {
 ```
 
 ### 定理 3.1 (协议语言识别)
+
 MQTT协议自动机可以识别所有有效的MQTT消息序列：
 
 $$\forall w \in \mathcal{L}_{MQTT}: A_{MQTT} \text{ accepts } w$$
@@ -217,6 +231,7 @@ $$\forall w \in \mathcal{L}_{MQTT}: A_{MQTT} \text{ accepts } w$$
 3. **语言等价**：自动机识别的语言等于MQTT协议语言
 
 ### 定义 3.3 (CoAP协议语言)
+
 CoAP协议语言是轻量级HTTP的IoT版本：
 
 $$\mathcal{L}_{CoAP} = \{GET, POST, PUT, DELETE\} \times \text{URI} \times \text{Payload}$$
@@ -254,17 +269,20 @@ impl CoapMessage {
 ## 类型系统与类型安全
 
 ### 定义 4.1 (IoT类型系统)
+
 IoT类型系统是一个四元组：
 
 $$\mathcal{T}_{IoT} = (\mathcal{B}, \mathcal{F}, \mathcal{R}, \mathcal{S})$$
 
 其中：
+
 - $\mathcal{B}$ 是基础类型集合
 - $\mathcal{F}$ 是函数类型集合
 - $\mathcal{R}$ 是资源类型集合
 - $\mathcal{S}$ 是安全类型集合
 
 ### 定义 4.2 (基础类型)
+
 IoT基础类型包括：
 
 $$\mathcal{B} = \{\text{Device}, \text{Sensor}, \text{Actuator}, \text{Gateway}, \text{Data}, \text{Message}\}$$
@@ -305,6 +323,7 @@ pub struct DataType {
 ```
 
 ### 定义 4.3 (函数类型)
+
 IoT函数类型定义设备间的交互：
 
 $$\mathcal{F} = \{\text{Read}: \text{Sensor} \rightarrow \text{Data}, \text{Write}: \text{Actuator} \times \text{Data} \rightarrow \text{Unit}\}$$
@@ -353,6 +372,7 @@ impl IoTOperation for WriteOperation {
 ```
 
 ### 定理 4.1 (类型安全保持)
+
 如果IoT系统是类型安全的，则其操作也是类型安全的：
 
 $$\text{TypeSafe}(S) \Rightarrow \forall op \in \text{Operations}(S): \text{TypeSafe}(op)$$
@@ -366,6 +386,7 @@ $$\text{TypeSafe}(S) \Rightarrow \forall op \in \text{Operations}(S): \text{Type
 ## 形式化验证方法
 
 ### 定义 5.1 (IoT系统规范)
+
 IoT系统规范是时态逻辑公式的集合：
 
 $$\Phi = \{\phi_1, \phi_2, \ldots, \phi_n\}$$
@@ -373,11 +394,13 @@ $$\Phi = \{\phi_1, \phi_2, \ldots, \phi_n\}$$
 其中每个 $\phi_i$ 是时态逻辑公式。
 
 ### 定义 5.2 (时态逻辑公式)
+
 IoT时态逻辑公式定义为：
 
 $$\phi ::= p | \neg \phi | \phi_1 \land \phi_2 | \phi_1 \lor \phi_2 | \phi_1 \rightarrow \phi_2 | \Box \phi | \Diamond \phi | \phi_1 \mathcal{U} \phi_2$$
 
 其中：
+
 - $p$ 是原子命题
 - $\Box \phi$ 表示"总是 $\phi$"
 - $\Diamond \phi$ 表示"最终 $\phi$"
@@ -414,6 +437,7 @@ impl TemporalFormula {
 ```
 
 ### 定义 5.3 (模型检查)
+
 模型检查是验证系统是否满足规范的过程：
 
 $$\text{ModelCheck}(M, \phi) = \begin{cases}
@@ -443,24 +467,24 @@ impl ModelChecker {
     pub fn check(&self) -> ModelCheckResult {
         let mut visited = HashSet::new();
         let mut stack = vec![self.system.initial_state()];
-        
+
         while let Some(state) = stack.pop() {
             if visited.contains(&state) {
                 continue;
             }
             visited.insert(state.clone());
-            
+
             // 检查当前状态是否满足规范
             if !self.specification.evaluate(&state) {
                 return ModelCheckResult::Violation(state);
             }
-            
+
             // 添加后继状态到栈中
             for next_state in self.system.successors(&state) {
                 stack.push(next_state);
             }
         }
-        
+
         ModelCheckResult::Satisfied
     }
 }
@@ -513,29 +537,29 @@ impl DeviceManagementSystem {
         if !self.type_checker.check(&device) {
             return Err(DeviceError::TypeError);
         }
-        
+
         // 添加到网络拓扑
         self.network.add_node(device.id.clone());
-        
+
         // 验证系统规范
         let specification = self.build_specification(&device);
         if !self.model_checker.check(&specification) {
             return Err(DeviceError::SpecificationViolation);
         }
-        
+
         self.devices.insert(device.id.clone(), device);
         Ok(())
     }
-    
+
     pub fn remove_device(&mut self, device_id: &DeviceId) -> Result<(), DeviceError> {
         // 检查设备依赖
         if self.has_dependencies(device_id) {
             return Err(DeviceError::HasDependencies);
         }
-        
+
         // 从网络拓扑中移除
         self.network.remove_node(device_id);
-        
+
         // 从设备集合中移除
         self.devices.remove(device_id);
         Ok(())
@@ -555,12 +579,12 @@ impl ProtocolVerifier {
     pub fn verify_message(&mut self, message: Message) -> Result<(), ProtocolError> {
         let automaton = self.automata.get_mut(&message.protocol_type)
             .ok_or(ProtocolError::UnknownProtocol)?;
-        
+
         // 使用自动机验证消息
         automaton.transition(message)?;
         Ok(())
     }
-    
+
     pub fn verify_sequence(&mut self, messages: Vec<Message>) -> Result<(), ProtocolError> {
         for message in messages {
             self.verify_message(message)?;
@@ -591,4 +615,4 @@ impl ProtocolVerifier {
 1. 扩展理论框架以支持更多IoT场景
 2. 开发自动化验证工具
 3. 应用理论到实际IoT系统设计
-4. 建立理论到代码的自动转换机制 
+4. 建立理论到代码的自动转换机制
