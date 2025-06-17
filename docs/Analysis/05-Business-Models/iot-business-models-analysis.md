@@ -287,6 +287,7 @@ $$\mathcal{L}^* = \arg\max_{\mathcal{L}} \text{balance}(\mathcal{L})$$
 $$\mathcal{V}_{Rust} = \alpha \cdot \text{safety} + \beta \cdot \text{performance} + \gamma \cdot \text{concurrency}$$
 
 其中：
+
 - $\text{safety}$ 是内存安全保证
 - $\text{performance}$ 是执行性能
 - $\text{concurrency}` 是并发能力
@@ -402,4 +403,4 @@ $$\mathcal{M}' \models \phi$$
 
 ---
 
-*本文档基于对`/docs/Matter`目录的全面分析，构建了IoT行业的业务模型形式化框架。所有内容均经过严格的形式化论证，确保与IoT行业实际应用相关，并符合学术规范。* 
+*本文档基于对`/docs/Matter`目录的全面分析，构建了IoT行业的业务模型形式化框架。所有内容均经过严格的形式化论证，确保与IoT行业实际应用相关，并符合学术规范。*

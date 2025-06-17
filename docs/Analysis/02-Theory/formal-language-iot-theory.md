@@ -22,6 +22,7 @@
 $$\mathcal{L}_{\text{IoT}} = \{\mathcal{L}_0, \mathcal{L}_1, \mathcal{L}_2, \mathcal{L}_3\}$$
 
 其中：
+
 - $\mathcal{L}_3$: 正则语言层 - IoT设备的基础通信协议
 - $\mathcal{L}_2$: 上下文无关语言层 - IoT消息格式和配置语言
 - $\mathcal{L}_1$: 上下文相关语言层 - IoT业务逻辑和规则引擎
@@ -45,6 +46,7 @@ $$\mathcal{L}_3 \subset \mathcal{L}_2 \subset \mathcal{L}_1 \subset \mathcal{L}_
 $$\mathcal{S} = (\Sigma, \mathcal{I}, \mathcal{O})$$
 
 其中：
+
 - $\Sigma$: 系统状态空间
 - $\mathcal{I}$: 输入语义函数 $\mathcal{I}: \text{Input} \rightarrow \Sigma \rightarrow \Sigma$
 - $\mathcal{O}$: 输出语义函数 $\mathcal{O}: \Sigma \rightarrow \text{Output}$
@@ -64,6 +66,7 @@ $$\mathcal{B} = \{(s_0, s_1, \ldots, s_n) \mid s_i \in \Sigma, s_{i+1} = \mathca
 $$M_D = (Q_D, \Sigma_D, \delta_D, q_{0,D}, F_D)$$
 
 其中：
+
 - $Q_D = \{\text{IDLE}, \text{SENSING}, \text{PROCESSING}, \text{TRANSMITTING}, \text{ERROR}\}$
 - $\Sigma_D = \{\text{START}, \text{SENSE}, \text{PROCESS}, \text{SEND}, \text{ERROR}, \text{RESET}\}$
 - $\delta_D: Q_D \times \Sigma_D \rightarrow Q_D$ 是状态转移函数
@@ -83,6 +86,7 @@ $$\delta_D^*(q_{0,D}, \omega) = q$$
 $$M_{\text{MQTT}} = (Q_{\text{MQTT}}, \Sigma_{\text{MQTT}}, \delta_{\text{MQTT}}, q_{0,\text{MQTT}}, F_{\text{MQTT}})$$
 
 其中：
+
 - $Q_{\text{MQTT}} = \{\text{DISCONNECTED}, \text{CONNECTING}, \text{CONNECTED}, \text{PUBLISHING}, \text{SUBSCRIBING}\}$
 - $\Sigma_{\text{MQTT}} = \{\text{CONNECT}, \text{PUBLISH}, \text{SUBSCRIBE}, \text{DISCONNECT}, \text{ACK}\}$
 
@@ -132,6 +136,7 @@ $$\llbracket P_1; P_2; \ldots; P_n \rrbracket = \llbracket P_n \rrbracket \circ 
 $$m = (\text{type}, \text{code}, \text{message\_id}, \text{token}, \text{options}, \text{payload})$$
 
 其中：
+
 - $\text{type} \in \{\text{CON}, \text{NON}, \text{ACK}, \text{RST}\}$
 - $\text{code} \in \{\text{GET}, \text{POST}, \text{PUT}, \text{DELETE}\} \times \{0, 1, 2, 3, 4, 5\}$
 
@@ -163,6 +168,7 @@ $$m_{\text{MQTT}} = (\text{type}, \text{flags}, \text{remaining\_length}, \text{
 $$M_S = (Q_S, \Sigma_S, \delta_S, q_{0,S}, F_S)$$
 
 其中：
+
 - $Q_S = \{\text{OFF}, \text{INIT}, \text{READY}, \text{SAMPLING}, \text{PROCESSING}, \text{SENDING}\}$
 - $\Sigma_S = \{\text{POWER\_ON}, \text{CALIBRATE}, \text{SAMPLE}, \text{SEND}, \text{POWER\_OFF}\}$
 
@@ -286,4 +292,4 @@ $$\forall \text{operation } o, \exists t \in \text{Time}: \forall t' > t, \text{
 4. Milner, R. (1999). Communicating and mobile systems: the π-calculus.
 5. Hoare, C. A. R. (1985). Communicating sequential processes.
 6. Abrial, J. R. (2010). Modeling in Event-B: system and software engineering.
-7. Lamport, L. (2002). Specifying systems: the TLA+ language and tools for hardware and software engineers. 
+7. Lamport, L. (2002). Specifying systems: the TLA+ language and tools for hardware and software engineers.

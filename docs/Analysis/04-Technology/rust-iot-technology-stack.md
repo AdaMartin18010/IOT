@@ -24,6 +24,7 @@
 $$\mathcal{A}_{\text{Rust-IoT}} = \{\text{Safety}, \text{Performance}, \text{Concurrency}, \text{Cross-Platform}, \text{Memory-Efficiency}\}$$
 
 其中：
+
 - $\text{Safety}$: 内存安全和线程安全
 - $\text{Performance}$: 零成本抽象和高效执行
 - $\text{Concurrency}$: 无数据竞争的并发编程
@@ -43,6 +44,7 @@ $$\text{IoT Requirements} \subseteq \text{Rust Capabilities}$$
 $$\mathcal{T}_{\text{Rust-IoT}} = (\mathcal{L}_{\text{Application}}, \mathcal{L}_{\text{Framework}}, \mathcal{L}_{\text{Runtime}}, \mathcal{L}_{\text{System}})$$
 
 其中：
+
 - $\mathcal{L}_{\text{Application}}$: 应用层 - 业务逻辑和用户接口
 - $\mathcal{L}_{\text{Framework}}$: 框架层 - IoT框架和库
 - $\mathcal{L}_{\text{Runtime}}$: 运行时层 - 异步运行时和系统接口
@@ -874,4 +876,4 @@ async fn industrial_control_system() {
 4. MQTT. (2019). MQTT Version 5.0.
 5. CoAP. (2014). Constrained Application Protocol (CoAP).
 6. Embedded Rust. (2023). Embedded Rust Book.
-7. WASI. (2023). WebAssembly System Interface. 
+7. WASI. (2023). WebAssembly System Interface.

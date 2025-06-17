@@ -39,6 +39,7 @@ $$\mathcal{L}_{\text{Security}} = \{\text{Low}, \text{Medium}, \text{High}, \tex
 $$\mathcal{T} = (\mathcal{A}, \mathcal{C}, \mathcal{V}, \mathcal{R})$$
 
 其中：
+
 - $\mathcal{A}$: 攻击者能力集合
 - $\mathcal{C}$: 攻击成本集合
 - $\mathcal{V}$: 漏洞集合
@@ -49,6 +50,7 @@ $$\mathcal{T} = (\mathcal{A}, \mathcal{C}, \mathcal{V}, \mathcal{R})$$
 $$A = (\text{Capability}, \text{Resources}, \text{Knowledge}, \text{Goals})$$
 
 其中：
+
 - $\text{Capability}$: 攻击能力
 - $\text{Resources}$: 可用资源
 - $\text{Knowledge}$: 系统知识
@@ -65,6 +67,7 @@ $$A = (\text{Capability}, \text{Resources}, \text{Knowledge}, \text{Goals})$$
 $$\mathcal{E}_{\text{Sym}} = (\text{KeyGen}, \text{Encrypt}, \text{Decrypt})$$
 
 其中：
+
 - $\text{KeyGen}: 1^\lambda \rightarrow \mathcal{K}$: 密钥生成算法
 - $\text{Encrypt}: \mathcal{K} \times \mathcal{M} \rightarrow \mathcal{C}$: 加密算法
 - $\text{Decrypt}: \mathcal{K} \times \mathcal{C} \rightarrow \mathcal{M}$: 解密算法
@@ -88,6 +91,7 @@ $$\text{Security}_{\text{AES}}(\lambda) \geq 2^{128} \text{ operations}$$
 $$\mathcal{E}_{\text{Asym}} = (\text{KeyGen}, \text{Encrypt}, \text{Decrypt})$$
 
 其中：
+
 - $\text{KeyGen}: 1^\lambda \rightarrow (\text{pk}, \text{sk})$: 密钥对生成
 - $\text{Encrypt}: \text{pk} \times \mathcal{M} \rightarrow \mathcal{C}$: 公钥加密
 - $\text{Decrypt}: \text{sk} \times \mathcal{C} \rightarrow \mathcal{M}$: 私钥解密
@@ -133,6 +137,7 @@ $$\text{Security}_{\text{SHA-256}} \geq 2^{128} \text{ operations}$$
 $$\mathcal{S} = (\text{KeyGen}, \text{Sign}, \text{Verify})$$
 
 其中：
+
 - $\text{KeyGen}: 1^\lambda \rightarrow (\text{pk}, \text{sk})$: 密钥生成
 - $\text{Sign}: \text{sk} \times \mathcal{M} \rightarrow \Sigma$: 签名算法
 - $\text{Verify}: \text{pk} \times \mathcal{M} \times \Sigma \rightarrow \{\text{True}, \text{False}\}$: 验证算法
@@ -154,6 +159,7 @@ $$\text{ECDSA}: \mathbb{Z}_q \times \mathcal{M} \rightarrow (\mathbb{Z}_q, \math
 $$\mathcal{A} = (\text{Init}, \text{Challenge}, \text{Response}, \text{Verify})$$
 
 其中：
+
 - $\text{Init}: \text{Device} \times \text{Server} \rightarrow \text{Session}$
 - $\text{Challenge}: \text{Session} \rightarrow \text{Challenge}$
 - $\text{Response}: \text{Challenge} \times \text{Secret} \rightarrow \text{Response}$
@@ -170,6 +176,7 @@ $$\forall \text{adversary } \mathcal{E}, \Pr[\text{Verify}(\mathcal{E}(\text{Cha
 $$\mathcal{MFA} = (\mathcal{F}_1, \mathcal{F}_2, \ldots, \mathcal{F}_n, \mathcal{C})$$
 
 其中：
+
 - $\mathcal{F}_i$: 第 $i$ 个认证因子
 - $\mathcal{C}$: 组合策略
 
@@ -178,6 +185,7 @@ $$\mathcal{MFA} = (\mathcal{F}_1, \mathcal{F}_2, \ldots, \mathcal{F}_n, \mathcal
 $$\mathcal{F} = (\text{Type}, \text{Strength}, \text{Reliability})$$
 
 其中：
+
 - $\text{Type} \in \{\text{Knowledge}, \text{Possession}, \text{Inherence}\}$
 - $\text{Strength} \in [0, 1]$: 强度度量
 - $\text{Reliability} \in [0, 1]$: 可靠性度量
@@ -213,6 +221,7 @@ $$\forall k \in \mathcal{K}: \mathcal{Q}(k) \geq 0.8$$
 $$\mathcal{KD} = (\text{Setup}, \text{Distribute}, \text{Verify})$$
 
 其中：
+
 - $\text{Setup}: \text{Parties} \rightarrow \text{Parameters}$
 - $\text{Distribute}: \text{Parameters} \times \mathcal{K} \rightarrow \text{Distribution}$
 - $\text{Verify}: \text{Distribution} \rightarrow \{\text{True}, \text{False}\}$
@@ -228,6 +237,7 @@ $$\forall k \in \mathcal{K}, \text{只有授权方能够获得密钥 } k$$
 $$\mathcal{KU} = (\text{Trigger}, \text{Algorithm}, \text{Schedule})$$
 
 其中：
+
 - $\text{Trigger}$: 更新触发条件
 - $\text{Algorithm}$: 更新算法
 - $\text{Schedule}$: 更新计划
@@ -251,6 +261,7 @@ $$\text{Security}(\text{Updated Key}) > \text{Security}(\text{Old Key})$$
 $$\mathcal{TLS} = (\text{Handshake}, \text{Record}, \text{Alert})$$
 
 其中：
+
 - $\text{Handshake}$: 握手协议
 - $\text{Record}$: 记录协议
 - $\text{Alert}$: 告警协议
@@ -296,6 +307,7 @@ $$\text{Security}(\text{CoAPS}) = \text{Security}(\text{DTLS})$$
 $$\mathcal{ACM} = (\text{Subjects}, \text{Objects}, \text{Operations}, \text{Policy})$$
 
 其中：
+
 - $\text{Subjects}$: 主体集合
 - $\text{Objects}$: 客体集合
 - $\text{Operations}$: 操作集合
@@ -312,6 +324,7 @@ $$A: \text{Subjects} \times \text{Objects} \rightarrow 2^{\text{Operations}}$$
 $$\text{RBAC} = (\text{Users}, \text{Roles}, \text{Permissions}, \text{UserAssignment}, \text{RoleAssignment})$$
 
 其中：
+
 - $\text{Users}$: 用户集合
 - $\text{Roles}$: 角色集合
 - $\text{Permissions}$: 权限集合
@@ -329,6 +342,7 @@ $$\forall u \in \text{Users}, o \in \text{Objects}: \text{Access}(u, o) \iff \ex
 $$\text{ABAC} = (\text{Subjects}, \text{Objects}, \text{Environment}, \text{Policy})$$
 
 其中：
+
 - $\text{Subjects}$: 主体属性
 - $\text{Objects}$: 客体属性
 - $\text{Environment}$: 环境属性
@@ -401,6 +415,7 @@ $$\text{Security}(\mathcal{E}_{\text{Hom}}) \geq \text{Security}(\text{Underlyin
 $$\mathcal{T} = \{\text{Physical}, \text{Network}, \text{Application}, \text{Data}\}$$
 
 其中：
+
 - $\text{Physical}$: 物理威胁
 - $\text{Network}$: 网络威胁
 - $\text{Application}$: 应用威胁
@@ -417,6 +432,7 @@ $$\mathcal{S}: \mathcal{T} \rightarrow \{\text{Low}, \text{Medium}, \text{High},
 $$\mathcal{V} = (\text{Entry}, \text{Method}, \text{Target}, \text{Impact})$$
 
 其中：
+
 - $\text{Entry}$: 攻击入口点
 - $\text{Method}$: 攻击方法
 - $\text{Target}$: 攻击目标
@@ -479,4 +495,4 @@ $$\text{Risk} = \text{Threat} \times \text{Vulnerability} \times \text{Asset} \t
 4. Dwork, C. (2006). Differential privacy.
 5. Sweeney, L. (2002). k-anonymity: a model for protecting privacy.
 6. Gentry, C. (2009). Fully homomorphic encryption using ideal lattices.
-7. Roman, R., Zhou, J., & Lopez, J. (2013). On the features and challenges of security and privacy in distributed internet of things. 
+7. Roman, R., Zhou, J., & Lopez, J. (2013). On the features and challenges of security and privacy in distributed internet of things.

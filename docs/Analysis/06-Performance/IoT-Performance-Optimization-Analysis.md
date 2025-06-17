@@ -355,6 +355,7 @@ $$\mathcal{P}_{ower}^* = \arg\max_{\mathcal{P}_{ower}} \text{energy\_efficiency}
 $$\text{metrics} = \{m_1, m_2, ..., m_n\}$$
 
 其中每个指标 $m_i$ 包含：
+
 - 指标名称
 - 指标值
 - 时间戳

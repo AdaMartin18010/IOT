@@ -22,6 +22,7 @@
 $$\mathcal{A} = (\mathcal{C}, \mathcal{R}, \mathcal{I}, \mathcal{P})$$
 
 其中：
+
 - $\mathcal{C}$: 组件集合
 - $\mathcal{R}$: 关系集合
 - $\mathcal{I}$: 接口集合
@@ -60,6 +61,7 @@ $$\mu_p: \mathcal{A} \rightarrow [0, 1]$$
 $$L_{\text{Sensing}} = (\mathcal{C}_{\text{Sensing}}, \mathcal{R}_{\text{Sensing}}, \mathcal{I}_{\text{Sensing}}, \mathcal{P}_{\text{Sensing}})$$
 
 其中：
+
 - $\mathcal{C}_{\text{Sensing}} = \{\text{Sensors}, \text{Actuators}, \text{Controllers}\}$
 - $\mathcal{R}_{\text{Sensing}} = \{\text{DataFlow}, \text{ControlFlow}, \text{PowerFlow}\}$
 - $\mathcal{I}_{\text{Sensing}} = \{\text{SensorInterface}, \text{ActuatorInterface}, \text{ControllerInterface}\}$
@@ -79,6 +81,7 @@ $$\forall s \in \text{Sensors}, \exists d \in \text{Data}: \text{Read}(s) = d$$
 $$L_{\text{Network}} = (\mathcal{C}_{\text{Network}}, \mathcal{R}_{\text{Network}}, \mathcal{I}_{\text{Network}}, \mathcal{P}_{\text{Network}})$$
 
 其中：
+
 - $\mathcal{C}_{\text{Network}} = \{\text{Gateways}, \text{Routers}, \text{Protocols}\}$
 - $\mathcal{R}_{\text{Network}} = \{\text{Connection}, \text{Routing}, \text{Protocol}\}$
 
@@ -97,6 +100,7 @@ $$\forall c_1, c_2 \in \mathcal{C}_{\text{Network}}, \exists \text{path}: c_1 \r
 $$L_{\text{Platform}} = (\mathcal{C}_{\text{Platform}}, \mathcal{R}_{\text{Platform}}, \mathcal{I}_{\text{Platform}}, \mathcal{P}_{\text{Platform}})$$
 
 其中：
+
 - $\mathcal{C}_{\text{Platform}} = \{\text{DataProcessing}, \text{Storage}, \text{Analytics}\}$
 - $\mathcal{R}_{\text{Platform}} = \{\text{DataFlow}, \text{ProcessingFlow}, \text{StorageFlow}\}$
 
@@ -115,6 +119,7 @@ $$\forall dp \in \text{DataProcessing}, \text{Correct}(dp) \Rightarrow \text{Out
 $$L_{\text{Application}} = (\mathcal{C}_{\text{Application}}, \mathcal{R}_{\text{Application}}, \mathcal{I}_{\text{Application}}, \mathcal{P}_{\text{Application}})$$
 
 其中：
+
 - $\mathcal{C}_{\text{Application}} = \{\text{UserInterface}, \text{BusinessLogic}, \text{Integration}\}$
 - $\mathcal{R}_{\text{Application}} = \{\text{UserFlow}, \text{BusinessFlow}, \text{IntegrationFlow}\}$
 
@@ -129,6 +134,7 @@ $$L_{\text{Application}} = (\mathcal{C}_{\text{Application}}, \mathcal{R}_{\text
 $$E = (\text{Location}, \text{Resources}, \text{Services}, \text{Connectivity})$$
 
 其中：
+
 - $\text{Location} = (x, y, z)$: 地理位置坐标
 - $\text{Resources} = \{\text{CPU}, \text{Memory}, \text{Storage}, \text{Network}\}$
 - $\text{Services} = \{\text{Processing}, \text{Storage}, \text{Communication}\}$
@@ -145,6 +151,7 @@ $$\text{Capacity}(E) = \sum_{r \in \text{Resources}} \text{Capacity}(r)$$
 $$\mathcal{A}_{\text{Edge}} = (\mathcal{E}, \mathcal{R}_{\text{Edge}}, \mathcal{I}_{\text{Edge}}, \mathcal{P}_{\text{Edge}})$$
 
 其中：
+
 - $\mathcal{E} = \{E_1, E_2, \ldots, E_n\}$: 边缘节点集合
 - $\mathcal{R}_{\text{Edge}}$: 边缘节点间关系
 - $\mathcal{I}_{\text{Edge}}$: 边缘计算接口
@@ -163,6 +170,7 @@ $$\text{Latency}_{\text{Edge}} \ll \text{Latency}_{\text{Cloud}}$$
 $$\mathcal{C}_{\text{Edge-Cloud}} = (\mathcal{E}, \mathcal{C}, \mathcal{R}_{\text{EC}}, \mathcal{S}_{\text{EC}})$$
 
 其中：
+
 - $\mathcal{E}$: 边缘节点集合
 - $\mathcal{C}$: 云节点集合
 - $\mathcal{R}_{\text{EC}}$: 边缘-云关系
@@ -187,6 +195,7 @@ $$\text{Performance}(\mathcal{C}_{\text{Edge-Cloud}}) \geq \max(\text{Performanc
 $$M = (\text{ID}, \text{Interface}, \text{Implementation}, \text{State}, \text{Dependencies})$$
 
 其中：
+
 - $\text{ID}$: 服务唯一标识符
 - $\text{Interface}$: 服务接口定义
 - $\text{Implementation}$: 服务实现
@@ -204,6 +213,7 @@ $$\mathcal{I}_M = \{\text{Methods}, \text{Events}, \text{Data}\}$$
 $$\mathcal{A}_{\text{Microservice}} = (\mathcal{M}, \mathcal{R}_{\text{MS}}, \mathcal{I}_{\text{MS}}, \mathcal{P}_{\text{MS}})$$
 
 其中：
+
 - $\mathcal{M} = \{M_1, M_2, \ldots, M_n\}$: 微服务集合
 - $\mathcal{R}_{\text{MS}}$: 微服务间关系
 - $\mathcal{I}_{\text{MS}}$: 架构接口
@@ -238,6 +248,7 @@ $$\forall m \in \text{Message}, \exists r \in \text{Response}: \mathcal{C}_{\tex
 $$\mathcal{A}_{\text{Cloud-Edge-Device}} = (\mathcal{C}, \mathcal{E}, \mathcal{D}, \mathcal{R}_{\text{CED}}, \mathcal{S}_{\text{CED}})$$
 
 其中：
+
 - $\mathcal{C}$: 云层组件集合
 - $\mathcal{E}$: 边缘层组件集合
 - $\mathcal{D}$: 设备层组件集合
@@ -279,6 +290,7 @@ $$\forall t \in \text{Task}, \text{Optimal}(\mathcal{L}_{\text{Balance}}(t, \tex
 $$D = (\text{ID}, \text{Type}, \text{Capabilities}, \text{Resources}, \text{State})$$
 
 其中：
+
 - $\text{ID}$: 设备唯一标识符
 - $\text{Type}$: 设备类型
 - $\text{Capabilities}$: 设备能力
@@ -296,6 +308,7 @@ $$\text{State}_D = \{\text{Online}, \text{Offline}, \text{Error}, \text{Maintena
 $$G = (\text{ID}, \text{Protocols}, \text{Processing}, \text{Storage}, \text{Connectivity})$$
 
 其中：
+
 - $\text{Protocols}$: 支持的协议集合
 - $\text{Processing}$: 处理能力
 - $\text{Storage}$: 存储能力
@@ -312,6 +325,7 @@ $$\forall p_1, p_2 \in \text{Protocols}, \exists f: p_1 \rightarrow p_2$$
 $$P = (\text{ID}, \text{Services}, \text{APIs}, \text{Security}, \text{Scalability})$$
 
 其中：
+
 - $\text{Services}$: 平台服务集合
 - $\text{APIs}$: 应用编程接口
 - $\text{Security}$: 安全机制
@@ -328,6 +342,7 @@ $$P = (\text{ID}, \text{Services}, \text{APIs}, \text{Security}, \text{Scalabili
 $$\mathcal{P}_{\text{Pub-Sub}} = (\text{Publishers}, \text{Subscribers}, \text{Broker}, \text{Topics})$$
 
 其中：
+
 - $\text{Publishers}$: 发布者集合
 - $\text{Subscribers}$: 订阅者集合
 - $\text{Broker}$: 消息代理
@@ -344,6 +359,7 @@ $$\mathcal{M}_{\text{Pub-Sub}}: \text{Publisher} \times \text{Topic} \times \tex
 $$\mathcal{P}_{\text{Event-Driven}} = (\text{Events}, \text{Handlers}, \text{EventBus}, \text{Triggers})$$
 
 其中：
+
 - $\text{Events}$: 事件集合
 - $\text{Handlers}$: 事件处理器集合
 - $\text{EventBus}$: 事件总线
@@ -360,6 +376,7 @@ $$\forall e \in \text{Events}, \exists h \in \text{Handlers}: \text{Process}(e, 
 $$\mathcal{P}_{\text{Layered}} = (\mathcal{L}, \mathcal{R}_{\text{Layer}}, \mathcal{I}_{\text{Layer}})$$
 
 其中：
+
 - $\mathcal{L}$: 层次集合
 - $\mathcal{R}_{\text{Layer}}$: 层间关系
 - $\mathcal{I}_{\text{Layer}}$: 层间接口
@@ -404,4 +421,4 @@ $$\forall L_i, L_j \in \mathcal{L}, i \neq j: \text{Encapsulation}(L_i, L_j)$$
 4. Satyanarayanan, M. (2017). The emergence of edge computing.
 5. Buyya, R., & Dastjerdi, A. V. (2016). Internet of things: principles and paradigms.
 6. Garlan, D., & Shaw, M. (1993). An introduction to software architecture.
-7. Clements, P., Kazman, R., & Klein, M. (2002). Evaluating software architectures: methods and case studies. 
+7. Clements, P., Kazman, R., & Klein, M. (2002). Evaluating software architectures: methods and case studies.
