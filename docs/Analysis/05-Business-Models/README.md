@@ -13,11 +13,13 @@
 ## IoT业务模型理论基础
 
 ### 定义 1.1 (IoT业务模型)
+
 IoT业务模型是描述IoT系统如何创造、传递和获取价值的框架：
 
 $$\mathcal{B}_{IoT} = (\mathcal{V}, \mathcal{C}, \mathcal{R}, \mathcal{P}, \mathcal{S})$$
 
 其中：
+
 - $\mathcal{V}$ 是价值主张集合
 - $\mathcal{C}$ 是客户细分集合
 - $\mathcal{R}$ 是收入流集合
@@ -25,11 +27,13 @@ $$\mathcal{B}_{IoT} = (\mathcal{V}, \mathcal{C}, \mathcal{R}, \mathcal{P}, \math
 - $\mathcal{S}$ 是核心资源集合
 
 ### 定义 1.2 (价值创造机制)
+
 IoT价值创造机制定义为：
 
 $$\text{ValueCreation} = \text{DataValue} + \text{AutomationValue} + \text{IntelligenceValue} + \text{ConnectivityValue}$$
 
 ### 定理 1.1 (IoT价值倍增效应)
+
 IoT系统的价值随设备数量呈指数增长：
 
 $$V(n) = V_0 \cdot n^2$$
@@ -94,11 +98,13 @@ pub enum MarketSize {
 ## IoT行业应用场景
 
 ### 定义 2.1 (IoT应用场景)
+
 IoT应用场景是IoT技术在特定行业中的具体应用：
 
 $$\text{IoTApplication} = \text{Industry} \times \text{UseCase} \times \text{Technology} \times \text{Value}$$
 
 ### 定义 2.2 (主要应用场景)
+
 主要IoT应用场景包括：
 
 1. **智能家居**: 家庭自动化、安全监控、能源管理
@@ -108,6 +114,7 @@ $$\text{IoTApplication} = \text{Industry} \times \text{UseCase} \times \text{Tec
 5. **农业**: 精准农业、环境监测、自动化管理
 
 ### 定理 2.1 (场景适用性)
+
 不同场景对IoT技术有不同的适用性要求：
 
 $$\text{Applicability}(S, T) = \text{TechnicalFit}(S, T) \times \text{BusinessFit}(S, T) \times \text{MarketFit}(S, T)$$
@@ -201,11 +208,13 @@ impl IoTApplicationScenario {
 ## 商业模式分析
 
 ### 定义 3.1 (IoT商业模式)
+
 IoT商业模式是IoT企业创造和获取价值的方式：
 
 $$\text{IoTBusinessModel} = \text{ValueProposition} \times \text{RevenueModel} \times \text{CostStructure} \times \text{KeyResources}$$
 
 ### 定义 3.2 (主要商业模式)
+
 主要IoT商业模式包括：
 
 1. **设备销售模式**: 销售IoT设备和硬件
@@ -215,6 +224,7 @@ $$\text{IoTBusinessModel} = \text{ValueProposition} \times \text{RevenueModel} \
 5. **混合模式**: 组合多种收入来源
 
 ### 定理 3.1 (商业模式可持续性)
+
 可持续的商业模式满足：
 
 $$\text{Sustainable}(M) \Leftrightarrow \text{Revenue}(M) > \text{Cost}(M) \land \text{Growth}(M) > 0$$
@@ -321,11 +331,13 @@ pub struct ProfitabilityMetrics {
 ## 价值链分析
 
 ### 定义 4.1 (IoT价值链)
+
 IoT价值链是IoT产品从概念到交付的完整过程：
 
 $$\text{ValueChain} = \text{Research} \rightarrow \text{Design} \rightarrow \text{Development} \rightarrow \text{Manufacturing} \rightarrow \text{Distribution} \rightarrow \text{Service}$$
 
 ### 定义 4.2 (价值链环节)
+
 IoT价值链的主要环节：
 
 1. **研发环节**: 技术研究、产品设计、原型开发
@@ -334,6 +346,7 @@ IoT价值链的主要环节：
 4. **服务环节**: 部署实施、运维支持、升级维护
 
 ### 定理 4.1 (价值链优化)
+
 价值链优化可以降低成本并提高效率：
 
 $$\text{Optimization}(VC) = \text{CostReduction}(VC) + \text{EfficiencyImprovement}(VC) + \text{ValueAddition}(VC)$$
@@ -429,11 +442,13 @@ pub struct OptimizationOpportunity {
 ## 市场趋势分析
 
 ### 定义 5.1 (市场趋势)
+
 市场趋势是IoT市场发展的方向和模式：
 
 $$\text{MarketTrend} = \text{TechnologyTrend} \times \text{BusinessTrend} \times \text{RegulatoryTrend} \times \text{ConsumerTrend}$$
 
 ### 定义 5.2 (主要趋势)
+
 主要IoT市场趋势：
 
 1. **技术趋势**: 5G、AI、边缘计算
@@ -442,6 +457,7 @@ $$\text{MarketTrend} = \text{TechnologyTrend} \times \text{BusinessTrend} \times
 4. **消费趋势**: 个性化、智能化、便捷性
 
 ### 定理 5.1 (趋势影响分析)
+
 市场趋势对IoT业务的影响：
 
 $$\text{Impact}(T, B) = \text{Opportunity}(T, B) + \text{Threat}(T, B) + \text{Adaptation}(T, B)$$
@@ -562,11 +578,13 @@ pub enum StrategicImplication {
 ## 业务建模方法
 
 ### 定义 6.1 (业务建模)
+
 业务建模是创建和分析业务模型的过程：
 
 $$\text{BusinessModeling} = \text{Analysis} \rightarrow \text{Design} \rightarrow \text{Validation} \rightarrow \text{Implementation}$$
 
 ### 定义 6.2 (建模方法)
+
 主要业务建模方法：
 
 1. **画布模型**: 使用业务模型画布
@@ -575,6 +593,7 @@ $$\text{BusinessModeling} = \text{Analysis} \rightarrow \text{Design} \rightarro
 4. **财务建模**: 建立财务预测模型
 
 ### 定理 6.1 (建模有效性)
+
 有效的业务建模满足：
 
 $$\text{Effective}(M) \Leftrightarrow \text{Complete}(M) \land \text{Consistent}(M) \land \text{Valid}(M)$$
@@ -722,11 +741,13 @@ pub enum Priority {
 ## 实施策略
 
 ### 定义 7.1 (实施策略)
+
 实施策略是将业务模型转化为实际行动的计划：
 
 $$\text{ImplementationStrategy} = \text{Phase} \times \text{Resource} \times \text{Timeline} \times \text{Milestone}$$
 
 ### 定义 7.2 (实施阶段)
+
 主要实施阶段：
 
 1. **准备阶段**: 团队组建、资源准备、风险评估
@@ -735,6 +756,7 @@ $$\text{ImplementationStrategy} = \text{Phase} \times \text{Resource} \times \te
 4. **优化阶段**: 性能优化、功能扩展、持续改进
 
 ### 定理 7.1 (实施成功条件)
+
 成功的实施需要满足：
 
 $$\text{Success}(I) \Leftrightarrow \text{Clear}(I) \land \text{Feasible}(I) \land \text{Supported}(I) \land \text{Monitored}(I)$$
@@ -883,4 +905,4 @@ pub struct RiskMitigationAction {
 1. 深入分析特定行业应用
 2. 开发自动化分析工具
 3. 建立业务模型数据库
-4. 创建最佳实践指南 
+4. 创建最佳实践指南

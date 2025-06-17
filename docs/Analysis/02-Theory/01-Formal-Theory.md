@@ -440,12 +440,15 @@ impl TemporalFormula {
 
 模型检查是验证系统是否满足规范的过程：
 
-$$\text{ModelCheck}(M, \phi) = \begin{cases}
+$$
+\text{ModelCheck}(M, \phi) = \begin{cases}
 \text{true} & \text{if } M \models \phi \\
 \text{false} & \text{otherwise}
-\end{cases}$$
+\end{cases}
+$$
 
 ### 定理 5.1 (模型检查完备性)
+
 对于有限状态系统，模型检查是可判定的：
 
 $$\forall M \in \text{FiniteStateSystem}, \forall \phi \in \mathcal{L}_{Temporal}: \text{Decidable}(\text{ModelCheck}(M, \phi))$$
@@ -493,6 +496,7 @@ impl ModelChecker {
 ## 理论应用与实现
 
 ### 定义 6.1 (理论到代码映射)
+
 理论到代码映射是一个函数：
 
 $$f: \mathcal{F} \rightarrow \text{Code}$$
@@ -508,6 +512,7 @@ $$f: \mathcal{F} \rightarrow \text{Code}$$
 | 时态逻辑 | `TemporalFormula` enum | 规范验证 |
 
 ### 定理 6.1 (实现正确性)
+
 如果代码实现正确映射了理论概念，则实现是正确的：
 
 $$\text{CorrectMapping}(f) \land \text{ValidTheory}(\mathcal{F}) \Rightarrow \text{CorrectImplementation}(\text{Code})$$
@@ -521,6 +526,7 @@ $$\text{CorrectMapping}(f) \land \text{ValidTheory}(\mathcal{F}) \Rightarrow \te
 ### 实际应用示例
 
 #### 设备管理系统
+
 ```rust
 // 基于形式化理论的设备管理系统
 pub struct DeviceManagementSystem {
@@ -568,6 +574,7 @@ impl DeviceManagementSystem {
 ```
 
 #### 协议验证系统
+
 ```rust
 // 基于自动机理论的协议验证系统
 pub struct ProtocolVerifier {

@@ -13,11 +13,13 @@
 ## OTA算法理论基础
 
 ### 定义 1.1 (OTA更新系统)
+
 OTA更新系统是一个六元组：
 
 $$\mathcal{O} = (D, V, T, S, F, R)$$
 
 其中：
+
 - $D = \{d_1, d_2, \ldots, d_n\}$ 是设备集合
 - $V = \{v_1, v_2, \ldots, v_m\}$ 是版本集合
 - $T$ 是传输协议
@@ -26,16 +28,19 @@ $$\mathcal{O} = (D, V, T, S, F, R)$$
 - $R$ 是恢复机制
 
 ### 定义 1.2 (更新操作)
+
 更新操作是一个三元组：
 
 $$update = (source, target, algorithm)$$
 
 其中：
+
 - $source$ 是源版本
 - $target$ 是目标版本
 - $algorithm$ 是更新算法
 
 ### 定理 1.1 (更新原子性)
+
 OTA更新操作是原子的，即：
 
 $$\text{Atomic}(update) \Leftrightarrow \text{AllOrNothing}(update)$$
@@ -79,16 +84,19 @@ pub struct UpdateMetadata {
 ## 差分更新算法
 
 ### 定义 2.1 (差分更新)
+
 差分更新是通过计算两个版本间的差异来减少传输数据量的算法：
 
 $$\text{DiffUpdate}(v_1, v_2) = \text{ComputeDiff}(v_1, v_2) + \text{ApplyDiff}(v_1, \text{diff})$$
 
 ### 定义 2.2 (二进制差分)
+
 二进制差分算法计算两个二进制文件间的差异：
 
 $$\text{BinaryDiff}(f_1, f_2) = \{(offset, length, data) \mid \text{Changed}(f_1, f_2, offset, length)\}$$
 
 ### 算法 2.1 (BSDiff算法)
+
 BSDiff是一种高效的二进制差分算法：
 
 ```rust
@@ -166,6 +174,7 @@ pub struct ControlBlock {
 ```
 
 ### 定理 2.1 (差分更新最优性)
+
 BSDiff算法在压缩比和速度之间达到最优平衡：
 
 $$\text{Optimal}(\text{BSDiff}) \Leftrightarrow \text{CompressionRatio}(\text{BSDiff}) \times \text{Speed}(\text{BSDiff}) = \max$$
@@ -177,6 +186,7 @@ $$\text{Optimal}(\text{BSDiff}) \Leftrightarrow \text{CompressionRatio}(\text{BS
 3. **最优性**：在给定约束下达到最优平衡
 
 ### 算法 2.2 (增量更新算法)
+
 增量更新算法支持多层版本更新：
 
 ```rust
@@ -243,21 +253,25 @@ impl IncrementalUpdate {
 ## 签名验证算法
 
 ### 定义 3.1 (数字签名)
+
 数字签名是使用私钥对消息进行加密的过程：
 
 $$\text{Sign}(m, sk) = \sigma$$
 
 其中：
+
 - $m$ 是消息
 - $sk$ 是私钥
 - $\sigma$ 是签名
 
 ### 定义 3.2 (签名验证)
+
 签名验证是使用公钥验证签名的过程：
 
 $$\text{Verify}(m, \sigma, pk) = \text{true/false}$$
 
 ### 算法 3.1 (RSA签名算法)
+
 RSA签名算法基于大数分解困难性：
 
 ```rust
@@ -339,6 +353,7 @@ impl EcdsaSignature {
 ```
 
 ### 定理 3.1 (签名安全性)
+
 RSA签名算法在RSA假设下是安全的：
 
 $$\text{RSAAssumption} \Rightarrow \text{Secure}(\text{RSASignature})$$
@@ -352,11 +367,13 @@ $$\text{RSAAssumption} \Rightarrow \text{Secure}(\text{RSASignature})$$
 ## 资源优化算法
 
 ### 定义 4.1 (资源优化)
+
 资源优化是在满足功能需求的前提下最小化资源消耗：
 
 $$\text{Optimize}(f, R) = \arg\min_{x} \text{Resource}(x) \text{ s.t. } f(x) \geq \text{Requirement}$$
 
 ### 算法 4.1 (内存优化算法)
+
 内存优化算法减少OTA更新过程中的内存使用：
 
 ```rust
@@ -419,6 +436,7 @@ impl MemoryOptimizer {
 ```
 
 ### 算法 4.2 (带宽优化算法)
+
 带宽优化算法减少网络传输量：
 
 ```rust
@@ -488,11 +506,13 @@ impl BandwidthOptimizer {
 ## 安全传输算法
 
 ### 定义 5.1 (安全传输)
+
 安全传输确保数据在传输过程中的机密性、完整性和可用性：
 
 $$\text{SecureTransmission} = \text{Confidentiality} \land \text{Integrity} \land \text{Availability}$$
 
 ### 算法 5.1 (TLS传输算法)
+
 TLS提供端到端的安全传输：
 
 ```rust
@@ -545,6 +565,7 @@ impl TlsTransport {
 ```
 
 ### 算法 5.2 (端到端加密算法)
+
 端到端加密确保只有通信双方能解密数据：
 
 ```rust
@@ -592,11 +613,13 @@ impl EndToEndEncryption {
 ## 回滚与恢复算法
 
 ### 定义 6.1 (回滚操作)
+
 回滚操作是将系统恢复到之前状态的过程：
 
 $$\text{Rollback}(v_{current}, v_{target}) = \text{Restore}(v_{target})$$
 
 ### 算法 6.1 (A/B分区回滚算法)
+
 A/B分区算法确保安全的回滚：
 
 ```rust
@@ -672,6 +695,7 @@ impl AbPartitionRollback {
 ```
 
 ### 算法 6.2 (增量回滚算法)
+
 增量回滚算法支持部分回滚：
 
 ```rust
@@ -838,4 +862,4 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 1. 优化算法性能以适应更多IoT场景
 2. 开发自动化测试和验证工具
 3. 建立算法性能基准测试
-4. 研究新的压缩和加密算法 
+4. 研究新的压缩和加密算法

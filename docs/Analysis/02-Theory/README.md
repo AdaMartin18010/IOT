@@ -14,11 +14,13 @@
 ## 理论基础体系
 
 ### 定义 1.1 (IoT理论基础体系)
+
 IoT理论基础体系是一个多层次、多维度的理论框架，定义为：
 
 $$\mathcal{T}_{IoT} = (\mathcal{F}, \mathcal{L}, \mathcal{C}, \mathcal{P}, \mathcal{D}, \mathcal{V})$$
 
 其中：
+
 - $\mathcal{F}$ 是形式化理论组件
 - $\mathcal{L}$ 是语言理论组件  
 - $\mathcal{C}$ 是控制理论组件
@@ -27,6 +29,7 @@ $$\mathcal{T}_{IoT} = (\mathcal{F}, \mathcal{L}, \mathcal{C}, \mathcal{P}, \math
 - $\mathcal{V}$ 是验证理论组件
 
 ### 定理 1.1 (理论层次关系)
+
 IoT理论基础体系中的各组件存在严格的层次依赖关系：
 
 $$\mathcal{F} \prec \mathcal{L} \prec \mathcal{C} \prec \mathcal{P} \prec \mathcal{D} \prec \mathcal{V}$$
@@ -42,6 +45,7 @@ $$\mathcal{F} \prec \mathcal{L} \prec \mathcal{C} \prec \mathcal{P} \prec \mathc
 ## 形式化理论框架
 
 ### 定义 2.1 (统一形式框架)
+
 统一形式框架是一个七元组：
 
 $$\mathcal{F} = (\mathcal{L}, \mathcal{T}, \mathcal{S}, \mathcal{C}, \mathcal{V}, \mathcal{P}, \mathcal{A})$$
@@ -49,16 +53,19 @@ $$\mathcal{F} = (\mathcal{L}, \mathcal{T}, \mathcal{S}, \mathcal{C}, \mathcal{V}
 其中各组件定义如下：
 
 #### 语言理论组件 $\mathcal{L}$
+
 - **正则语言**：$\mathcal{L}_{reg} = \{L | \exists A \in \text{DFA}: L = L(A)\}$
 - **上下文无关语言**：$\mathcal{L}_{cf} = \{L | \exists G \in \text{CFG}: L = L(G)\}$
 - **递归可枚举语言**：$\mathcal{L}_{re} = \{L | \exists M \in \text{TM}: L = L(M)\}$
 
 #### 类型理论组件 $\mathcal{T}$
+
 - **简单类型**：$\mathcal{T}_{simple} = \{\tau | \tau ::= \text{base} | \tau_1 \rightarrow \tau_2\}$
 - **高阶类型**：$\mathcal{T}_{higher} = \{\tau | \tau ::= \text{base} | \tau_1 \rightarrow \tau_2 | \forall \alpha. \tau\}$
 - **依赖类型**：$\mathcal{T}_{dependent} = \{\tau | \tau ::= \text{base} | \Pi x:A. B | \Sigma x:A. B\}$
 
 ### 定理 2.1 (语言-类型对应关系)
+
 对于每个语言类，存在对应的类型系统：
 
 $$L \in \mathcal{L} \Leftrightarrow \exists \tau \in \mathcal{T} : L = L(\tau)$$
@@ -66,6 +73,7 @@ $$L \in \mathcal{L} \Leftrightarrow \exists \tau \in \mathcal{T} : L = L(\tau)$$
 **证明：** 通过构造性证明：
 
 1. **正则语言到简单类型**：
+
    ```haskell
    regToType :: RegularLanguage -> SimpleType
    regToType lang = 
@@ -77,6 +85,7 @@ $$L \in \mathcal{L} \Leftrightarrow \exists \tau \in \mathcal{T} : L = L(\tau)$$
    ```
 
 2. **上下文无关语言到高阶类型**：
+
    ```haskell
    cfToType :: ContextFreeLanguage -> HigherOrderType
    cfToType lang = 
@@ -89,17 +98,20 @@ $$L \in \mathcal{L} \Leftrightarrow \exists \tau \in \mathcal{T} : L = L(\tau)$$
 ## 类型理论体系
 
 ### 定义 3.1 (IoT类型系统)
+
 IoT类型系统是一个四元组：
 
 $$\mathcal{T}_{IoT} = (\mathcal{B}, \mathcal{F}, \mathcal{R}, \mathcal{S})$$
 
 其中：
+
 - $\mathcal{B}$ 是基础类型集合
 - $\mathcal{F}$ 是函数类型集合
 - $\mathcal{R}$ 是资源类型集合
 - $\mathcal{S}$ 是安全类型集合
 
 #### 基础类型定义
+
 ```rust
 // IoT基础类型系统
 pub trait IoTType {
@@ -133,6 +145,7 @@ pub struct MessageType {
 ```
 
 ### 定理 3.1 (类型安全保持)
+
 如果IoT系统 $S$ 是类型安全的，则其子系统也是类型安全的：
 
 $$\text{TypeSafe}(S) \Rightarrow \forall S' \subseteq S: \text{TypeSafe}(S')$$
@@ -146,11 +159,13 @@ $$\text{TypeSafe}(S) \Rightarrow \forall S' \subseteq S: \text{TypeSafe}(S')$$
 ## 控制理论基础
 
 ### 定义 4.1 (IoT控制系统)
+
 IoT控制系统是一个五元组：
 
 $$\mathcal{C} = (X, U, Y, f, h)$$
 
 其中：
+
 - $X \subseteq \mathbb{R}^n$ 是状态空间
 - $U \subseteq \mathbb{R}^m$ 是控制输入空间
 - $Y \subseteq \mathbb{R}^p$ 是输出空间
@@ -158,6 +173,7 @@ $$\mathcal{C} = (X, U, Y, f, h)$$
 - $h: X \rightarrow Y$ 是输出函数
 
 ### 定义 4.2 (分布式控制系统)
+
 分布式控制系统是多个局部控制器的协调系统：
 
 $$\mathcal{C}_{dist} = \{\mathcal{C}_1, \mathcal{C}_2, \ldots, \mathcal{C}_n, \mathcal{C}_{coord}\}$$
@@ -165,6 +181,7 @@ $$\mathcal{C}_{dist} = \{\mathcal{C}_1, \mathcal{C}_2, \ldots, \mathcal{C}_n, \m
 其中 $\mathcal{C}_{coord}$ 是协调控制器。
 
 ### 定理 4.1 (分布式控制稳定性)
+
 如果所有局部控制器都是稳定的，且满足协调条件，则分布式控制系统稳定：
 
 $$\forall i: \text{Stable}(\mathcal{C}_i) \land \text{Coordinated}(\mathcal{C}_{coord}) \Rightarrow \text{Stable}(\mathcal{C}_{dist})$$
@@ -178,21 +195,25 @@ $$\forall i: \text{Stable}(\mathcal{C}_i) \land \text{Coordinated}(\mathcal{C}_{
 ## 时态逻辑理论
 
 ### 定义 5.1 (IoT时态逻辑)
+
 IoT时态逻辑是线性时态逻辑(LTL)的扩展：
 
 $$\mathcal{L}_{IoT} = \mathcal{L}_{LTL} \cup \{\text{Device}(d), \text{Connected}(d_1, d_2), \text{Secure}(m)\}$$
 
 其中：
+
 - $\text{Device}(d)$ 表示设备 $d$ 存在
 - $\text{Connected}(d_1, d_2)$ 表示设备 $d_1$ 和 $d_2$ 连接
 - $\text{Secure}(m)$ 表示消息 $m$ 安全
 
 ### 定义 5.2 (时态逻辑公式)
+
 IoT时态逻辑公式定义为：
 
 $$\phi ::= p | \neg \phi | \phi_1 \land \phi_2 | \phi_1 \lor \phi_2 | \phi_1 \rightarrow \phi_2 | \Box \phi | \Diamond \phi | \phi_1 \mathcal{U} \phi_2$$
 
 ### 定理 5.1 (时态逻辑完备性)
+
 IoT时态逻辑验证框架对于有限状态系统是完备的：
 
 $$\forall S \in \text{FiniteStateSystem}, \forall \phi \in \mathcal{L}_{IoT}: \text{Verifiable}(S, \phi)$$
@@ -206,17 +227,20 @@ $$\forall S \in \text{FiniteStateSystem}, \forall \phi \in \mathcal{L}_{IoT}: \t
 ## Petri网理论
 
 ### 定义 6.1 (IoT Petri网)
+
 IoT Petri网是一个四元组：
 
 $$N = (P, T, F, M_0)$$
 
 其中：
+
 - $P$ 是位置集合，表示系统状态
 - $T$ 是变迁集合，表示系统事件
 - $F \subseteq (P \times T) \cup (T \times P)$ 是流关系
 - $M_0: P \rightarrow \mathbb{N}$ 是初始标识
 
 ### 定义 6.2 (Petri网-控制系统映射)
+
 Petri网与控制系统之间存在自然映射：
 
 - **位置** $\leftrightarrow$ **状态变量**
@@ -225,6 +249,7 @@ Petri网与控制系统之间存在自然映射：
 - **流关系** $\leftrightarrow$ **状态方程**
 
 ### 定理 6.1 (Petri网-控制系统等价性)
+
 对于每个Petri网，存在对应的控制系统：
 
 $$N \text{ 可达 } M \Leftrightarrow \Sigma \text{ 可控到 } x$$
@@ -238,11 +263,13 @@ $$N \text{ 可达 } M \Leftrightarrow \Sigma \text{ 可控到 } x$$
 ## 分布式系统理论
 
 ### 定义 7.1 (IoT分布式系统)
+
 IoT分布式系统是一个六元组：
 
 $$\mathcal{D} = (N, C, M, P, S, F)$$
 
 其中：
+
 - $N$ 是节点集合
 - $C$ 是通信网络
 - $M$ 是消息集合
@@ -251,12 +278,15 @@ $$\mathcal{D} = (N, C, M, P, S, F)$$
 - $F$ 是故障模型
 
 ### 定义 7.2 (共识算法)
+
 共识算法确保分布式系统中的节点就某个值达成一致：
 
 $$\text{Consensus}(v_1, v_2, \ldots, v_n) = v \text{ s.t. } \forall i: \text{Agree}(i, v)$$
 
 ### 定理 7.1 (FLP不可能性)
+
 在异步分布式系统中，即使只有一个节点可能故障，也不可能同时满足：
+
 1. **终止性**：每个非故障节点最终决定某个值
 2. **一致性**：所有节点决定相同的值
 3. **有效性**：如果所有节点提议相同的值，则决定该值
@@ -270,6 +300,7 @@ $$\text{Consensus}(v_1, v_2, \ldots, v_n) = v \text{ s.t. } \forall i: \text{Agr
 ## 理论应用映射
 
 ### 定义 8.1 (理论到应用映射)
+
 理论到应用映射是一个函数：
 
 $$f: \mathcal{T} \rightarrow \mathcal{A}$$
@@ -289,6 +320,7 @@ $$f: \mathcal{T} \rightarrow \mathcal{A}$$
 | $\mathcal{V}$ (验证理论) | 系统验证 | 安全验证、性能验证 |
 
 ### 定理 8.1 (理论应用完备性)
+
 对于每个IoT应用领域，都存在对应的理论基础：
 
 $$\forall a \in \mathcal{A}: \exists t \in \mathcal{T}: f(t) = a$$

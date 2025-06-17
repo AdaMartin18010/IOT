@@ -18,18 +18,23 @@
 ## 理论基础
 
 ### 定义 5.1 (事件)
+
 事件是一个四元组 $\mathcal{E} = (I, T, D, M)$，其中：
+
 - $I$ 是事件标识符 (Identifier)
 - $T$ 是时间戳 (Timestamp)
 - $D$ 是事件数据 (Data)
 - $M$ 是元数据 (Metadata)
 
 ### 定义 5.2 (事件流)
+
 事件流是一个有序的事件序列 $\mathcal{S} = (E_1, E_2, ..., E_n)$，满足：
 $$\forall i < j, T(E_i) \leq T(E_j)$$
 
 ### 定义 5.3 (事件驱动架构)
+
 事件驱动架构是一个六元组 $\mathcal{A}_{ED} = (P, C, B, R, F, S)$，其中：
+
 - $P = \{P_1, P_2, ..., P_n\}$ 是事件生产者集合
 - $C = \{C_1, C_2, ..., C_k\}$ 是事件消费者集合
 - $B = \{B_1, B_2, ..., B_l\}$ 是事件总线集合
@@ -38,27 +43,33 @@ $$\forall i < j, T(E_i) \leq T(E_j)$$
 - $S = \{S_1, S_2, ..., S_r\}$ 是存储组件集合
 
 ### 定义 5.4 (事件图)
+
 事件图是一个有向图 $\mathcal{G} = (V, E, W)$，其中：
+
 - $V = \{v_1, v_2, ..., v_n\}$ 是事件节点集合
 - $E \subseteq V \times V$ 是事件流关系集合
 - $W: E \rightarrow \mathbb{R}^+$ 是权重函数（延迟、吞吐量等）
 
 ### 定理 5.1 (事件因果性定理)
+
 在事件驱动系统中，事件的因果性可以通过时间戳和依赖关系确定。
 
 **证明**:
 设 $E_1$ 和 $E_2$ 为两个事件，$E_1 \rightarrow E_2$ 表示 $E_1$ 因果先于 $E_2$。
 因果性满足：
+
 1. **传递性**: $E_1 \rightarrow E_2 \land E_2 \rightarrow E_3 \Rightarrow E_1 \rightarrow E_3$
 2. **反对称性**: $E_1 \rightarrow E_2 \Rightarrow \neg(E_2 \rightarrow E_1)$
 3. **时间一致性**: $E_1 \rightarrow E_2 \Rightarrow T(E_1) \leq T(E_2)$
 
 ### 定理 5.2 (事件处理一致性定理)
+
 在分布式事件驱动系统中，存在一个一致性协议确保事件处理的顺序一致性。
 
 **证明**:
 设 $\mathcal{P}$ 为一致性协议，$\mathcal{E}$ 为事件集合。
 一致性协议确保：
+
 1. **全序性**: $\forall E_1, E_2 \in \mathcal{E}, E_1 \prec E_2 \lor E_2 \prec E_1$
 2. **因果性**: $E_1 \rightarrow E_2 \Rightarrow E_1 \prec E_2$
 3. **稳定性**: 一旦事件被传递，其顺序不再改变
@@ -128,6 +139,7 @@ graph TB
 ### 事件处理模式
 
 #### 1. 简单事件处理
+
 ```mermaid
 sequenceDiagram
     participant Source
@@ -142,6 +154,7 @@ sequenceDiagram
 ```
 
 #### 2. 复杂事件处理
+
 ```mermaid
 sequenceDiagram
     participant Source1
@@ -158,6 +171,7 @@ sequenceDiagram
 ```
 
 #### 3. 事件流处理
+
 ```mermaid
 sequenceDiagram
     participant Stream
@@ -173,35 +187,46 @@ sequenceDiagram
 ## 形式化定义
 
 ### 定义 5.5 (事件生产者)
+
 事件生产者是一个函数 $P: S \rightarrow E$，其中：
+
 - $S$ 是状态集合
 - $E$ 是事件集合
 
 ### 定义 5.6 (事件消费者)
+
 事件消费者是一个函数 $C: E \rightarrow A$，其中：
+
 - $E$ 是事件集合
 - $A$ 是动作集合
 
 ### 定义 5.7 (事件总线)
+
 事件总线是一个三元组 $B = (R, F, Q)$，其中：
+
 - $R$ 是路由函数集合
 - $F$ 是过滤器集合
 - $Q$ 是队列集合
 
 ### 定义 5.8 (事件路由)
+
 事件路由是一个函数 $R: E \times C \rightarrow \{true, false\}$，表示事件 $E$ 是否应该路由到消费者 $C$。
 
 ### 定义 5.9 (事件过滤器)
+
 事件过滤器是一个函数 $F: E \rightarrow \{true, false\}$，表示事件 $E$ 是否通过过滤。
 
 ### 定义 5.10 (事件处理函数)
+
 事件处理函数是一个函数 $H: E \times S \rightarrow S' \times A$，其中：
+
 - $E$ 是输入事件
 - $S$ 是当前状态
 - $S'$ 是新状态
 - $A$ 是输出动作
 
 ### 定理 5.3 (事件处理正确性定理)
+
 事件处理函数必须保持状态一致性，即对于任意事件序列，最终状态与事件处理顺序无关。
 
 **证明**:
@@ -210,6 +235,7 @@ sequenceDiagram
 这等价于：$H$ 是交换的，即 $\forall E_1, E_2, H(E_1, H(E_2, S)) = H(E_2, H(E_1, S))$
 
 ### 定理 5.4 (事件处理性能定理)
+
 事件处理的性能与事件队列长度和处理能力相关。
 
 **证明**:
@@ -222,39 +248,47 @@ sequenceDiagram
 ### 事件驱动设计原则
 
 #### 原则 5.1 (松耦合原则)
+
 事件生产者和消费者之间应该保持松耦合：
 $$\forall P \in \mathcal{P}, \forall C \in \mathcal{C}, P \not\prec C$$
 
 #### 原则 5.2 (异步处理原则)
+
 事件处理应该是异步的，避免阻塞：
 $$\forall E \in \mathcal{E}, Process(E) \text{ 是异步的}$$
 
 #### 原则 5.3 (事件不可变性原则)
+
 事件一旦产生就不可变：
 $$\forall E \in \mathcal{E}, \forall t > T(E), E(t) = E(T(E))$$
 
 #### 原则 5.4 (幂等性原则)
+
 事件处理应该是幂等的：
 $$\forall E \in \mathcal{E}, \forall n \in \mathbb{N}, H^n(E) = H(E)$$
 
 ### 事件驱动模式
 
 #### 1. 发布-订阅模式
+
 - **发布者**: 产生事件但不关心谁消费
 - **订阅者**: 订阅感兴趣的事件类型
 - **事件总线**: 负责事件的路由和分发
 
 #### 2. 事件流处理模式
+
 - **流处理器**: 连续处理事件流
 - **窗口操作**: 在时间或数量窗口内处理事件
 - **聚合操作**: 对事件进行聚合计算
 
 #### 3. 复杂事件处理模式
+
 - **模式匹配**: 识别复杂的事件模式
 - **事件关联**: 关联多个相关事件
 - **规则引擎**: 基于规则处理事件
 
 #### 4. 事件溯源模式
+
 - **事件存储**: 存储所有事件历史
 - **状态重建**: 通过重放事件重建状态
 - **审计追踪**: 提供完整的审计追踪
@@ -838,20 +872,24 @@ impl StreamProcessor for DataAggregationProcessor {
 ### 事件处理性能分析
 
 #### 1. 事件吞吐量
+
 $$T_{throughput} = \frac{N_{events}}{T_{processing}}$$
 
 其中 $N_{events}$ 是处理的事件数量，$T_{processing}$ 是处理时间。
 
 #### 2. 事件延迟
+
 $$L_{latency} = L_{publish} + L_{routing} + L_{processing} + L_{delivery}$$
 
 其中：
+
 - $L_{publish}$ 是发布延迟
 - $L_{routing}$ 是路由延迟
 - $L_{processing}$ 是处理延迟
 - $L_{delivery}$ 是投递延迟
 
 #### 3. 事件队列长度
+
 $$Q_{length} = \lambda \cdot W$$
 
 其中 $\lambda$ 是到达率，$W$ 是等待时间。
@@ -859,6 +897,7 @@ $$Q_{length} = \lambda \cdot W$$
 ### 性能优化策略
 
 #### 1. 并行处理
+
 ```rust
 use tokio::task;
 
@@ -886,6 +925,7 @@ pub async fn process_events_parallel(&self, events: &[Event]) -> Result<Vec<Even
 ```
 
 #### 2. 批量处理
+
 ```rust
 pub async fn process_events_batch(&self, events: &[Event], batch_size: usize) -> Result<Vec<Event>, Box<dyn std::error::Error>> {
     let mut results = Vec::new();
@@ -900,6 +940,7 @@ pub async fn process_events_batch(&self, events: &[Event], batch_size: usize) ->
 ```
 
 #### 3. 缓存优化
+
 ```rust
 use std::collections::HashMap;
 use tokio::sync::RwLock;
@@ -932,24 +973,28 @@ impl EventCache {
 ## 最佳实践
 
 ### 1. 事件设计
+
 - **事件不可变性**: 事件一旦产生就不可变
 - **事件幂等性**: 事件处理应该是幂等的
 - **事件版本化**: 实现事件版本管理
 - **事件序列化**: 使用高效的序列化格式
 
 ### 2. 性能优化
+
 - **异步处理**: 使用异步处理避免阻塞
 - **批量处理**: 批量处理提高吞吐量
 - **并行处理**: 利用多线程提高并发性能
 - **缓存策略**: 实现合理的缓存策略
 
 ### 3. 可靠性保证
+
 - **事件持久化**: 确保事件不丢失
 - **重试机制**: 实现智能重试机制
 - **死信队列**: 处理无法处理的事件
 - **监控告警**: 建立完善的监控体系
 
 ### 4. 扩展性设计
+
 - **水平扩展**: 支持水平扩展
 - **分区策略**: 实现合理的事件分区
 - **负载均衡**: 实现负载均衡
@@ -965,4 +1010,4 @@ impl EventCache {
 ---
 
 *最后更新: 2024-12-19*
-*版本: 1.0* 
+*版本: 1.0*

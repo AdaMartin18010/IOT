@@ -14,11 +14,13 @@
 ## 微服务架构理论基础
 
 ### 定义 1.1 (微服务架构)
+
 微服务架构是一个分布式系统架构，定义为：
 
 $$\mathcal{M} = (S, C, D, N, F)$$
 
 其中：
+
 - $S = \{s_1, s_2, \ldots, s_n\}$ 是服务集合
 - $C = \{c_{ij}\}$ 是服务间通信关系
 - $D = \{d_1, d_2, \ldots, d_n\}$ 是数据存储集合
@@ -26,11 +28,13 @@ $$\mathcal{M} = (S, C, D, N, F)$$
 - $F = \{f_1, f_2, \ldots, f_k\}$ 是故障模式集合
 
 ### 定义 1.2 (微服务)
+
 微服务是一个自治的计算单元，定义为：
 
 $$s = (id, api, data, behavior, state)$$
 
 其中：
+
 - $id$ 是服务标识符
 - $api$ 是服务接口
 - $data$ 是服务数据
@@ -38,6 +42,7 @@ $$s = (id, api, data, behavior, state)$$
 - $state$ 是服务状态
 
 ### 定理 1.1 (微服务自治性)
+
 每个微服务都是自治的，即：
 
 $$\forall s \in S: \text{Autonomous}(s) \Leftrightarrow \text{Independent}(s) \land \text{SelfContained}(s)$$
@@ -79,11 +84,13 @@ pub struct ServiceBehavior {
 ## 微服务设计原则与模式
 
 ### 定义 2.1 (单一职责原则)
+
 每个微服务应专注于单一业务功能：
 
 $$\text{SingleResponsibility}(s) \Leftrightarrow \forall f_1, f_2 \in \text{Functions}(s): \text{Related}(f_1, f_2)$$
 
 ### 定义 2.2 (高内聚低耦合)
+
 微服务应具有高内聚性和低耦合性：
 
 $$\text{HighCohesion}(s) \land \text{LowCoupling}(s) \Leftrightarrow \frac{\text{InternalDependencies}(s)}{\text{ExternalDependencies}(s)} > \alpha$$
@@ -91,11 +98,13 @@ $$\text{HighCohesion}(s) \land \text{LowCoupling}(s) \Leftrightarrow \frac{\text
 其中 $\alpha$ 是内聚耦合比阈值。
 
 ### 定义 2.3 (服务边界)
+
 服务边界由业务领域决定：
 
 $$\text{Boundary}(s) = \text{Domain}(s) \cap \text{Technology}(s) \cap \text{Team}(s)$$
 
 ### 定理 2.1 (服务分解最优性)
+
 最优的服务分解满足：
 
 $$\arg\min_{S} \sum_{i,j} \text{Coupling}(s_i, s_j) \text{ s.t. } \forall s \in S: \text{Cohesion}(s) > \beta$$
@@ -134,11 +143,13 @@ impl ServiceDecomposition {
 ## IoT微服务架构模型
 
 ### 定义 3.1 (IoT微服务架构)
+
 IoT微服务架构是专门为IoT系统设计的微服务架构：
 
 $$\mathcal{M}_{IoT} = (\mathcal{D}, \mathcal{G}, \mathcal{C}, \mathcal{A}, \mathcal{S})$$
 
 其中：
+
 - $\mathcal{D}$ 是设备管理服务集合
 - $\mathcal{G}$ 是网关服务集合
 - $\mathcal{C}$ 是云服务集合
@@ -146,6 +157,7 @@ $$\mathcal{M}_{IoT} = (\mathcal{D}, \mathcal{G}, \mathcal{C}, \mathcal{A}, \math
 - $\mathcal{S}$ 是安全服务集合
 
 ### 定义 3.2 (设备管理服务)
+
 设备管理服务负责设备生命周期管理：
 
 $$d \in \mathcal{D} = (registration, monitoring, control, maintenance)$$
@@ -182,6 +194,7 @@ impl DeviceManagementService {
 ```
 
 ### 定义 3.3 (网关服务)
+
 网关服务负责设备与云端的通信：
 
 $$g \in \mathcal{G} = (protocol_translation, data_aggregation, edge_computing)$$
@@ -216,6 +229,7 @@ impl GatewayService {
 ```
 
 ### 定理 3.1 (IoT微服务可扩展性)
+
 IoT微服务架构支持水平扩展：
 
 $$\forall s \in \mathcal{M}_{IoT}: \text{Scalable}(s) \Leftrightarrow \text{Stateless}(s) \lor \text{SharedState}(s)$$
@@ -229,25 +243,30 @@ $$\forall s \in \mathcal{M}_{IoT}: \text{Scalable}(s) \Leftrightarrow \text{Stat
 ## 服务通信与协调
 
 ### 定义 4.1 (服务通信模式)
+
 服务通信模式包括同步和异步两种：
 
 $$\mathcal{C} = \mathcal{C}_{sync} \cup \mathcal{C}_{async}$$
 
 其中：
+
 - $\mathcal{C}_{sync} = \{\text{REST}, \text{gRPC}, \text{GraphQL}\}$
 - $\mathcal{C}_{async} = \{\text{Message Queue}, \text{Event Bus}, \text{Stream}\}$
 
 ### 定义 4.2 (同步通信)
+
 同步通信是请求-响应模式：
 
 $$c_{sync}(s_1, s_2) = (request, response, timeout)$$
 
 ### 定义 4.3 (异步通信)
+
 异步通信是事件驱动模式：
 
 $$c_{async}(s_1, s_2) = (event, handler, queue)$$
 
 ### 定理 4.1 (通信可靠性)
+
 异步通信比同步通信更可靠：
 
 $$\text{Reliability}(\mathcal{C}_{async}) > \text{Reliability}(\mathcal{C}_{sync})$$
@@ -301,21 +320,25 @@ impl ServiceCommunication for RestCommunication {
 ## 数据管理与一致性
 
 ### 定义 5.1 (分布式数据管理)
+
 每个微服务可以拥有自己的数据存储：
 
 $$\mathcal{D} = \{d_1, d_2, \ldots, d_n\} \text{ where } d_i \cap d_j = \emptyset \text{ for } i \neq j$$
 
 ### 定义 5.2 (数据一致性)
+
 数据一致性通过分布式事务保证：
 
 $$\text{Consistency}(D) \Leftrightarrow \forall t_1, t_2 \in T: \text{Serializable}(t_1, t_2)$$
 
 ### 定义 5.3 (最终一致性)
+
 最终一致性允许临时不一致：
 
 $$\text{EventualConsistency}(D) \Leftrightarrow \lim_{t \to \infty} \text{Consistency}(D, t)$$
 
 ### 定理 5.1 (CAP定理)
+
 分布式系统最多只能满足CAP中的两个性质：
 
 $$\text{Consistency} \land \text{Availability} \land \text{PartitionTolerance} = \text{False}$$
@@ -358,21 +381,25 @@ impl DistributedDataManager {
 ## 安全与可靠性
 
 ### 定义 6.1 (微服务安全)
+
 微服务安全包括认证、授权和加密：
 
 $$\mathcal{S} = \mathcal{A}_{auth} \times \mathcal{A}_{authz} \times \mathcal{E}_{crypto}$$
 
 ### 定义 6.2 (服务网格安全)
+
 服务网格提供统一的安全控制：
 
 $$\text{ServiceMesh} = \text{Sidecar} \times \text{ControlPlane} \times \text{DataPlane}$$
 
 ### 定义 6.3 (熔断器模式)
+
 熔断器模式防止故障传播：
 
 $$\text{CircuitBreaker} = (\text{Closed}, \text{Open}, \text{HalfOpen})$$
 
 ### 定理 6.1 (熔断器有效性)
+
 熔断器模式可以有效防止故障传播：
 
 $$\text{CircuitBreaker}(s) \Rightarrow \text{FaultIsolation}(s)$$
@@ -453,21 +480,25 @@ impl CircuitBreaker {
 ## 可观测性与监控
 
 ### 定义 7.1 (可观测性)
+
 可观测性包括日志、指标和追踪：
 
 $$\mathcal{O} = \mathcal{L}_{logs} \times \mathcal{M}_{metrics} \times \mathcal{T}_{traces}$$
 
 ### 定义 7.2 (分布式追踪)
+
 分布式追踪跟踪请求在服务间的传播：
 
 $$\text{Trace} = \text{Span}_1 \rightarrow \text{Span}_2 \rightarrow \cdots \rightarrow \text{Span}_n$$
 
 ### 定义 7.3 (服务指标)
+
 服务指标包括性能、可用性和业务指标：
 
 $$\mathcal{M} = \mathcal{M}_{perf} \times \mathcal{M}_{avail} \times \mathcal{M}_{business}$$
 
 ### 定理 7.1 (可观测性完备性)
+
 完整的可观测性可以诊断所有问题：
 
 $$\text{CompleteObservability}(\mathcal{O}) \Rightarrow \text{Diagnosable}(\text{AllProblems})$$
