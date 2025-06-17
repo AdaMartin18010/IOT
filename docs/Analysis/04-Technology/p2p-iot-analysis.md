@@ -63,6 +63,7 @@ $$\forall v_i, v_j \in V, \exists path(v_i, v_j)$$
 $$s_i = (id_i, type_i, location_i, capability_i, status_i, neighbors_i)$$
 
 其中：
+
 - $id_i$ 是设备唯一标识符
 - $type_i$ 是设备类型
 - $location_i = (x_i, y_i, z_i)$ 是设备三维坐标
@@ -75,6 +76,7 @@ $$s_i = (id_i, type_i, location_i, capability_i, status_i, neighbors_i)$$
 $$capability_i = \{compute_i, storage_i, bandwidth_i, energy_i\}$$
 
 其中：
+
 - $compute_i$ 是计算能力
 - $storage_i$ 是存储能力
 - $bandwidth_i$ 是网络带宽
@@ -87,6 +89,7 @@ $$capability_i = \{compute_i, storage_i, bandwidth_i, energy_i\}$$
 $$P(s_{t+1} | s_t, a_t)$$
 
 其中：
+
 - $s_t$ 是时刻 $t$ 的网络状态
 - $a_t$ 是时刻 $t$ 的网络动作
 - $P$ 是状态转移概率
@@ -106,6 +109,7 @@ $$leave(d_i) = (V \setminus \{d_i\}, E \setminus \{(d_i, d_j) | d_j \in V\})$$
 $$DHT = (K, V, N, f)$$
 
 其中：
+
 - $K$ 是键空间
 - $V$ 是值空间
 - $N$ 是节点集合
@@ -178,6 +182,7 @@ $$if \quad event_1 \rightarrow event_2 \quad then \quad state_1 \rightarrow stat
 $$identity_i = (public_key_i, certificate_i, device_hash_i)$$
 
 其中：
+
 - $public_key_i$ 是设备公钥
 - $certificate_i$ 是设备证书
 - $device_hash_i = H(hardware_id_i || firmware_hash_i)$
@@ -240,7 +245,7 @@ use std::net::SocketAddr;
 use tokio::net::{TcpListener, TcpStream};
 use tokio::io::{AsyncReadExt, AsyncWriteExt};
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+# [derive(Debug, Clone, Serialize, Deserialize)]
 pub struct IoTDevice {
     pub id: String,
     pub device_type: String,
@@ -251,7 +256,7 @@ pub struct IoTDevice {
     pub public_key: PublicKey,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+# [derive(Debug, Clone, Serialize, Deserialize)]
 pub struct DeviceCapability {
     pub compute: f64,
     pub storage: u64,
@@ -259,7 +264,7 @@ pub struct DeviceCapability {
     pub energy: f64,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+# [derive(Debug, Clone, Serialize, Deserialize)]
 pub enum DeviceStatus {
     Online,
     Offline,
@@ -267,7 +272,7 @@ pub enum DeviceStatus {
     Error,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+# [derive(Debug, Clone, Serialize, Deserialize)]
 pub struct P2PNode {
     pub id: String,
     pub address: SocketAddr,
@@ -276,7 +281,7 @@ pub struct P2PNode {
     pub keypair: Keypair,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+# [derive(Debug, Clone, Serialize, Deserialize)]
 pub enum P2PMessage {
     Ping { from: String, timestamp: u64 },
     Pong { from: String, timestamp: u64 },
@@ -307,9 +312,9 @@ impl P2PIoTNetwork {
             routing_table: HashMap::new(),
             keypair,
         };
-        
+
         let (message_sender, message_receiver) = mpsc::channel(1000);
-        
+
         Self {
             node,
             dht: HashMap::new(),
@@ -318,187 +323,187 @@ impl P2PIoTNetwork {
             message_receiver,
         }
     }
-    
+
     pub async fn start(&mut self) -> Result<(), Box<dyn std::error::Error>> {
         let listener = TcpListener::bind(self.node.address).await?;
         println!("P2P IoT Network listening on {}", self.node.address);
-        
+
         let message_sender = self.message_sender.clone();
-        
+
         // 启动消息处理任务
         tokio::spawn(async move {
             Self::handle_messages(message_sender).await;
         });
-        
+
         loop {
             let (socket, addr) = listener.accept().await?;
             let message_sender = self.message_sender.clone();
-            
+
             tokio::spawn(async move {
                 Self::handle_connection(socket, addr, message_sender).await;
             });
         }
     }
-    
+
     async fn handle_connection(
         mut socket: TcpStream,
         addr: SocketAddr,
         message_sender: mpsc::Sender<P2PMessage>,
     ) -> Result<(), Box<dyn std::error::Error>> {
         let mut buffer = vec![0; 1024];
-        
+
         loop {
             let n = socket.read(&mut buffer).await?;
             if n == 0 {
                 break;
             }
-            
+
             let message_data = &buffer[0..n];
             if let Ok(message) = serde_json::from_slice::<P2PMessage>(message_data) {
                 let _ = message_sender.send(message).await;
             }
         }
-        
+
         Ok(())
     }
-    
+
     async fn handle_messages(mut message_sender: mpsc::Sender<P2PMessage>) {
         // 消息处理逻辑
     }
-    
+
     pub async fn add_device(&mut self, device: IoTDevice) -> Result<(), String> {
         // 验证设备身份
         if !self.verify_device_identity(&device)? {
             return Err("Invalid device identity".to_string());
         }
-        
+
         // 添加到设备注册表
         self.device_registry.insert(device.id.clone(), device.clone());
         self.node.devices.insert(device.id.clone(), device);
-        
+
         // 广播设备加入消息
         let message = P2PMessage::DeviceJoin {
             device,
             from: self.node.id.clone(),
         };
-        
+
         self.broadcast_message(message).await?;
-        
+
         Ok(())
     }
-    
+
     pub async fn remove_device(&mut self, device_id: &str) -> Result<(), String> {
         if !self.device_registry.contains_key(device_id) {
             return Err("Device not found".to_string());
         }
-        
+
         self.device_registry.remove(device_id);
         self.node.devices.remove(device_id);
-        
+
         // 广播设备离开消息
         let message = P2PMessage::DeviceLeave {
             device_id: device_id.to_string(),
             from: self.node.id.clone(),
         };
-        
+
         self.broadcast_message(message).await?;
-        
+
         Ok(())
     }
-    
+
     pub async fn find_device(&self, device_id: &str) -> Option<IoTDevice> {
         // 首先在本地查找
         if let Some(device) = self.device_registry.get(device_id) {
             return Some(device.clone());
         }
-        
+
         // 在DHT中查找
         if let Some(device_data) = self.dht.get(device_id) {
             if let Ok(device) = serde_json::from_slice::<IoTDevice>(device_data) {
                 return Some(device);
             }
         }
-        
+
         // 在P2P网络中查找
         self.find_device_in_network(device_id).await
     }
-    
+
     async fn find_device_in_network(&self, device_id: &str) -> Option<IoTDevice> {
         let message = P2PMessage::FindNode {
             target: device_id.to_string(),
             from: self.node.id.clone(),
         };
-        
+
         // 发送查找消息到邻居节点
         self.send_to_neighbors(message).await;
-        
+
         // 等待响应
         None // 简化实现
     }
-    
+
     pub async fn store_data(&mut self, key: String, value: Vec<u8>) -> Result<(), String> {
         // 计算DHT键
         let dht_key = self.calculate_dht_key(&key);
-        
+
         // 存储到DHT
         self.dht.insert(dht_key, value);
-        
+
         // 广播存储消息
         let message = P2PMessage::Store {
             key: dht_key,
             value,
             from: self.node.id.clone(),
         };
-        
+
         self.broadcast_message(message).await?;
-        
+
         Ok(())
     }
-    
+
     pub async fn get_data(&self, key: &str) -> Option<Vec<u8>> {
         // 计算DHT键
         let dht_key = self.calculate_dht_key(key);
-        
+
         // 从本地DHT获取
         if let Some(value) = self.dht.get(&dht_key) {
             return Some(value.clone());
         }
-        
+
         // 从P2P网络获取
         self.get_data_from_network(&dht_key).await
     }
-    
+
     async fn get_data_from_network(&self, key: &str) -> Option<Vec<u8>> {
         let message = P2PMessage::Get {
             key: key.to_string(),
             from: self.node.id.clone(),
         };
-        
+
         // 发送获取消息到邻居节点
         self.send_to_neighbors(message).await;
-        
+
         // 等待响应
         None // 简化实现
     }
-    
+
     fn calculate_dht_key(&self, key: &str) -> String {
         let mut hasher = Sha256::new();
         hasher.update(key.as_bytes());
         format!("{:x}", hasher.finalize())
     }
-    
+
     fn verify_device_identity(&self, device: &IoTDevice) -> Result<bool, String> {
         // 验证设备公钥
         // 验证设备证书
         // 验证设备哈希
         Ok(true) // 简化实现
     }
-    
+
     async fn broadcast_message(&self, message: P2PMessage) -> Result<(), String> {
         // 广播消息到所有邻居节点
         Ok(())
     }
-    
+
     async fn send_to_neighbors(&self, message: P2PMessage) {
         // 发送消息到邻居节点
     }
@@ -508,7 +513,7 @@ impl P2PIoTNetwork {
 ### 7.2 地理位置感知路由
 
 ```rust
-#[derive(Debug, Clone)]
+# [derive(Debug, Clone)]
 pub struct GeoRoutingTable {
     pub buckets: Vec<Vec<(String, SocketAddr, (f64, f64, f64))>>,
     pub max_bucket_size: usize,
@@ -521,15 +526,15 @@ impl GeoRoutingTable {
             max_bucket_size,
         }
     }
-    
+
     pub fn add_node(&mut self, node_id: String, addr: SocketAddr, location: (f64, f64, f64)) {
         let bucket_index = self.get_bucket_index(&node_id);
-        
+
         if let Some(bucket) = self.buckets.get_mut(bucket_index) {
             // 检查是否已存在
             if !bucket.iter().any(|(id, _, _)| id == &node_id) {
                 bucket.push((node_id, addr, location));
-                
+
                 // 如果桶满了，移除最远的节点
                 if bucket.len() > self.max_bucket_size {
                     bucket.remove(0);
@@ -537,29 +542,29 @@ impl GeoRoutingTable {
             }
         }
     }
-    
+
     pub fn find_closest_nodes(&self, target_location: (f64, f64, f64), k: usize) -> Vec<(String, SocketAddr, f64)> {
         let mut all_nodes = Vec::new();
-        
+
         for bucket in &self.buckets {
             for (node_id, addr, location) in bucket {
                 let distance = self.calculate_distance(*location, target_location);
                 all_nodes.push((node_id.clone(), *addr, distance));
             }
         }
-        
+
         // 按距离排序并返回前k个
         all_nodes.sort_by(|a, b| a.2.partial_cmp(&b.2).unwrap());
         all_nodes.into_iter().take(k).collect()
     }
-    
+
     fn get_bucket_index(&self, node_id: &str) -> usize {
         let mut hasher = Sha256::new();
         hasher.update(node_id.as_bytes());
         let hash = hasher.finalize();
         hash[0] as usize
     }
-    
+
     fn calculate_distance(&self, loc1: (f64, f64, f64), loc2: (f64, f64, f64)) -> f64 {
         let dx = loc1.0 - loc2.0;
         let dy = loc1.1 - loc2.1;
@@ -580,15 +585,15 @@ impl GeoAwareRouter {
             local_location,
         }
     }
-    
+
     pub fn route_message(&self, target_location: (f64, f64, f64), message: P2PMessage) -> Vec<SocketAddr> {
         // 找到最近的k个节点
         let closest_nodes = self.routing_table.find_closest_nodes(target_location, 3);
-        
+
         // 返回这些节点的地址
         closest_nodes.into_iter().map(|(_, addr, _)| addr).collect()
     }
-    
+
     pub fn update_routing_table(&mut self, node_id: String, addr: SocketAddr, location: (f64, f64, f64)) {
         self.routing_table.add_node(node_id, addr, location);
     }
@@ -598,7 +603,7 @@ impl GeoAwareRouter {
 ### 7.3 数据同步与一致性
 
 ```rust
-#[derive(Debug, Clone, Serialize, Deserialize)]
+# [derive(Debug, Clone, Serialize, Deserialize)]
 pub struct DataItem {
     pub key: String,
     pub value: Vec<u8>,
@@ -607,7 +612,7 @@ pub struct DataItem {
     pub signature: Signature,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+# [derive(Debug, Clone, Serialize, Deserialize)]
 pub enum SyncMessage {
     SyncRequest { key: String, version: u64 },
     SyncResponse { data: Option<DataItem> },
@@ -628,30 +633,30 @@ impl DataSynchronizer {
             network,
         }
     }
-    
+
     pub async fn sync_data(&mut self, key: &str) -> Result<(), String> {
         // 获取本地数据版本
         let local_version = self.local_data.get(key).map(|item| item.version).unwrap_or(0);
-        
+
         // 发送同步请求
         let message = SyncMessage::SyncRequest {
             key: key.to_string(),
             version: local_version,
         };
-        
+
         // 发送到网络并等待响应
         self.send_sync_message(message).await?;
-        
+
         Ok(())
     }
-    
+
     pub async fn update_data(&mut self, key: String, value: Vec<u8>) -> Result<(), String> {
         let version = self.local_data.get(&key).map(|item| item.version + 1).unwrap_or(1);
         let timestamp = std::time::SystemTime::now()
             .duration_since(std::time::UNIX_EPOCH)
             .unwrap()
             .as_secs();
-        
+
         // 创建数据项
         let data_item = DataItem {
             key: key.clone(),
@@ -660,27 +665,27 @@ impl DataSynchronizer {
             timestamp,
             signature: self.keypair.sign(&format!("{}{}{}", key, version, timestamp).as_bytes()),
         };
-        
+
         // 更新本地数据
         self.local_data.insert(key.clone(), data_item.clone());
-        
+
         // 广播更新消息
         let message = SyncMessage::SyncUpdate { data: data_item };
         self.broadcast_sync_message(message).await?;
-        
+
         Ok(())
     }
-    
+
     async fn send_sync_message(&self, message: SyncMessage) -> Result<(), String> {
         // 发送同步消息到网络
         Ok(())
     }
-    
+
     async fn broadcast_sync_message(&self, message: SyncMessage) -> Result<(), String> {
         // 广播同步消息到网络
         Ok(())
     }
-    
+
     pub fn verify_data_integrity(&self, data: &DataItem) -> bool {
         let message = format!("{}{}{}", data.key, data.version, data.timestamp);
         data.signature.verify(message.as_bytes(), &data.signature).is_ok()
@@ -763,5 +768,3 @@ P2P技术在IoT中的应用为构建去中心化、可扩展的IoT网络提供�
 2. Stoica, I., et al. (2001). Chord: A scalable peer-to-peer lookup service for internet applications.
 3. Rowstron, A., & Druschel, P. (2001). Pastry: Scalable, decentralized object location, and routing for large-scale peer-to-peer systems.
 4. IEEE P2144.1. (2023). Standard for Peer-to-Peer Networks in Internet of Things (IoT).
-
-

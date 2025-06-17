@@ -47,6 +47,7 @@ IoT区块链系统提供以下核心价值：
 $$s_i = (id_i, type_i, location_i, data_i, timestamp_i, status_i)$$
 
 其中：
+
 - $id_i$ 是设备唯一标识符
 - $type_i$ 是设备类型
 - $location_i$ 是设备位置坐标
@@ -59,6 +60,7 @@ $$s_i = (id_i, type_i, location_i, data_i, timestamp_i, status_i)$$
 $$tx = (device_id, data_hash, signature, timestamp, nonce)$$
 
 其中：
+
 - $device_id$ 是发送设备ID
 - $data_hash = H(data)$ 是数据哈希
 - $signature$ 是设备数字签名
@@ -142,7 +144,7 @@ action & \text{if } evaluate(trigger, state) \land evaluate(condition, state) \\
 
 ```rust
 // IoT设备管理智能合约示例
-#[derive(Debug, Clone, Serialize, Deserialize)]
+# [derive(Debug, Clone, Serialize, Deserialize)]
 pub struct IoTDeviceContract {
     pub device_id: String,
     pub owner: String,
@@ -150,7 +152,7 @@ pub struct IoTDeviceContract {
     pub actions: Vec<DeviceAction>,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+# [derive(Debug, Clone, Serialize, Deserialize)]
 pub enum DeviceAction {
     Alert { message: String, severity: u8 },
     Shutdown,
@@ -167,12 +169,12 @@ impl IoTDeviceContract {
             None
         }
     }
-    
+
     fn check_trigger(&self, state: &DeviceState) -> bool {
         // 实现触发条件检查逻辑
         state.temperature > self.threshold || state.battery_level < 0.2
     }
-    
+
     fn check_condition(&self, state: &DeviceState) -> bool {
         // 实现执行条件检查逻辑
         state.status == DeviceStatus::Online
@@ -248,7 +250,7 @@ use tokio::sync::RwLock;
 use std::collections::HashMap;
 use std::sync::Arc;
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+# [derive(Debug, Clone, Serialize, Deserialize)]
 pub struct IoTDevice {
     pub id: String,
     pub public_key: PublicKey,
@@ -258,7 +260,7 @@ pub struct IoTDevice {
     pub last_update: u64,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+# [derive(Debug, Clone, Serialize, Deserialize)]
 pub enum DeviceStatus {
     Online,
     Offline,
@@ -266,7 +268,7 @@ pub enum DeviceStatus {
     Error,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+# [derive(Debug, Clone, Serialize, Deserialize)]
 pub struct IoTTransaction {
     pub device_id: String,
     pub data_hash: [u8; 32],
@@ -277,7 +279,7 @@ pub struct IoTTransaction {
     pub value: f64,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+# [derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Block {
     pub index: u64,
     pub previous_hash: [u8; 32],
@@ -307,7 +309,7 @@ impl IoTBlockchain {
             nonce: 0,
             hash: [0; 32],
         };
-        
+
         Self {
             chain: vec![genesis_block],
             devices: HashMap::new(),
@@ -315,7 +317,7 @@ impl IoTBlockchain {
             difficulty: 4,
         }
     }
-    
+
     pub fn add_device(&mut self, device: IoTDevice) -> Result<(), String> {
         if self.devices.contains_key(&device.id) {
             return Err("Device already exists".to_string());
@@ -323,42 +325,42 @@ impl IoTBlockchain {
         self.devices.insert(device.id.clone(), device);
         Ok(())
     }
-    
+
     pub fn add_transaction(&mut self, transaction: IoTTransaction) -> Result<(), String> {
         // 验证交易
         if !self.verify_transaction(&transaction)? {
             return Err("Invalid transaction".to_string());
         }
-        
+
         self.pending_transactions.push(transaction);
         Ok(())
     }
-    
+
     pub fn verify_transaction(&self, transaction: &IoTTransaction) -> Result<bool, String> {
         // 检查设备是否存在
         let device = self.devices.get(&transaction.device_id)
             .ok_or("Device not found")?;
-        
+
         // 验证签名
-        let message = format!("{}{:?}{}{}", 
-            transaction.device_id, 
-            transaction.data_hash, 
-            transaction.timestamp, 
+        let message = format!("{}{:?}{}{}",
+            transaction.device_id,
+            transaction.data_hash,
+            transaction.timestamp,
             transaction.nonce
         );
-        
+
         let message_bytes = message.as_bytes();
         device.public_key.verify(message_bytes, &transaction.signature)
             .map_err(|e| format!("Signature verification failed: {}", e))?;
-        
+
         // 检查时间戳
         if transaction.timestamp <= device.last_update {
             return Err("Transaction timestamp too old".to_string());
         }
-        
+
         Ok(true)
     }
-    
+
     pub fn mine_block(&mut self) -> Result<Block, String> {
         let last_block = self.chain.last().unwrap();
         let mut new_block = Block {
@@ -372,40 +374,40 @@ impl IoTBlockchain {
             nonce: 0,
             hash: [0; 32],
         };
-        
+
         // 工作量证明
         while !self.is_valid_hash(&new_block.hash) {
             new_block.nonce += 1;
             new_block.hash = self.calculate_hash(&new_block);
         }
-        
+
         // 更新设备状态
         for transaction in &new_block.transactions {
             if let Some(device) = self.devices.get_mut(&transaction.device_id) {
                 device.last_update = transaction.timestamp;
             }
         }
-        
+
         self.chain.push(new_block.clone());
         self.pending_transactions.clear();
-        
+
         Ok(new_block)
     }
-    
+
     fn calculate_hash(&self, block: &Block) -> [u8; 32] {
-        let block_data = format!("{}{:?}{:?}{}{}", 
-            block.index, 
-            block.previous_hash, 
-            block.transactions, 
-            block.timestamp, 
+        let block_data = format!("{}{:?}{:?}{}{}",
+            block.index,
+            block.previous_hash,
+            block.transactions,
+            block.timestamp,
             block.nonce
         );
-        
+
         let mut hasher = Sha256::new();
         hasher.update(block_data.as_bytes());
         hasher.finalize().into()
     }
-    
+
     fn is_valid_hash(&self, hash: &[u8; 32]) -> bool {
         let target = [0u8; 32];
         for i in 0..self.difficulty {
@@ -415,16 +417,16 @@ impl IoTBlockchain {
         }
         true
     }
-    
+
     pub fn is_chain_valid(&self) -> bool {
         for i in 1..self.chain.len() {
             let current = &self.chain[i];
             let previous = &self.chain[i - 1];
-            
+
             if current.hash != self.calculate_hash(current) {
                 return false;
             }
-            
+
             if current.previous_hash != previous.hash {
                 return false;
             }
@@ -437,7 +439,7 @@ impl IoTBlockchain {
 ### 7.2 智能合约执行引擎
 
 ```rust
-#[derive(Debug, Clone, Serialize, Deserialize)]
+# [derive(Debug, Clone, Serialize, Deserialize)]
 pub struct IoTContract {
     pub id: String,
     pub device_id: String,
@@ -446,7 +448,7 @@ pub struct IoTContract {
     pub active: bool,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+# [derive(Debug, Clone, Serialize, Deserialize)]
 pub enum ContractCondition {
     Temperature { min: f64, max: f64 },
     BatteryLevel { threshold: f64 },
@@ -454,7 +456,7 @@ pub enum ContractCondition {
     TimeWindow { start: u64, end: u64 },
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+# [derive(Debug, Clone, Serialize, Deserialize)]
 pub enum ContractAction {
     SendAlert { message: String, recipients: Vec<String> },
     AdjustSettings { parameter: String, value: f64 },
@@ -474,27 +476,27 @@ impl ContractEngine {
             blockchain,
         }
     }
-    
+
     pub fn add_contract(&mut self, contract: IoTContract) {
         self.contracts.insert(contract.id.clone(), contract);
     }
-    
+
     pub async fn evaluate_contracts(&self, device_state: &DeviceState) -> Vec<ContractAction> {
         let mut actions = Vec::new();
-        
+
         for contract in self.contracts.values() {
             if !contract.active || contract.device_id != device_state.device_id {
                 continue;
             }
-            
+
             if self.check_conditions(&contract.conditions, device_state) {
                 actions.extend(contract.actions.clone());
             }
         }
-        
+
         actions
     }
-    
+
     fn check_conditions(&self, conditions: &[ContractCondition], state: &DeviceState) -> bool {
         conditions.iter().all(|condition| {
             match condition {
@@ -517,7 +519,7 @@ impl ContractEngine {
             }
         })
     }
-    
+
     pub async fn execute_actions(&self, actions: Vec<ContractAction>) -> Result<(), String> {
         for action in actions {
             match action {
@@ -537,25 +539,25 @@ impl ContractEngine {
         }
         Ok(())
     }
-    
+
     async fn send_alert(&self, message: &str, recipients: &[String]) -> Result<(), String> {
         // 实现告警发送逻辑
         println!("Sending alert: {} to {:?}", message, recipients);
         Ok(())
     }
-    
+
     async fn adjust_device_settings(&self, parameter: &str, value: f64) -> Result<(), String> {
         // 实现设备设置调整逻辑
         println!("Adjusting {} to {}", parameter, value);
         Ok(())
     }
-    
+
     async fn trigger_backup(&self, target: &str) -> Result<(), String> {
         // 实现备份触发逻辑
         println!("Triggering backup to {}", target);
         Ok(())
     }
-    
+
     async fn schedule_maintenance(&self, time: u64) -> Result<(), String> {
         // 实现维护调度逻辑
         println!("Scheduling maintenance at {}", time);
