@@ -19,6 +19,7 @@ IoT微服务系统是一个六元组 $\mathcal{M} = (S, C, N, D, A, P)$，其中
 $$B(s_i) = \{interface_i, data_i, business_i, deployment_i\}$$
 
 其中：
+
 - $interface_i$ 是服务接口
 - $data_i$ 是数据模型
 - $business_i$ 是业务逻辑
@@ -32,6 +33,7 @@ $$B(s_i) = \{interface_i, data_i, business_i, deployment_i\}$$
 3. **部署隔离**：$\forall s_i, s_j \in S, i \neq j: deployment_i \cap deployment_j = \emptyset$
 
 **证明：**
+
 1. **接口隔离**：确保服务间无直接依赖
 2. **数据隔离**：确保数据所有权明确
 3. **部署隔离**：确保独立部署和扩展
@@ -900,4 +902,4 @@ impl CRDT for PNCounter {
 1. **边缘微服务**：研究边缘计算环境下的微服务架构
 2. **量子微服务**：探索量子计算在微服务中的应用
 3. **AI驱动架构**：使用机器学习优化微服务架构
-4. **区块链集成**：研究区块链与微服务的结合 
+4. **区块链集成**：研究区块链与微服务的结合
