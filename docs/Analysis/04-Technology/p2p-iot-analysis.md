@@ -764,3 +764,4 @@ P2P技术在IoT中的应用为构建去中心化、可扩展的IoT网络提供�
 3. Rowstron, A., & Druschel, P. (2001). Pastry: Scalable, decentralized object location, and routing for large-scale peer-to-peer systems.
 4. IEEE P2144.1. (2023). Standard for Peer-to-Peer Networks in Internet of Things (IoT).
 
+
