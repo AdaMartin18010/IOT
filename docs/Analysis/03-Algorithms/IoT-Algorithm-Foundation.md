@@ -28,6 +28,7 @@
 3. **终止性**：算法在有限步内终止
 
 **证明：**
+
 1. **安全性保持**：每个状态转移都保持安全性质
 2. **活性保证**：存在路径到达活跃状态
 3. **终止性**：状态空间有限且无循环
@@ -40,7 +41,7 @@
 **定义 1.4 (拜占庭容错)**
 拜占庭容错系统能够容忍 $f$ 个恶意节点，当总节点数 $n > 3f$ 时。
 
-**算法 1.1 (PBFT算法)**
+**算法 1.1 (PBFT算法)**:
 
 ```rust
 pub struct PBFTNode {
@@ -120,7 +121,7 @@ impl PBFTNode {
 }
 ```
 
-**算法 1.2 (Raft算法)**
+**算法 1.2 (Raft算法)**:
 
 ```rust
 pub struct RaftNode {
@@ -258,7 +259,7 @@ $$\min_{x} f(x) \text{ subject to } g_i(x) \leq 0, i = 1, 2, ..., m$$
 
 其中 $x$ 是决策变量，$f(x)$ 是目标函数，$g_i(x)$ 是约束函数。
 
-**算法 2.1 (遗传算法)**
+**算法 2.1 (遗传算法)**:
 
 ```rust
 pub struct GeneticAlgorithm {
@@ -370,7 +371,7 @@ impl GeneticAlgorithm {
 }
 ```
 
-**算法 2.2 (粒子群优化)**
+**算法 2.2 (粒子群优化)**:
 
 ```rust
 pub struct ParticleSwarmOptimization {
@@ -454,7 +455,7 @@ pub struct Particle {
 - $C$ 是容量约束
 - $F$ 是流量函数
 
-**算法 2.3 (Dijkstra算法)**
+**算法 2.3 (Dijkstra算法)**:
 
 ```rust
 pub struct DijkstraRouter {
@@ -564,7 +565,7 @@ impl DijkstraRouter {
 学习目标是找到假设 $h \in H$ 使得：
 $$h^* = \arg\min_{h \in H} \mathbb{E}_{(x,y) \sim D}[L(h(x), y)]$$
 
-**算法 3.1 (支持向量机)**
+**算法 3.1 (支持向量机)**:
 
 ```rust
 pub struct SupportVectorMachine {
@@ -692,7 +693,7 @@ impl Kernel for RBFKernel {
 }
 ```
 
-**算法 3.2 (随机森林)**
+**算法 3.2 (随机森林)**:
 
 ```rust
 pub struct RandomForest {
@@ -910,4 +911,4 @@ pub enum TreeNode {
 1. **量子算法**：探索量子算法在IoT中的应用
 2. **联邦学习**：研究分布式机器学习算法
 3. **边缘智能**：在边缘设备上实现智能算法
-4. **自适应算法**：设计自适应学习算法 
+4. **自适应算法**：设计自适应学习算法

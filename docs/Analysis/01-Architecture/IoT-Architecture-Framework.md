@@ -28,6 +28,7 @@ IoT系统是一个六元组 $\mathcal{I} = (\mathcal{D}, \mathcal{N}, \mathcal{P
 $$\mathcal{I} \subset \mathcal{I}' \land |\mathcal{D}'| > |\mathcal{D}|$$
 
 **证明：**
+
 1. **设备添加**：新设备 $d_{new} \notin \mathcal{D}$ 可以添加到 $\mathcal{D}' = \mathcal{D} \cup \{d_{new}\}$
 2. **网络扩展**：网络拓扑 $\mathcal{N}'$ 可以包含新设备的连接
 3. **协议兼容**：协议栈 $\mathcal{P}'$ 保持向后兼容
@@ -55,6 +56,7 @@ $$R_{i,j} = \{(x, y) | x \in L_i, y \in L_j, \text{存在从}x\text{到}y\text{�
 $$R_{i,i+1} \neq \emptyset \land R_{i+1,i} = \emptyset$$
 
 **证明：**
+
 1. **单向依赖**：上层依赖下层，下层不依赖上层
 2. **接口定义**：每层通过标准接口与相邻层交互
 3. **封装性**：每层内部实现对外层透明
@@ -78,7 +80,7 @@ $$R_{i,i+1} \neq \emptyset \land R_{i+1,i} = \emptyset$$
 - $C$ 是云端服务
 - $F$ 是边缘-云端协作函数
 
-**算法 2.1 (边缘计算决策算法)**
+**算法 2.1 (边缘计算决策算法)**:
 
 ```rust
 pub struct EdgeComputingDecision {
@@ -123,6 +125,7 @@ pub enum ProcessingLocation {
 在异步网络模型中，分布式IoT系统无法保证强一致性。
 
 **证明：** 基于FLP不可能性定理：
+
 1. **异步性**：网络延迟无界
 2. **故障容忍**：节点可能故障
 3. **一致性**：无法同时满足安全性、活性和故障容忍
@@ -236,6 +239,7 @@ $$P: \mathcal{S} \rightarrow \mathcal{R}$$
 如果事件处理器 $H$ 是确定性的，则事件流处理结果是可预测的。
 
 **证明：**
+
 1. **确定性**：$H(e_1) = H(e_2)$ 当且仅当 $e_1 = e_2$
 2. **可预测性**：相同的事件序列产生相同的结果
 3. **正确性**：处理结果符合预期语义
@@ -260,7 +264,7 @@ $$P: \mathcal{S} \rightarrow \mathcal{R}$$
 - $C$ 是服务编排器
 - $N$ 是服务网络
 
-**算法 4.1 (服务发现算法)**
+**算法 4.1 (服务发现算法)**:
 
 ```rust
 pub struct ServiceRegistry {
@@ -312,6 +316,7 @@ $$O: \mathcal{R} \times \mathcal{S} \rightarrow \mathcal{P}$$
 在资源约束下，服务编排问题是一个NP难问题。
 
 **证明：**
+
 1. **问题归约**：服务编排可以归约到任务调度问题
 2. **NP难性**：任务调度问题是NP难的
 3. **最优性**：无法在多项式时间内找到最优解
@@ -390,11 +395,12 @@ $$AC: S \times O \times A \rightarrow \{allow, deny\}$$
 如果安全策略 $\mathcal{P}$ 满足单调性，则系统状态转换保持安全性。
 
 **证明：**
+
 1. **单调性**：一旦授予权限，不会撤销
 2. **状态转换**：每次状态转换都检查访问控制
 3. **安全性保持**：单调性确保安全性在转换中保持
 
-**算法 5.1 (基于角色的访问控制)**
+**算法 5.1 (基于角色的访问控制)**:
 
 ```rust
 pub struct RBAC {

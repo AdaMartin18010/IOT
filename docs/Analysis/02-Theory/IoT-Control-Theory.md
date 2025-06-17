@@ -20,6 +20,7 @@ IoT控制系统是一个七元组 $\mathcal{C} = (\mathcal{D}, \mathcal{S}, \mat
 $$s_d = (position, energy, connectivity, data)$$
 
 其中：
+
 - $position$ 是设备位置
 - $energy$ 是能量状态
 - $connectivity$ 是连接状态
@@ -33,6 +34,7 @@ $$s_d = (position, energy, connectivity, data)$$
 3. **控制连续性**：控制输入空间 $\mathcal{U}$ 是连续的
 
 **证明：**
+
 1. **网络连通性**：设备可达性确保网络连通
 2. **状态转移**：状态可达性确保任意状态转移
 3. **控制能力**：控制连续性确保精确控制
@@ -205,6 +207,7 @@ IoT多智能体系统是一个三元组 $\mathcal{M} = (A, G, T)$，其中：
 $$u_i(t) = K_i \sum_{j \in \mathcal{N}_i} (x_j(t) - x_i(t)) + K_p e_i(t)$$
 
 其中：
+
 - $K_i$ 是协调增益
 - $K_p$ 是比例增益
 - $e_i(t)$ 是跟踪误差
@@ -303,6 +306,7 @@ impl MultiAgentController {
 $$\dot{\theta}(t) = -\gamma \phi(t) e(t)$$
 
 其中：
+
 - $\theta(t)$ 是参数估计
 - $\gamma$ 是学习率
 - $\phi(t)$ 是回归向量

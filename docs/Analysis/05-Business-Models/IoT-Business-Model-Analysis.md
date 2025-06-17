@@ -20,6 +20,7 @@ IoT业务模型是一个七元组 $\mathcal{B} = (V, C, R, P, A, I, E)$，其中
 $$V: \mathcal{D} \times \mathcal{S} \times \mathcal{T} \rightarrow \mathbb{R}$$
 
 其中：
+
 - $\mathcal{D}$ 是设备集合
 - $\mathcal{S}$ 是服务集合
 - $\mathcal{T}$ 是时间维度
@@ -28,6 +29,7 @@ $$V: \mathcal{D} \times \mathcal{S} \times \mathcal{T} \rightarrow \mathbb{R}$$
 在资源约束下，IoT业务模型的价值最大化问题是一个凸优化问题。
 
 **证明：**
+
 1. **价值函数凸性**：价值创造函数在设备和服务空间上是凸的
 2. **约束凸性**：资源约束形成凸集
 3. **最优解存在**：凸优化问题存在全局最优解
@@ -931,4 +933,4 @@ pub struct PlatformValue {
 1. **AI驱动商业模式**：探索AI技术对IoT商业模式的影响
 2. **区块链经济**：研究区块链在IoT生态系统中的应用
 3. **可持续发展**：设计绿色低碳的IoT商业模式
-4. **全球化策略**：研究IoT业务的国际化发展模式 
+4. **全球化策略**：研究IoT业务的国际化发展模式
