@@ -124,27 +124,35 @@
 ## 核心文档
 
 ### 1. 形式化理论基础
+
 - [01-Formal-Theory.md](01-Formal-Theory.md) - 形式化理论基础
 
 ### 2. 数学理论分析
+
 - [01-Mathematical-Theory.md](01-Mathematical-Theory.md) - 数学理论分析
 
 ### 3. 数学基础分析
+
 - [03-Mathematical-Foundations.md](03-Mathematical-Foundations.md) - 数学基础分析
 
 ### 4. 控制理论分析
+
 - [IoT-Control-Theory.md](IoT-Control-Theory.md) - 控制理论分析
 
 ### 5. 形式化理论应用
+
 - [IoT-Formal-Theory-Application.md](IoT-Formal-Theory-Application.md) - 形式化理论应用
 
 ### 6. 形式化理论综合
+
 - [iot_formal_theory_synthesis.md](iot_formal_theory_synthesis.md) - 形式化理论综合
 
 ### 7. 哲学范式指导分析
+
 - [philosophy-paradigm-guidance-analysis.md](philosophy-paradigm-guidance-analysis.md) - 哲学范式指导分析
 
 ### 8. 形式语言理论应用
+
 - [formal-language-iot-theory.md](formal-language-iot-theory.md) - 形式语言理论在IoT中的应用
 
 ## 理论应用指南

@@ -124,33 +124,43 @@ $F(\mathcal{T}_{opt}) = \max(\alpha \cdot P(\mathcal{T}) + \beta \cdot S(\mathca
 ## 核心文档
 
 ### 1. 设计模式
+
 - [01-Design-Patterns.md](01-Design-Patterns.md) - 设计模式理论与实现
 
 ### 2. 异步编程
+
 - [02-Async-Programming-Paradigm.md](02-Async-Programming-Paradigm.md) - 异步编程范式
 
 ### 3. 编程范式
+
 - [04-Programming-Paradigms.md](04-Programming-Paradigms.md) - 编程范式分析
 
 ### 4. Rust技术栈
+
 - [rust-iot-technology-stack.md](rust-iot-technology-stack.md) - Rust技术栈分析
 
 ### 5. WebAssembly技术
+
 - [webassembly-iot-analysis.md](webassembly-iot-analysis.md) - WebAssembly IoT应用分析
 
 ### 6. 区块链技术
+
 - [blockchain-iot-analysis.md](blockchain-iot-analysis.md) - 区块链技术在IoT中的应用
 
 ### 7. P2P技术
+
 - [p2p-iot-analysis.md](p2p-iot-analysis.md) - P2P技术在IoT中的应用
 
 ### 8. 可观测性技术
+
 - [observability-analysis.md](observability-analysis.md) - 可观测性技术分析
 
 ### 9. 高性能网络技术
+
 - [high-performance-network-iot-analysis.md](high-performance-network-iot-analysis.md) - 高性能网络技术分析
 
 ### 10. Pingora代理服务器
+
 - [pingora-iot-analysis.md](pingora-iot-analysis.md) - Pingora高性能代理服务器分析
 
 ## 技术选型指南
