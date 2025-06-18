@@ -2,15 +2,48 @@
 
 ## 目录
 
-1. [引言](#1-引言)
-2. [理论基础](#2-理论基础)
-3. [架构形式化模型](#3-架构形式化模型)
-4. [性能优化形式化分析](#4-性能优化形式化分析)
-5. [安全机制形式化](#5-安全机制形式化)
-6. [IoT应用场景分析](#6-iot应用场景分析)
-7. [实现技术栈](#7-实现技术栈)
-8. [性能基准与评估](#8-性能基准与评估)
-9. [结论与展望](#9-结论与展望)
+- [IoT高性能代理服务器技术形式化分析](#iot高性能代理服务器技术形式化分析)
+  - [目录](#目录)
+  - [1. 引言](#1-引言)
+    - [1.1 研究背景](#11-研究背景)
+    - [1.2 问题定义](#12-问题定义)
+    - [1.3 研究目标](#13-研究目标)
+  - [2. 理论基础](#2-理论基础)
+    - [2.1 网络理论基础](#21-网络理论基础)
+      - [2.1.1 排队论模型](#211-排队论模型)
+      - [2.1.2 响应时间分析](#212-响应时间分析)
+    - [2.2 并发理论](#22-并发理论)
+      - [2.2.1 Actor模型](#221-actor模型)
+      - [2.2.2 异步处理模型](#222-异步处理模型)
+  - [3. 架构形式化模型](#3-架构形式化模型)
+    - [3.1 分层架构模型](#31-分层架构模型)
+    - [3.2 组件交互模型](#32-组件交互模型)
+    - [3.3 请求处理流程](#33-请求处理流程)
+  - [4. 性能优化形式化分析](#4-性能优化形式化分析)
+    - [4.1 零拷贝技术](#41-零拷贝技术)
+    - [4.2 内存管理优化](#42-内存管理优化)
+    - [4.3 连接池优化](#43-连接池优化)
+  - [5. 安全机制形式化](#5-安全机制形式化)
+    - [5.1 TLS安全模型](#51-tls安全模型)
+    - [5.2 访问控制模型](#52-访问控制模型)
+    - [5.3 流量控制](#53-流量控制)
+  - [6. IoT应用场景分析](#6-iot应用场景分析)
+    - [6.1 边缘计算代理](#61-边缘计算代理)
+    - [6.2 设备管理代理](#62-设备管理代理)
+    - [6.3 数据采集代理](#63-数据采集代理)
+  - [7. 实现技术栈](#7-实现技术栈)
+    - [7.1 Rust生态系统](#71-rust生态系统)
+    - [7.2 性能优化实现](#72-性能优化实现)
+    - [7.3 监控与可观测性](#73-监控与可观测性)
+  - [8. 性能基准与评估](#8-性能基准与评估)
+    - [8.1 基准测试模型](#81-基准测试模型)
+    - [8.2 评估指标](#82-评估指标)
+    - [8.3 性能对比](#83-性能对比)
+  - [9. 结论与展望](#9-结论与展望)
+    - [9.1 主要贡献](#91-主要贡献)
+    - [9.2 未来研究方向](#92-未来研究方向)
+    - [9.3 应用前景](#93-应用前景)
+  - [参考文献](#参考文献)
 
 ## 1. 引言
 
@@ -40,12 +73,15 @@ $$\forall N \geq N_{threshold}: T(N) > T_{max}$$
 **定义 2.1** (M/M/c排队模型)
 IoT代理服务器的连接处理可建模为M/M/c排队系统：
 
-$$P_n = \begin{cases}
+$$
+P_n = \begin{cases}
 \frac{(\lambda/\mu)^n}{n!}P_0, & n < c \\
 \frac{(\lambda/\mu)^n}{c!c^{n-c}}P_0, & n \geq c
-\end{cases}$$
+\end{cases}
+$$
 
 其中：
+
 - $\lambda$ 为到达率
 - $\mu$ 为服务率
 - $c$ 为服务器数量
@@ -70,6 +106,7 @@ Actor系统 $\mathcal{A}$ 可表示为：
 $$\mathcal{A} = (Actors, Messages, Mailboxes, Scheduler)$$
 
 其中：
+
 - $Actors$ 为Actor集合
 - $Messages$ 为消息类型集合
 - $Mailboxes$ 为消息队列集合
@@ -83,6 +120,7 @@ $$\mathcal{A} = (Actors, Messages, Mailboxes, Scheduler)$$
 $$T = (S, \Sigma, \delta, s_0, F)$$
 
 其中：
+
 - $S$ 为状态集合
 - $\Sigma$ 为事件集合
 - $\delta: S \times \Sigma \rightarrow S$ 为状态转移函数
@@ -120,6 +158,7 @@ $$\mathcal{P} = (L_1, L_2, L_3, L_4, L_5)$$
 $$v_i \xrightarrow{I_{ij}} v_j$$
 
 且 $I_{ij}$ 满足：
+
 1. 类型安全：$\forall m \in I_{ij}: Type(m) \in \mathcal{T}$
 2. 异步性：$\forall m \in I_{ij}: Async(m) = true$
 3. 错误处理：$\forall m \in I_{ij}: ErrorHandling(m) \neq \emptyset$
@@ -136,7 +175,8 @@ $$v_i \xrightarrow{I_{ij}} v_j$$
 
 **状态转移函数** $\delta$ 定义如下：
 
-$$\begin{align}
+$$
+\begin{align}
 \delta(Accept, connect) &= Parse \\
 \delta(Parse, data) &= Route \\
 \delta(Route, data) &= Process \\
@@ -144,7 +184,8 @@ $$\begin{align}
 \delta(Response, data) &= Close \\
 \delta(q, timeout) &= Close, \forall q \in Q \\
 \delta(q, error) &= Close, \forall q \in Q
-\end{align}$$
+\end{align}
+$$
 
 ## 4. 性能优化形式化分析
 
@@ -170,6 +211,7 @@ $$Performance\_Gain = \frac{T_{traditional}}{T_{zero\_copy}} = \frac{2S + overhe
 $$\mathcal{M} = (Pools, Allocator, Deallocator)$$
 
 其中：
+
 - $Pools = \{P_1, P_2, ..., P_n\}$ 为不同大小的内存池
 - $Allocator: Size \rightarrow P_i$ 为分配函数
 - $Deallocator: P_i \rightarrow \emptyset$ 为释放函数
@@ -203,6 +245,7 @@ TLS连接 $\mathcal{T}$ 的安全属性可表示为：
 $$\mathcal{T} = (Confidentiality, Integrity, Authentication)$$
 
 其中：
+
 - $Confidentiality: \forall m \in Messages: Encrypted(m) = true$
 - $Integrity: \forall m \in Messages: Hash(m) = Valid$
 - $Authentication: \forall c \in Connections: Verified(c) = true$
@@ -240,6 +283,7 @@ $$Tokens_{new} = \min(Capacity, Tokens_{old} + Rate \times (Time_{now} - Last\_U
 $$\mathcal{E} = (Local\_Processing, Data\_Aggregation, Protocol\_Translation, Security\_Gateway)$$
 
 **性能要求**：
+
 - 延迟：$Latency < 10ms$
 - 吞吐量：$Throughput > 10^6 req/s$
 - 并发连接：$Connections > 10^5$
