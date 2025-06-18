@@ -14,7 +14,10 @@
 ├── 03-Microservices.md          # 微服务架构
 ├── 04-WASM-Containerization.md  # WASM容器化架构
 ├── 05-Event-Driven.md           # 事件驱动架构
-└── 06-Reference-Architecture.md # 参考架构模式
+├── IoT-Microservice-Architecture.md # IoT微服务架构形式化分析
+└── 01-Formal-Theory/            # 形式化理论基础
+    ├── IOT-Formal-Theory-Framework.md
+    └── iot_formal_theory_foundation.md
 ```
 
 ## 架构层次体系
@@ -114,6 +117,28 @@ IoT架构是一个五元组 $\mathcal{A} = (L, C, P, D, R)$，其中：
 - **复杂度**: $C = \sum_{i=1}^{n} w_i \cdot m_i$，其中 $w_i$ 是权重，$m_i$ 是度量值
 - **耦合度**: $Coupling = \frac{|E|}{|V| \cdot (|V|-1)}$，其中 $E$ 是边数，$V$ 是节点数
 - **内聚度**: $Cohesion = \frac{\sum_{i=1}^{k} |C_i|}{|V|}$，其中 $C_i$ 是组件内节点数
+
+## 核心文档
+
+### 1. 分层架构理论
+- [01-Layered-Architecture.md](01-Layered-Architecture.md) - 分层架构理论与设计
+
+### 2. 边缘计算架构
+- [02-Edge-Computing.md](02-Edge-Computing.md) - 边缘计算架构设计
+
+### 3. 微服务架构
+- [03-Microservices.md](03-Microservices.md) - 微服务架构理论
+- [IoT-Microservice-Architecture.md](IoT-Microservice-Architecture.md) - IoT微服务架构形式化分析
+
+### 4. WASM容器化架构
+- [04-WASM-Containerization.md](04-WASM-Containerization.md) - WASM容器化架构
+
+### 5. 事件驱动架构
+- [05-Event-Driven.md](05-Event-Driven.md) - 事件驱动架构设计
+
+### 6. 形式化理论基础
+- [01-Formal-Theory/IOT-Formal-Theory-Framework.md](01-Formal-Theory/IOT-Formal-Theory-Framework.md) - IoT形式化理论框架
+- [01-Formal-Theory/iot_formal_theory_foundation.md](01-Formal-Theory/iot_formal_theory_foundation.md) - IoT形式化理论基础
 
 ## 参考标准
 

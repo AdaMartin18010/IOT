@@ -55,8 +55,7 @@
 - [统一索引](00-Index/IoT_Analysis_Index.md) - 完整的文档索引
 - [快速导航](00-Index/Quick_Navigation.md) - 快速跳转指南
 - [质量检查报告](00-Index/Quality_Check_Report.md) - 质量保证报告
-- [项目完成总结](00-Index/Project_Completion_Summary.md) - 项目总结
-- [最终完成报告](00-Index/Final_Project_Completion_Report.md) - 最终项目完成报告
+- [项目完成总结](00-Index/Final_Project_Completion_Report.md) - 项目总结
 
 ### 🏗️ 架构理论层 (01-Architecture)
 
@@ -66,6 +65,7 @@
 - [微服务架构](01-Architecture/03-Microservices.md) - 微服务架构
 - [WASM容器化](01-Architecture/04-WASM-Containerization.md) - WASM容器化架构
 - [事件驱动](01-Architecture/05-Event-Driven.md) - 事件驱动架构
+- [IoT微服务架构分析](01-Architecture/IoT-Microservice-Architecture.md) - 微服务架构在IoT中的形式化应用
 
 ### 🧮 理论基础层 (02-Theory)
 
@@ -86,18 +86,17 @@
 ### 💻 技术实现层 (04-Technology)
 
 - [技术基础](04-Technology/README.md) - 技术分析总览
-- [Rust技术栈](04-Technology/01-Rust-Stack.md) - Rust技术栈分析
+- [Rust技术栈](04-Technology/rust-iot-technology-stack.md) - Rust技术栈分析
 - [编程语言比较](04-Technology/02-Language-Comparison.md) - 编程语言比较分析
-- [编程范式](04-Technology/03-Programming-Paradigms.md) - 编程范式分析
-- [异步编程](04-Technology/04-Async-Programming.md) - 异步编程范式
-- [设计模式](04-Technology/05-Design-Patterns.md) - 设计模式理论与实现
-- [WebAssembly](04-Technology/06-WebAssembly.md) - WebAssembly IoT应用分析
-- [区块链技术](04-Technology/07-Blockchain.md) - 区块链技术在IoT中的应用
-- [P2P技术](04-Technology/08-P2P.md) - P2P技术在IoT中的应用
-- [可观测性](04-Technology/09-Observability.md) - 可观测性技术分析
-- [DevOps](04-Technology/10-DevOps.md) - IoT DevOps形式化分析
-- [容器化](04-Technology/11-Containerization.md) - IoT容器化技术形式化分析
-- [工作流编排](04-Technology/12-Workflow-Orchestration.md) - IoT工作流编排技术形式化分析
+- [编程范式](04-Technology/04-Programming-Paradigms.md) - 编程范式分析
+- [异步编程](04-Technology/02-Async-Programming-Paradigm.md) - 异步编程范式
+- [设计模式](04-Technology/01-Design-Patterns.md) - 设计模式理论与实现
+- [WebAssembly](04-Technology/webassembly-iot-analysis.md) - WebAssembly IoT应用分析
+- [区块链技术](04-Technology/blockchain-iot-analysis.md) - 区块链技术在IoT中的应用
+- [P2P技术](04-Technology/p2p-iot-analysis.md) - P2P技术在IoT中的应用
+- [可观测性](04-Technology/observability-analysis.md) - 可观测性技术分析
+- [高性能网络](04-Technology/high-performance-network-iot-analysis.md) - 高性能网络技术分析
+- [Pingora代理](04-Technology/pingora-iot-analysis.md) - Pingora高性能代理服务器分析
 
 ### 💼 业务模型层 (05-Business-Models)
 

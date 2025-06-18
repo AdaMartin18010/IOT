@@ -34,156 +34,145 @@
 
 ### 1. 架构理论层 (01-Architecture/)
 
-#### 1.1 微服务架构
+#### 1.1 基础架构
 
-- **IoT微服务架构形式化分析** - 微服务架构在IoT中的形式化应用
-- **微服务架构理论与设计** - IoT微服务架构的理论基础和设计模式
-- **分层架构分析** - IoT系统的分层架构理论和实践
+- [架构基础](./01-Architecture/README.md) - 架构分析总览
+- [分层架构](./01-Architecture/01-Layered-Architecture.md) - 分层架构理论与设计
+- [边缘计算](./01-Architecture/02-Edge-Computing.md) - 边缘计算架构
+- [微服务架构](./01-Architecture/03-Microservices.md) - 微服务架构
+- [WASM容器化](./01-Architecture/04-WASM-Containerization.md) - WASM容器化架构
+- [事件驱动](./01-Architecture/05-Event-Driven.md) - 事件驱动架构
 
-#### 1.2 边缘计算架构
+#### 1.2 微服务架构
 
-- **边缘计算架构** - 边缘计算在IoT中的应用和架构设计
-- **IoT系统架构的形式化分析** - IoT系统架构的数学建模和形式化验证
+- [IoT微服务架构分析](./01-Architecture/IoT-Microservice-Architecture.md) - 微服务架构在IoT中的形式化应用
+- [微服务架构理论与设计](./01-Architecture/03-Microservices.md) - IoT微服务架构的理论基础和设计模式
 
-#### 1.3 高性能架构
+#### 1.3 边缘计算架构
 
-- **IoT高性能代理服务器技术分析** - Pingora等高性能代理技术在IoT中的应用
-- **IoT工作流编排技术形式化分析** - 工作流编排技术的数学基础和IoT应用
+- [边缘计算架构](./01-Architecture/02-Edge-Computing.md) - 边缘计算在IoT中的应用和架构设计
+
+#### 1.4 高性能架构
+
+- [IoT高性能代理服务器技术分析](./04-Technology/pingora-iot-analysis.md) - Pingora等高性能代理技术在IoT中的应用
+- [IoT工作流编排技术形式化分析](./01-Architecture/IoT-Workflow-Orchestration-Formal-Analysis.md) - 工作流编排技术的数学基础和IoT应用
 
 ### 2. 理论基础层 (02-Theory/)
 
 #### 2.1 形式化理论
 
-- **形式化理论基础** - 形式化方法在IoT中的应用基础
-- **形式语言理论在IoT中的应用分析** - 形式语言理论指导IoT协议设计
-
-#### 2.2 数学理论
-
-- **数学理论分析** - 数学理论在IoT系统设计中的指导作用
-- **控制理论分析** - 控制理论在IoT系统控制中的应用
+- [理论基础](./02-Theory/README.md) - 理论基础总览
+- [形式化理论](./02-Theory/01-Formal-Theory.md) - 形式化方法在IoT中的应用基础
+- [数学理论](./02-Theory/02-Mathematical-Theory.md) - 数学理论在IoT系统设计中的指导作用
+- [控制理论](./02-Theory/03-Control-Theory.md) - 控制理论在IoT系统控制中的应用
+- [形式语言理论](./02-Theory/04-Formal-Language-Theory.md) - 形式语言理论指导IoT协议设计
 
 ### 3. 算法技术层 (03-Algorithms/)
 
 #### 3.1 核心算法
 
-- **OTA算法理论与实现** - 空中升级算法的理论基础和实现
-- **数据处理算法** - IoT数据处理算法的设计和优化
-- **安全算法** - IoT安全相关算法的实现和分析
-- **分布式算法** - 分布式系统算法的IoT应用
+- [算法基础](./03-Algorithms/README.md) - 算法分析总览
+- [OTA算法](./03-Algorithms/01-OTA-Algorithms.md) - 空中升级算法的理论基础和实现
+- [数据处理算法](./03-Algorithms/02-Data-Processing.md) - IoT数据处理算法的设计和优化
+- [安全算法](./03-Algorithms/03-Security-Algorithms.md) - IoT安全相关算法的实现和分析
+- [分布式算法](./03-Algorithms/04-Distributed-Algorithms.md) - 分布式系统算法的IoT应用
 
 ### 4. 技术实现层 (04-Technology/)
 
 #### 4.1 编程语言与范式
 
-- **Rust技术栈分析** - Rust语言在IoT技术栈中的优势和应用
-- **Rust在IoT技术栈中的综合应用分析** - Rust在IoT中的综合应用案例
-- **编程语言特性** - 不同编程语言在IoT中的特性比较
-- **编程语言比较分析** - 不同编程语言在IoT中的比较研究
-- **编程范式分析** - 不同编程范式在IoT中的应用分析
-- **异步编程范式** - 异步编程在IoT系统中的应用
+- [技术基础](./04-Technology/README.md) - 技术分析总览
+- [Rust技术栈](./04-Technology/rust-iot-technology-stack.md) - Rust语言在IoT技术栈中的优势和应用
+- [编程语言比较](./04-Technology/02-Language-Comparison.md) - 不同编程语言在IoT中的比较研究
+- [编程范式](./04-Technology/04-Programming-Paradigms.md) - 不同编程范式在IoT中的应用分析
+- [异步编程](./04-Technology/02-Async-Programming-Paradigm.md) - 异步编程在IoT系统中的应用
 
 #### 4.2 设计模式与架构
 
-- **设计模式理论与实现** - 设计模式在IoT中的理论和实践
-- **工作流编排架构分析** - 工作流编排技术的架构设计
-- **IoT工作流编排技术形式化分析** - 工作流编排技术的形式化分析
+- [设计模式](./04-Technology/01-Design-Patterns.md) - 设计模式在IoT中的理论和实践
 
 #### 4.3 新兴技术
 
-- **WebAssembly IoT应用分析** - WebAssembly在IoT中的应用场景
-- **区块链技术在IoT中的应用分析** - 区块链技术在IoT中的应用
-- **P2P技术在IoT中的应用分析** - P2P技术在IoT中的应用
+- [WebAssembly](./04-Technology/webassembly-iot-analysis.md) - WebAssembly在IoT中的应用场景
+- [区块链技术](./04-Technology/blockchain-iot-analysis.md) - 区块链技术在IoT中的应用
+- [P2P技术](./04-Technology/p2p-iot-analysis.md) - P2P技术在IoT中的应用
 
 #### 4.4 运维与部署
 
-- **可观测性技术分析** - OpenTelemetry等可观测性技术的IoT应用
-- **IoT DevOps形式化分析** - DevOps在IoT中的形式化应用
-- **IoT容器化技术形式化分析** - 容器化技术在IoT中的形式化应用
-
-#### 4.5 实际应用
-
-- **IoT实际项目实现分析** - 实际IoT项目的实现案例分析
-- **IoT高性能代理服务器技术分析** - 高性能代理服务器技术分析
+- [可观测性](./04-Technology/observability-analysis.md) - OpenTelemetry等可观测性技术的IoT应用
+- [高性能网络](./04-Technology/high-performance-network-iot-analysis.md) - 高性能网络技术在IoT中的应用
 
 ### 5. 业务模型层 (05-Business-Models/)
 
 #### 5.1 业务架构
 
-- **IoT业务模型形式化分析** - IoT业务模型的数学建模
-- **分层业务架构模型** - 业务架构的分层设计
-- **形式化业务模型** - 业务模型的形式化表达
+- [业务基础](./05-Business-Models/README.md) - 业务模型总览
+- [IoT业务模型](./05-Business-Models/01-IoT-Business-Models.md) - IoT业务模型的数学建模
+- [分层业务架构](./05-Business-Models/02-Layered-Business.md) - 业务架构的分层设计
 
 #### 5.2 商业模式
 
-- **微服务业务模式** - 微服务架构的业务模式
-- **边缘计算业务模型** - 边缘计算的商业模式
-- **OTA更新业务模型** - OTA更新的商业模式
-- **安全业务模型** - 安全相关的商业模式
-
-#### 5.3 业务影响
-
-- **编程语言业务影响** - 编程语言选择对业务的影响
-- **哲学范式业务指导** - 哲学思想对业务设计的指导
+- [微服务业务模式](./05-Business-Models/03-Microservice-Business.md) - 微服务架构的业务模式
+- [边缘计算业务模型](./05-Business-Models/04-Edge-Computing-Business.md) - 边缘计算的商业模式
+- [OTA更新业务模型](./05-Business-Models/05-OTA-Business.md) - OTA更新的商业模式
+- [安全业务模型](./05-Business-Models/06-Security-Business.md) - 安全相关的商业模式
 
 ### 6. 性能优化层 (06-Performance/)
 
 #### 6.1 性能理论
 
-- **IoT性能优化形式化分析** - IoT系统性能优化的形式化方法
-- **性能理论基础** - 性能优化的理论基础
-- **系统性能模型** - 系统性能的建模方法
+- [性能基础](./06-Performance/README.md) - 性能分析总览
+- [性能优化](./06-Performance/01-Performance-Optimization.md) - IoT系统性能优化的形式化方法
+- [性能理论](./06-Performance/02-Performance-Theory.md) - 性能优化的理论基础
+- [系统性能模型](./06-Performance/04-System-Performance.md) - 系统性能的建模方法
 
 #### 6.2 优化策略
 
-- **算法性能分析** - 算法性能的分析方法
-- **资源优化策略** - 资源优化的策略和方法
-- **并发性能优化** - 并发系统的性能优化
-- **网络性能优化** - 网络性能的优化方法
-- **内存性能优化** - 内存使用的优化策略
-- **能耗性能优化** - 能耗优化的方法和技术
-
-#### 6.3 监控与调优
-
-- **性能监控与调优** - 性能监控和调优技术
-- **性能基准测试** - 性能基准测试方法
+- [算法性能分析](./06-Performance/03-Algorithm-Performance.md) - 算法性能的分析方法
+- [资源优化策略](./06-Performance/05-Resource-Optimization.md) - 资源优化的策略和方法
+- [并发性能优化](./06-Performance/06-Concurrency-Performance.md) - 并发系统的性能优化
+- [网络性能优化](./06-Performance/07-Network-Performance.md) - 网络性能的优化方法
+- [内存性能优化](./06-Performance/08-Memory-Performance.md) - 内存使用的优化策略
+- [能耗性能优化](./06-Performance/09-Energy-Performance.md) - 能耗优化的方法和技术
 
 ### 7. 安全规范层 (07-Security/)
 
 #### 7.1 安全理论
 
-- **IoT安全的形式化分析** - IoT安全的形式化分析方法
-- **IoT安全架构综合分析** - IoT安全架构的综合分析
+- [安全基础](./07-Security/README.md) - 安全分析总览
+- [IoT安全](./07-Security/01-IoT-Security.md) - IoT安全的形式化分析方法
+- [安全架构](./07-Security/02-Security-Architecture.md) - IoT安全架构的综合分析
 
 #### 7.2 认证与授权
 
-- **IoT认证系统分析** - IoT认证系统的设计和实现
-- **IoT认证系统形式化分析** - IoT认证系统的形式化分析
-- **认证机制形式化** - 认证机制的形式化建模
+- [认证系统](./07-Security/03-Authentication-System.md) - IoT认证系统的设计和实现
+- [认证形式化](./07-Security/04-Authentication-Formal.md) - IoT认证系统的形式化分析
 
 #### 7.3 加密与密钥
 
-- **加密算法形式化** - 加密算法的形式化表达
-- **密钥管理形式化** - 密钥管理的形式化方法
+- [加密算法](./07-Security/05-Encryption-Algorithms.md) - 加密算法的形式化表达
+- [密钥管理](./07-Security/06-Key-Management.md) - 密钥管理的形式化方法
 
 #### 7.4 访问控制
 
-- **访问控制形式化** - 访问控制的形式化模型
-- **安全协议形式化** - 安全协议的形式化验证
+- [访问控制](./07-Security/07-Access-Control.md) - 访问控制的形式化模型
+- [安全协议](./07-Security/08-Security-Protocols.md) - 安全协议的形式化验证
 
 #### 7.5 隐私与威胁
 
-- **隐私保护形式化** - 隐私保护的形式化方法
-- **安全威胁建模** - 安全威胁的建模方法
+- [隐私保护](./07-Security/09-Privacy-Protection.md) - 隐私保护的形式化方法
+- [威胁建模](./07-Security/10-Threat-Modeling.md) - 安全威胁的建模方法
 
 ### 8. 哲学指导层 (08-Philosophy/)
 
 #### 8.1 哲学基础
 
-- **IoT行业哲学基础分析** - IoT行业的哲学基础
-- **本体论指导** - 本体论对IoT系统设计的指导
-- **认识论指导** - 认识论对IoT知识获取的指导
-- **伦理学指导** - 伦理学对IoT伦理问题的指导
-- **逻辑学指导** - 逻辑学对IoT逻辑推理的指导
+- [哲学基础](./08-Philosophy/README.md) - 哲学分析总览
+- [IoT哲学](./08-Philosophy/01-IoT-Philosophy.md) - IoT行业的哲学基础
+- [本体论](./08-Philosophy/02-Ontology.md) - 本体论对IoT系统设计的指导
+- [认识论](./08-Philosophy/03-Epistemology.md) - 认识论对IoT知识获取的指导
+- [伦理学](./08-Philosophy/04-Ethics.md) - 伦理学对IoT伦理问题的指导
+- [逻辑学](./08-Philosophy/05-Logic.md) - 逻辑学对IoT逻辑推理的指导
 
 ## 核心发现总结
 
@@ -198,24 +187,71 @@
 ### 2. 技术栈演进
 
 - **Rust语言**在IoT领域获得广泛应用，特别是在安全性和性能要求高的场景
-- **WebAssembly**提供跨平台和安全性，适合资源受限的IoT设备
-- **异步编程**成为IoT系统的主流编程模式
-- **函数式编程**在IoT算法设计中发挥重要作用
-- **工作流技术**实现业务流程的标准化和自动化
+- **WebAssembly**提供跨平台和安全性
+- **异步编程**成为IoT系统的主流模式
+- **函数式编程**在IoT算法中的应用
+- **工作流技术**业务流程的标准化和自动化
 
 ### 3. 安全挑战与解决方案
 
-- **大规模设备管理**：通过分布式认证和区块链技术解决
-- **资源约束**：通过轻量级加密算法和优化协议解决
-- **网络异构性**：通过多协议支持和适配层解决
-- **安全威胁**：通过零信任架构和持续监控解决
+- **设备认证**: 大规模设备的安全认证机制
+- **数据加密**: 端到端的数据加密技术
+- **密钥管理**: 分布式密钥管理系统
+- **隐私保护**: 用户数据的隐私保护技术
 
-### 4. 形式化方法应用
+### 4. 性能优化策略
 
-- **数学建模**：为IoT系统提供精确的数学模型
-- **形式化验证**：通过定理证明确保系统正确性
-- **模型检查**：自动验证系统满足安全属性
-- **类型系统**：通过类型安全保证程序正确性
+- **差分更新**: 减少OTA更新的数据传输
+- **资源管理**: 内存和带宽的优化策略
+- **负载均衡**: 边缘节点的负载均衡技术
+- **缓存策略**: 多层次的缓存机制
+
+## 项目价值
+
+### 学术价值
+
+- 建立了IoT行业的完整理论体系
+- 提供了形式化的分析方法和证明
+- 形成了可复用的研究框架
+- 为后续研究提供了理论基础
+
+### 工程价值
+
+- 提供了实际的技术选型指南
+- 总结了丰富的工程实践经验
+- 建立了标准化的开发流程
+- 为项目开发提供了参考模板
+
+### 行业价值
+
+- 推动了IoT技术的标准化发展
+- 促进了开源技术的应用和推广
+- 为行业决策提供了理论支持
+- 建立了技术交流的知识平台
+
+## 使用指南
+
+### 1. 按层次阅读
+
+建议按照八层分析架构的顺序阅读，从架构理论层开始，逐步深入到哲学指导层。
+
+### 2. 按主题阅读
+
+可以根据具体的技术主题或业务需求，选择相应的文档进行深入阅读。
+
+### 3. 交叉参考
+
+文档间建立了丰富的交叉引用关系，可以通过链接跳转到相关主题。
+
+### 4. 实践应用
+
+每个文档都包含了实际的应用案例和代码示例，可以直接用于项目实践。
+
+---
+
+*最后更新: 2024-12-19*
+*版本: 1.0*
+*项目状态: 100%完成*
 
 ## 方法论
 
