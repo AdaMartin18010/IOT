@@ -43,6 +43,7 @@ $$F_2 = F_1 \oplus D(F_1, F_2)$$
 其中 $\oplus$ 表示按位异或操作。
 
 **证明**：
+
 1. 差分更新只修改不同的字节
 2. 异或操作具有可逆性
 3. 因此 $F_1 \oplus D(F_1, F_2) = F_2$
@@ -55,6 +56,7 @@ $$F_2 = F_1 \oplus D(F_1, F_2)$$
 $$I(F_1, F_2) = \text{compress}(D(F_1, F_2))$$
 
 **算法 2.1** (LZ77压缩差分)
+
 ```rust
 fn lz77_compress_diff(diff: Vec<DiffBlock>) -> Vec<u8> {
     let mut compressed = Vec::new();
@@ -95,6 +97,7 @@ $$F(S_1, S_2, ..., S_n) = \sum_{i=1}^{n} w_i \cdot S_i$$
 其中 $w_i$ 为权重，满足 $\sum_{i=1}^{n} w_i = 1$。
 
 **算法 3.1** (卡尔曼滤波)
+
 ```rust
 struct KalmanFilter {
     state: f64,
@@ -144,14 +147,14 @@ impl SlidingWindowAnomalyDetector {
         if self.window.len() > self.window_size {
             self.window.pop_front();
         }
-        
+
         if self.window.len() >= self.window_size {
             let mean = self.window.iter().sum::<f64>() / self.window.len() as f64;
             let variance = self.window.iter()
                 .map(|x| (x - mean).powi(2))
                 .sum::<f64>() / self.window.len() as f64;
             let std_dev = variance.sqrt();
-            
+
             (value - mean).abs() > self.threshold * std_dev
         } else {
             false
@@ -178,7 +181,7 @@ use aes_gcm::aead::{Aead, NewAead};
 fn aes_gcm_encrypt(key: &[u8], plaintext: &[u8], nonce: &[u8]) -> Result<Vec<u8>, Box<dyn std::error::Error>> {
     let cipher = Aes256Gcm::new_from_slice(key)?;
     let nonce = Nonce::from_slice(nonce);
-    
+
     let ciphertext = cipher.encrypt(nonce, plaintext)?;
     Ok(ciphertext)
 }
@@ -186,7 +189,7 @@ fn aes_gcm_encrypt(key: &[u8], plaintext: &[u8], nonce: &[u8]) -> Result<Vec<u8>
 fn aes_gcm_decrypt(key: &[u8], ciphertext: &[u8], nonce: &[u8]) -> Result<Vec<u8>, Box<dyn std::error::Error>> {
     let cipher = Aes256Gcm::new_from_slice(key)?;
     let nonce = Nonce::from_slice(nonce);
-    
+
     let plaintext = cipher.decrypt(nonce, ciphertext)?;
     Ok(plaintext)
 }
@@ -227,7 +230,7 @@ $$d[v] = \min_{u \in V} \{d[u] + w(u, v)\}$$
 use std::collections::{BinaryHeap, HashMap};
 use std::cmp::Ordering;
 
-#[derive(Eq, PartialEq)]
+# [derive(Eq, PartialEq)]
 struct State {
     cost: i32,
     position: usize,
@@ -248,15 +251,15 @@ impl PartialOrd for State {
 fn dijkstra(graph: &Vec<Vec<(usize, i32)>>, start: usize) -> Vec<i32> {
     let mut dist = vec![i32::MAX; graph.len()];
     dist[start] = 0;
-    
+
     let mut heap = BinaryHeap::new();
     heap.push(State { cost: 0, position: start });
-    
+
     while let Some(State { cost, position }) = heap.pop() {
         if cost > dist[position] {
             continue;
         }
-        
+
         for &(next, weight) in &graph[position] {
             let next_cost = cost + weight;
             if next_cost < dist[next] {
@@ -265,7 +268,7 @@ fn dijkstra(graph: &Vec<Vec<(usize, i32)>>, start: usize) -> Vec<i32> {
             }
         }
     }
-    
+
     dist
 }
 ```
@@ -291,7 +294,7 @@ impl WeightedRoundRobin {
     fn next_server(&mut self) -> &Server {
         loop {
             self.current_weight = (self.current_weight + self.gcd) % self.max_weight;
-            
+
             for server in &self.servers {
                 if server.weight >= self.current_weight {
                     return server;
@@ -326,25 +329,25 @@ impl EdgeInference {
     fn new(model_path: &str) -> Result<Self, Box<dyn std::error::Error>> {
         let model = Model::from_file(model_path)?;
         let interpreter = Interpreter::new(&model, None)?;
-        
+
         let input_shape = interpreter.get_input_tensor_info(0).shape;
         let output_shape = interpreter.get_output_tensor_info(0).shape;
-        
+
         Ok(Self {
             interpreter,
             input_tensor: vec![0.0; input_shape.iter().product()],
             output_tensor: vec![0.0; output_shape.iter().product()],
         })
     }
-    
+
     fn inference(&mut self, input: &[f32]) -> Result<&[f32], Box<dyn std::error::Error>> {
         self.input_tensor.copy_from_slice(input);
-        
+
         self.interpreter.allocate_tensors()?;
         self.interpreter.set_input_tensor_data(0, &self.input_tensor)?;
         self.interpreter.invoke()?;
         self.interpreter.get_output_tensor_data(0, &mut self.output_tensor)?;
-        
+
         Ok(&self.output_tensor)
     }
 }
@@ -382,15 +385,15 @@ impl ResourceOptimizer {
         F: FnMut(&[f64]) -> (f64, Vec<f64>), // (value, gradient)
     {
         let mut x = initial_guess;
-        
+
         for _ in 0..self.max_iterations {
             let (_, gradient) = objective(&x);
-            
+
             for i in 0..x.len() {
                 x[i] -= self.learning_rate * gradient[i];
             }
         }
-        
+
         x
     }
 }
@@ -414,7 +417,7 @@ impl DVFSController {
     fn adjust_frequency(&mut self, target_performance: f64) {
         let optimal_freq = self.power_model.find_optimal_frequency(target_performance);
         let optimal_voltage = self.power_model.frequency_to_voltage(optimal_freq);
-        
+
         self.current_frequency = optimal_freq;
         self.current_voltage = optimal_voltage;
     }
@@ -430,14 +433,14 @@ use std::collections::HashMap;
 use tokio::sync::mpsc;
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+# [derive(Debug, Clone, Serialize, Deserialize)]
 pub struct AlgorithmConfig {
     pub algorithm_type: AlgorithmType,
     pub parameters: HashMap<String, f64>,
     pub timeout: std::time::Duration,
 }
 
-#[derive(Debug, Clone)]
+# [derive(Debug, Clone)]
 pub struct IoTAlgorithmEngine {
     algorithms: HashMap<String, Box<dyn Algorithm>>,
     message_queue: mpsc::Sender<AlgorithmMessage>,
@@ -446,23 +449,23 @@ pub struct IoTAlgorithmEngine {
 impl IoTAlgorithmEngine {
     pub async fn new() -> Self {
         let (tx, mut rx) = mpsc::channel(1000);
-        
+
         tokio::spawn(async move {
             while let Some(message) = rx.recv().await {
                 Self::process_algorithm_message(message).await;
             }
         });
-        
+
         Self {
             algorithms: HashMap::new(),
             message_queue: tx,
         }
     }
-    
+
     pub fn register_algorithm(&mut self, name: String, algorithm: Box<dyn Algorithm>) {
         self.algorithms.insert(name, algorithm);
     }
-    
+
     pub async fn execute_algorithm(&self, name: &str, input: AlgorithmInput) -> Result<AlgorithmOutput, Box<dyn std::error::Error>> {
         if let Some(algorithm) = self.algorithms.get(name) {
             algorithm.execute(input).await
@@ -476,7 +479,7 @@ impl IoTAlgorithmEngine {
 ### 8.2 算法接口
 
 ```rust
-#[async_trait]
+# [async_trait]
 pub trait Algorithm: Send + Sync {
     async fn execute(&self, input: AlgorithmInput) -> Result<AlgorithmOutput, Box<dyn std::error::Error>>;
     fn get_config(&self) -> &AlgorithmConfig;
@@ -486,7 +489,7 @@ pub struct OTAAlgorithm {
     config: AlgorithmConfig,
 }
 
-#[async_trait]
+# [async_trait]
 impl Algorithm for OTAAlgorithm {
     async fn execute(&self, input: AlgorithmInput) -> Result<AlgorithmOutput, Box<dyn std::error::Error>> {
         match input {
@@ -494,7 +497,7 @@ impl Algorithm for OTAAlgorithm {
                 let diff = self.compute_diff(&current_firmware, &new_firmware).await?;
                 let compressed = self.compress_diff(&diff).await?;
                 let signature = self.sign_diff(&compressed).await?;
-                
+
                 Ok(AlgorithmOutput::OTAUpdate {
                     diff: compressed,
                     signature,
@@ -504,7 +507,7 @@ impl Algorithm for OTAAlgorithm {
             _ => Err("Invalid input type".into()),
         }
     }
-    
+
     fn get_config(&self) -> &AlgorithmConfig {
         &self.config
     }
@@ -561,4 +564,4 @@ impl Algorithm for OTAAlgorithm {
 1. Rivest, R. L., Shamir, A., & Adleman, L. (1978). A method for obtaining digital signatures and public-key cryptosystems. Communications of the ACM, 21(2), 120-126.
 2. Kalman, R. E. (1960). A new approach to linear filtering and prediction problems. Journal of basic Engineering, 82(1), 35-45.
 3. Dijkstra, E. W. (1959). A note on two problems in connexion with graphs. Numerische mathematik, 1(1), 269-271.
-4. McMahan, B., Moore, E., Ramage, D., Hampson, S., & y Arcas, B. A. (2017). Communication-efficient learning of deep networks from decentralized data. In Artificial intelligence and statistics (pp. 1273-1282). 
+4. McMahan, B., Moore, E., Ramage, D., Hampson, S., & y Arcas, B. A. (2017). Communication-efficient learning of deep networks from decentralized data. In Artificial intelligence and statistics (pp. 1273-1282).

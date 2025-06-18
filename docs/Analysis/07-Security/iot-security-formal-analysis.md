@@ -19,6 +19,7 @@
 ### 1.1 IoT安全挑战
 
 IoT系统面临独特的安全挑战：
+
 - **大规模设备管理**：数百万设备的身份认证
 - **资源约束**：有限的计算和存储资源
 - **网络异构性**：多种通信协议和网络环境
@@ -27,6 +28,7 @@ IoT系统面临独特的安全挑战：
 ### 1.2 形式化安全方法
 
 我们采用以下形式化方法：
+
 - **密码学基础**：提供加密和认证的数学基础
 - **形式化验证**：通过数学证明确保安全性质
 - **威胁建模**：系统化分析安全威胁
@@ -41,6 +43,7 @@ IoT系统的安全状态空间 $S_{sec}$ 定义为：
 $$S_{sec} = \{(auth, enc, key, perm) | auth \in Auth, enc \in Enc, key \in Key, perm \in Perm\}$$
 
 其中：
+
 - $Auth$：认证状态集合
 - $Enc$：加密状态集合
 - $Key$：密钥状态集合
@@ -57,6 +60,7 @@ $$T_{sec}: S_{sec} \times Event \rightarrow S_{sec}$$
 $$\forall s \in S_{sec}, \forall e \in Event: \text{secure}(s) \Rightarrow \text{secure}(T_{sec}(s, e))$$
 
 **证明**：
+
 1. 安全转换只允许合法的状态变化
 2. 所有转换都经过安全验证
 3. 因此安全性质得到保持
@@ -68,6 +72,7 @@ $$\forall s \in S_{sec}, \forall e \in Event: \text{secure}(s) \Rightarrow \text
 
 **定义 3.1** (对称加密方案)
 对称加密方案 $\Pi = (Gen, Enc, Dec)$ 定义为：
+
 - $Gen(1^n) \rightarrow k$：密钥生成算法
 - $Enc(k, m) \rightarrow c$：加密算法
 - $Dec(k, c) \rightarrow m$：解密算法
@@ -85,6 +90,7 @@ $$\text{Adv}_{AES}^{CPA}(A) \leq \frac{q^2}{2^{256}}$$
 
 **定义 3.2** (RSA加密方案)
 RSA加密方案定义为：
+
 - 密钥生成：$(pk, sk) \leftarrow Gen(1^n)$
 - 加密：$c = m^e \bmod n$
 - 解密：$m = c^d \bmod n$
@@ -97,6 +103,7 @@ $$\text{Adv}_{RSA}^{OW}(A) \leq \text{Adv}_{FACTOR}^{A}(n)$$
 
 **定义 3.3** (密码学哈希函数)
 密码学哈希函数 $H: \{0,1\}^* \rightarrow \{0,1\}^n$ 满足：
+
 1. **确定性**：$H(m_1) = H(m_2) \Rightarrow m_1 = m_2$
 2. **抗碰撞性**：找到 $m_1 \neq m_2$ 使得 $H(m_1) = H(m_2)$ 是困难的
 3. **单向性**：从 $H(m)$ 计算 $m$ 是困难的
@@ -111,6 +118,7 @@ $$\text{Adv}_{SHA256}^{COL}(A) \leq \frac{q^2}{2^{256}}$$
 
 **定义 4.1** (数字签名方案)
 数字签名方案 $\Sigma = (Gen, Sign, Verify)$ 定义为：
+
 - $Gen(1^n) \rightarrow (pk, sk)$：密钥生成
 - $Sign(sk, m) \rightarrow \sigma$：签名算法
 - $Verify(pk, m, \sigma) \rightarrow \{0,1\}$：验证算法
@@ -122,6 +130,7 @@ $$\forall (pk, sk) \leftarrow Gen(1^n), \forall m: Verify(pk, m, Sign(sk, m)) = 
 
 **定义 4.2** (MAC方案)
 消息认证码方案 $MAC = (Gen, Tag, Verify)$ 定义为：
+
 - $Gen(1^n) \rightarrow k$：密钥生成
 - $Tag(k, m) \rightarrow t$：标签生成
 - $Verify(k, m, t) \rightarrow \{0,1\}$：验证算法
@@ -134,6 +143,7 @@ $$\text{Adv}_{HMAC}^{UF}(A) \leq \frac{q^2}{2^n} + \frac{q}{2^n}$$
 
 **定义 4.3** (零知识证明)
 零知识证明系统 $(P, V)$ 满足：
+
 1. **完备性**：诚实验证者总是接受诚实证明者
 2. **可靠性**：不诚实验证者无法欺骗诚实验证者
 3. **零知识性**：验证者无法获得除证明有效性外的任何信息
@@ -157,6 +167,7 @@ $$\text{Adv}_{DH}^{CDH}(A) \leq \text{Adv}_{G}^{CDH}(A)$$
 $$U: (k_{old}, t_{expire}) \rightarrow k_{new}$$
 
 **算法 5.1** (密钥轮换)
+
 ```rust
 struct KeyRotation {
     current_key: Vec<u8>,
@@ -196,6 +207,7 @@ TLS握手协议定义为状态机：
 $$TLS = (Q, \Sigma, \delta, q_0, F)$$
 
 其中：
+
 - $Q$：协议状态集合
 - $\Sigma$：消息集合
 - $\delta$：状态转换函数
@@ -210,6 +222,7 @@ $$\text{Adv}_{TLS}^{AKE}(A) \leq \text{Adv}_{SIG}^{EUF}(A) + \text{Adv}_{KEM}^{I
 
 **定义 6.2** (DTLS协议)
 DTLS协议是TLS的UDP版本，增加了：
+
 - 重传机制
 - 序列号管理
 - 连接状态跟踪
@@ -223,6 +236,7 @@ DTLS协议是TLS的UDP版本，增加了：
 $$ACM: Subjects \times Objects \rightarrow Permissions$$
 
 **性质 7.1** (访问控制性质)
+
 1. **单调性**：权限只能增加，不能减少
 2. **传递性**：$A \rightarrow B \land B \rightarrow C \Rightarrow A \rightarrow C$
 3. **自反性**：$A \rightarrow A$
@@ -234,10 +248,12 @@ RBAC模型定义为：
 $$RBAC = (Users, Roles, Permissions, UA, PA)$$
 
 其中：
+
 - $UA \subseteq Users \times Roles$：用户-角色分配
 - $PA \subseteq Roles \times Permissions$：角色-权限分配
 
 **算法 7.1** (RBAC实现)
+
 ```rust
 use std::collections::{HashMap, HashSet};
 
@@ -294,6 +310,7 @@ $$Dec(sk, Eval(pk, f, Enc(pk, m_1), ..., Enc(pk, m_n))) = f(m_1, ..., m_n)$$
 
 **定义 9.1** (STRIDE威胁)
 STRIDE威胁模型包含：
+
 - **S**poofing：身份欺骗
 - **T**ampering：数据篡改
 - **R**epudiation：否认
@@ -308,11 +325,13 @@ STRIDE威胁模型包含：
 $$AT = (N, E, root)$$
 
 其中：
+
 - $N$：攻击节点集合
 - $E$：攻击边集合
 - $root$：根节点
 
 **算法 9.1** (攻击树分析)
+
 ```rust
 struct AttackTree {
     nodes: HashMap<String, AttackNode>,
@@ -514,6 +533,7 @@ impl ThreatDetector {
 ### 11.2 安全保证
 
 本文提出的安全框架提供：
+
 - **机密性**：通过加密算法保证
 - **完整性**：通过数字签名保证
 - **可用性**：通过访问控制保证
@@ -522,6 +542,7 @@ impl ThreatDetector {
 ### 11.3 应用前景
 
 本文提出的安全框架可以应用于：
+
 - IoT设备安全
 - 网络安全
 - 数据安全
@@ -535,7 +556,7 @@ impl ThreatDetector {
 
 ---
 
-**参考文献**
+**参考文献**:
 
 1. Bellare, M., & Rogaway, P. (1993). Random oracles are practical: A paradigm for designing efficient protocols. In Proceedings of the 1st ACM conference on Computer and communications security (pp. 62-73).
 2. Dwork, C. (2006). Differential privacy. In International colloquium on automata, languages, and programming (pp. 1-12).

@@ -36,6 +36,7 @@
 $$MS = (I, O, S, P, C)$$
 
 其中：
+
 - $I$：输入接口集合
 - $O$：输出接口集合
 - $S$：服务状态
@@ -63,6 +64,7 @@ $$D: ServiceName \rightarrow MS$$
 $$D(R(MS).name) = MS$$
 
 **算法 2.1** (服务发现实现)
+
 ```rust
 use std::collections::HashMap;
 use tokio::sync::RwLock;
@@ -107,6 +109,7 @@ impl ServiceRegistry {
 $$LB: Request \times ServiceList \rightarrow Service$$
 
 **算法 2.2** (轮询负载均衡)
+
 ```rust
 struct RoundRobinLoadBalancer {
     services: Vec<ServiceInfo>,
@@ -122,6 +125,7 @@ impl RoundRobinLoadBalancer {
 ```
 
 **算法 2.3** (加权负载均衡)
+
 ```rust
 struct WeightedLoadBalancer {
     services: Vec<WeightedService>,
@@ -154,6 +158,7 @@ impl WeightedLoadBalancer {
 $$C = (Image, Runtime, Namespace, Cgroup)$$
 
 其中：
+
 - $Image$：容器镜像
 - $Runtime$：运行时环境
 - $Namespace$：命名空间隔离
@@ -174,6 +179,7 @@ $$NS: Process \times NamespaceType \rightarrow IsolatedProcess$$
 $$NS(P_1, N_1) \cap NS(P_2, N_2) = \emptyset$$
 
 **算法 3.1** (容器创建)
+
 ```rust
 use containerd_client::Client;
 use containerd_client::services::v1::containers_client::ContainersClient;
@@ -228,6 +234,7 @@ Docker镜像 $DI$ 定义为：
 $$DI = (Layers, Metadata, Config)$$
 
 **算法 4.1** (Docker镜像构建)
+
 ```rust
 use docker_api::Docker;
 
@@ -284,6 +291,7 @@ Docker网络 $DN$ 定义为：
 $$DN = (NetworkID, Subnet, Gateway, Containers)$$
 
 **算法 4.2** (Docker网络管理)
+
 ```rust
 struct DockerNetworkManager {
     networks: HashMap<String, DockerNetwork>,
@@ -327,6 +335,7 @@ Pod $P$ 定义为：
 $$P = (Containers, Network, Storage, Metadata)$$
 
 **算法 5.1** (Pod调度)
+
 ```rust
 use k8s_openapi::api::core::v1::Pod;
 use kube::Client;
@@ -388,6 +397,7 @@ Kubernetes服务 $KS$ 定义为：
 $$KS = (Selector, Endpoints, Ports, Type)$$
 
 **算法 5.2** (服务发现实现)
+
 ```rust
 struct KubernetesServiceDiscovery {
     client: Client,
@@ -433,6 +443,7 @@ WebAssembly执行 $WE$ 定义为：
 $$WE = (Module, Instance, Memory, Stack)$$
 
 **算法 6.1** (WebAssembly运行时)
+
 ```rust
 use wasmtime::{Engine, Module, Store, Instance};
 
@@ -471,6 +482,7 @@ IoT WebAssembly应用 $IWA$ 定义为：
 $$IWA = (WASM, Runtime, IoTInterface)$$
 
 **算法 6.2** (IoT WebAssembly部署)
+
 ```rust
 struct IoTWebAssemblyDeployment {
     runtime: WebAssemblyRuntime,
@@ -517,6 +529,7 @@ $$SM = (DataPlane, ControlPlane, Policies)$$
 $$Proxy = (Inbound, Outbound, Rules)$$
 
 **算法 7.1** (服务网格配置)
+
 ```rust
 use istio_client::Client;
 
@@ -558,6 +571,7 @@ impl ServiceMeshController {
 $$SP = (Authentication, Authorization, Encryption)$$
 
 **算法 7.2** (安全策略实施)
+
 ```rust
 struct SecurityPolicyEnforcer {
     policies: Vec<SecurityPolicy>,
@@ -601,6 +615,7 @@ CI/CD流水线 $Pipeline$ 定义为：
 $$Pipeline = (Build, Test, Deploy, Monitor)$$
 
 **算法 8.1** (CI/CD实现)
+
 ```rust
 use tokio::sync::mpsc;
 
@@ -664,6 +679,7 @@ impl PipelineStage for BuildStage {
 $$MS = (Metrics, Logs, Traces, Alerts)$$
 
 **算法 8.2** (监控实现)
+
 ```rust
 use prometheus::{Counter, Histogram, Registry};
 
@@ -841,6 +857,7 @@ impl ContainerManager {
 ### 10.2 技术优势
 
 本文提出的技术栈具有：
+
 - **可扩展性**：支持大规模分布式部署
 - **可维护性**：模块化设计，易于维护
 - **安全性**：多层安全防护
@@ -849,6 +866,7 @@ impl ContainerManager {
 ### 10.3 应用前景
 
 本文提出的技术栈可以应用于：
+
 - IoT平台部署
 - 边缘计算
 - 云原生应用
@@ -869,4 +887,4 @@ impl ContainerManager {
 3. Docker Documentation. (2024). Docker: Accelerated, containerized application development. <https://docs.docker.com/>
 4. Kubernetes Documentation. (2024). Kubernetes: Production-Grade Container Orchestration. <https://kubernetes.io/docs/>
 5. WebAssembly Documentation. (2024). WebAssembly: A binary instruction format for a stack-based virtual machine. <https://webassembly.org/>
-6. Rust Documentation. (2024). The Rust Programming Language. <https://doc.rust-lang.org/> 
+6. Rust Documentation. (2024). The Rust Programming Language. <https://doc.rust-lang.org/>

@@ -35,6 +35,7 @@ DevOps $D$ 定义为：
 $$D = (Dev, Ops, Automation, Collaboration)$$
 
 其中：
+
 - $Dev$：开发流程
 - $Ops$：运维流程
 - $Automation$：自动化工具
@@ -45,6 +46,7 @@ DevOps成熟度 $M$ 定义为：
 $$M = f(A, I, D, M)$$
 
 其中：
+
 - $A$：自动化程度
 - $I$：集成频率
 - $D$：部署频率
@@ -71,12 +73,14 @@ $$\min \sum_{i=1}^{n} T_i + \sum_{i=1}^{n} C_i$$
 $$CI = (Trigger, Build, Test, Report)$$
 
 其中：
+
 - $Trigger$：触发条件
 - $Build$：构建过程
 - $Test$：测试过程
 - $Report$：报告生成
 
 **算法 3.1** (CI流水线)
+
 ```rust
 use tokio::sync::mpsc;
 use std::collections::HashMap;
@@ -230,6 +234,7 @@ impl StageExecutor for BuildStage {
 $$CD = (Deploy, Rollback, Monitor, Alert)$$
 
 **算法 3.2** (CD流水线)
+
 ```rust
 #[derive(Debug, Clone)]
 pub struct CDPipeline {
@@ -332,6 +337,7 @@ impl DeploymentStrategy for BlueGreenDeployment {
 $$TP = (Unit, Integration, E2E)$$
 
 其中：
+
 - $Unit$：单元测试（最多）
 - $Integration$：集成测试（中等）
 - $E2E$：端到端测试（最少）
@@ -341,6 +347,7 @@ $$TP = (Unit, Integration, E2E)$$
 $$C = \frac{\text{测试覆盖的代码行数}}{\text{总代码行数}} \times 100\%$$
 
 **算法 4.1** (自动化测试框架)
+
 ```rust
 use tokio::sync::mpsc;
 
@@ -471,6 +478,7 @@ $$BG = (Blue, Green, Switch, Cleanup)$$
 $$Canary = (Base, Canary, Traffic, Gradual)$$
 
 **算法 5.1** (金丝雀部署实现)
+
 ```rust
 pub struct CanaryDeployment;
 
@@ -557,6 +565,7 @@ $$MS = (Metrics, Logs, Traces, Alerts)$$
 $$Metric = (Name, Value, Timestamp, Labels)$$
 
 **算法 6.1** (监控系统实现)
+
 ```rust
 use prometheus::{Counter, Histogram, Registry};
 use tokio::sync::mpsc;
@@ -662,6 +671,7 @@ $$SecDevOps = (Security, Development, Operations)$$
 $$SS = (Vulnerability, Dependency, Code, Container)$$
 
 **算法 7.1** (安全扫描实现)
+
 ```rust
 #[derive(Debug, Clone)]
 pub struct SecurityScanner {
@@ -970,6 +980,7 @@ impl VaultClient {
 ### 9.2 技术优势
 
 本文提出的DevOps框架具有：
+
 - **自动化**：全流程自动化
 - **安全性**：集成安全扫描
 - **可观测性**：完整的监控体系
@@ -978,6 +989,7 @@ impl VaultClient {
 ### 9.3 应用前景
 
 本文提出的DevOps框架可以应用于：
+
 - IoT平台开发
 - 微服务部署
 - 容器化应用
@@ -998,4 +1010,4 @@ impl VaultClient {
 3. Fowler, M. (2013). Continuous delivery: Reliable software releases through build, test, and deployment automation. Pearson Education.
 4. Rust Documentation. (2024). The Rust Programming Language. <https://doc.rust-lang.org/>
 5. Prometheus Documentation. (2024). Prometheus: Monitoring system & time series database. <https://prometheus.io/docs/>
-6. Kubernetes Documentation. (2024). Kubernetes: Production-Grade Container Orchestration. <https://kubernetes.io/docs/> 
+6. Kubernetes Documentation. (2024). Kubernetes: Production-Grade Container Orchestration. <https://kubernetes.io/docs/>

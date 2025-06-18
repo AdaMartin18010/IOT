@@ -38,6 +38,7 @@ IoT业务模型是连接技术实现与商业价值的关键桥梁。本文从�
 $$V = f(C, P, S, T)$$
 
 其中：
+
 - $C$：成本（Cost）
 - $P$：性能（Performance）
 - $S$：安全性（Security）
@@ -55,6 +56,7 @@ $$\text{s.t. } C \leq C_{max}, P \geq P_{min}, S \geq S_{min}, T \leq T_{max}$$
 $$BF = (N, E, \lambda, \tau)$$
 
 其中：
+
 - $N$：业务节点集合
 - $E \subseteq N \times N$：业务边集合
 - $\lambda: N \rightarrow BT$：节点到业务类型的映射
@@ -69,6 +71,7 @@ IoT五层业务架构 $BA$ 定义为：
 $$BA = (L_1, L_2, L_3, L_4, L_5)$$
 
 其中：
+
 - $L_1$：感知层业务（数据采集）
 - $L_2$：网络层业务（数据传输）
 - $L_3$：边缘层业务（数据处理）
@@ -94,6 +97,7 @@ $$A: L_i \rightarrow \mathbb{R}^+$$
 $$\sum_{i=1}^{5} A(L_i) = V_{total}$$
 
 **算法 3.1** (价值分配算法)
+
 ```rust
 struct BusinessValueAllocation {
     layers: Vec<BusinessLayer>,
@@ -138,6 +142,7 @@ impl BusinessValueAllocation {
 $$MS = (I, O, S, P, B)$$
 
 其中：
+
 - $I$：输入接口
 - $O$：输出接口
 - $S$：服务状态
@@ -156,6 +161,7 @@ $$(MS_1 \circ MS_2) \circ MS_3 = MS_1 \circ (MS_2 \circ MS_3)$$
 ### 4.3 业务服务编排
 
 **算法 4.1** (业务服务编排)
+
 ```rust
 use std::collections::HashMap;
 use tokio::sync::mpsc;
@@ -222,6 +228,7 @@ impl MicroserviceBusiness {
 $$EBN = (C, M, P, B)$$
 
 其中：
+
 - $C$：计算能力
 - $M$：存储容量
 - $P$：处理能力
@@ -234,6 +241,7 @@ $$EBN = (C, M, P, B)$$
 $$A_{edge}: Tasks \rightarrow EBN$$
 
 **算法 5.1** (边缘业务分配)
+
 ```rust
 struct EdgeBusinessAllocation {
     edge_nodes: Vec<EdgeBusinessNode>,
@@ -279,6 +287,7 @@ OTA业务价值 $V_{OTA}$ 定义为：
 $$V_{OTA} = V_{security} + V_{feature} + V_{maintenance} - C_{update}$$
 
 其中：
+
 - $V_{security}$：安全价值
 - $V_{feature}$：功能价值
 - $V_{maintenance}$：维护价值
@@ -291,12 +300,14 @@ OTA业务策略 $S_{OTA}$ 定义为：
 $$S_{OTA} = (T, P, R, M)$$
 
 其中：
+
 - $T$：更新时机
 - $P$：更新优先级
 - $R$：回滚策略
 - $M$：监控机制
 
 **算法 6.1** (OTA业务策略执行)
+
 ```rust
 struct OTABusinessStrategy {
     update_schedule: UpdateSchedule,
@@ -351,6 +362,7 @@ impl OTABusinessStrategy {
 $$V_{security} = V_{protection} - C_{security} - C_{incident}$$
 
 其中：
+
 - $V_{protection}$：保护价值
 - $C_{security}$：安全成本
 - $C_{incident}$：事件成本
@@ -362,12 +374,14 @@ $$V_{security} = V_{protection} - C_{security} - C_{incident}$$
 $$SSM = (D, P, M, R)$$
 
 其中：
+
 - $D$：检测服务
 - $P$：防护服务
 - $M$：监控服务
 - $R$：响应服务
 
 **算法 7.1** (安全服务编排)
+
 ```rust
 struct SecurityBusinessModel {
     detection_service: DetectionService,
@@ -407,6 +421,7 @@ impl SecurityBusinessModel {
 $$I_{lang} = f(P, S, C, T, M)$$
 
 其中：
+
 - $P$：性能影响
 - $S$：安全性影响
 - $C$：成本影响
@@ -417,12 +432,14 @@ $$I_{lang} = f(P, S, C, T, M)$$
 
 **定理 8.1** (Rust业务价值)
 Rust在IoT业务中的价值体现在：
+
 1. **安全性**：内存安全，减少安全漏洞
 2. **性能**：零成本抽象，高性能执行
 3. **并发性**：安全的并发编程
 4. **生态系统**：丰富的IoT库和工具
 
 **算法 8.1** (语言选择决策)
+
 ```rust
 struct LanguageSelectionModel {
     requirements: BusinessRequirements,
@@ -479,6 +496,7 @@ impl LanguageSelectionModel {
 $$OBM = (E, R, A)$$
 
 其中：
+
 - $E$：实体集合
 - $R$：关系集合
 - $A$：属性集合
@@ -490,6 +508,7 @@ $$OBM = (E, R, A)$$
 $$EBM = (K, M, V)$$
 
 其中：
+
 - $K$：知识集合
 - $M$：方法集合
 - $V$：验证集合
@@ -501,11 +520,13 @@ $$EBM = (K, M, V)$$
 $$EthBM = (V, P, R)$$
 
 其中：
+
 - $V$：价值观集合
 - $P$：原则集合
 - $R$：责任集合
 
 **算法 9.1** (伦理决策模型)
+
 ```rust
 struct EthicalDecisionModel {
     values: Vec<EthicalValue>,
@@ -549,6 +570,7 @@ impl EthicalDecisionModel {
 $$BSM = (Q, \Sigma, \delta, q_0, F)$$
 
 其中：
+
 - $Q$：业务状态集合
 - $\Sigma$：业务事件集合
 - $\delta$：状态转换函数
@@ -562,11 +584,13 @@ $$BSM = (Q, \Sigma, \delta, q_0, F)$$
 $$BL = (P, R, C)$$
 
 其中：
+
 - $P$：谓词集合
 - $R$：规则集合
 - $C$：约束集合
 
 **算法 10.1** (业务逻辑引擎)
+
 ```rust
 struct BusinessLogicEngine {
     predicates: HashMap<String, Predicate>,
@@ -722,6 +746,7 @@ impl BusinessValueCalculator {
 ### 12.2 业务价值
 
 本文提出的业务模型框架提供：
+
 - **价值量化**：通过数学模型量化业务价值
 - **决策支持**：为业务决策提供数据支持
 - **优化指导**：指导业务优化方向
@@ -729,6 +754,7 @@ impl BusinessValueCalculator {
 ### 12.3 应用前景
 
 本文提出的业务模型框架可以应用于：
+
 - IoT产品规划
 - 商业模式设计
 - 投资决策
@@ -748,4 +774,4 @@ impl BusinessValueCalculator {
 2. Osterwalder, A., & Pigneur, Y. (2010). Business model generation: a handbook for visionaries, game changers, and challengers. John Wiley & Sons.
 3. Chesbrough, H. (2010). Business model innovation: opportunities and barriers. Long range planning, 43(2-3), 354-363.
 4. Rust Documentation. (2024). The Rust Programming Language. <https://doc.rust-lang.org/>
-5. Tokio Documentation. (2024). Asynchronous runtime for Rust. <https://tokio.rs/> 
+5. Tokio Documentation. (2024). Asynchronous runtime for Rust. <https://tokio.rs/>
