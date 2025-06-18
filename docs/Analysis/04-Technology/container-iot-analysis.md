@@ -54,6 +54,7 @@ IoT容器技术提供以下核心价值：
 $$state(c_i) = (id_i, image_id, host_id, status, resources, created_at, started_at)$$
 
 其中：
+
 - $id_i$ 是容器唯一标识符
 - $image_id$ 是镜像标识符
 - $host_id$ 是宿主机标识符
@@ -79,6 +80,7 @@ $$\forall c_i, \forall t: valid\_transition(state(c_i, t), state(c_i, t+1))$$
 $$img_i = (id_i, layers, metadata, config)$$
 
 其中：
+
 - $id_i$ 是镜像唯一标识符
 - $layers$ 是分层文件系统层
 - $metadata$ 是镜像元数据
@@ -89,6 +91,7 @@ $$img_i = (id_i, layers, metadata, config)$$
 $$layer_i = (id_i, files, diff_id, parent_id)$$
 
 其中：
+
 - $id_i$ 是层唯一标识符
 - $files$ 是文件集合
 - $diff_id$ 是差异标识符
@@ -754,12 +757,14 @@ impl SecurityManager {
 **应用场景**：在边缘节点部署IoT应用，提供本地计算和数据处理能力。
 
 **架构特点**：
+
 1. 轻量级容器运行时
 2. 边缘节点管理
 3. 应用自动部署
 4. 资源优化调度
 
 **技术实现**：
+
 - 使用轻量级容器技术（如containerd）
 - 边缘节点资源监控
 - 应用生命周期管理
@@ -770,12 +775,14 @@ impl SecurityManager {
 **应用场景**：将IoT应用拆分为多个微服务，使用容器进行部署和管理。
 
 **核心功能**：
+
 1. 服务拆分和部署
 2. 服务发现和负载均衡
 3. 配置管理
 4. 监控和日志
 
 **技术特点**：
+
 - 容器编排（如Kubernetes）
 - 服务网格（如Istio）
 - 配置中心
@@ -822,4 +829,4 @@ impl SecurityManager {
 2. Kubernetes. (2024). Kubernetes Documentation.
 3. OCI. (2024). Open Container Initiative.
 4. CNCF. (2024). Cloud Native Computing Foundation.
-5. containerd. (2024). An industry-standard core container runtime. 
+5. containerd. (2024). An industry-standard core container runtime.
