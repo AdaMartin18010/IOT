@@ -118,9 +118,11 @@ $P(\mathcal{G}_{complete}) = \max P(\mathcal{G})$
 ## 核心文档
 
 ### 1. 哲学基础分析
+
 - [01-Philosophy-Foundations.md](01-Philosophy-Foundations.md) - 哲学基础分析
 
 ### 2. 哲学基础分析
+
 - [philosophical_foundations_analysis.md](philosophical_foundations_analysis.md) - 哲学基础分析
 
 ## 哲学分类
@@ -207,4 +209,4 @@ $P(\mathcal{G}_{complete}) = \max P(\mathcal{G})$
 ---
 
 *最后更新: 2024-12-19*
-*版本: 1.0* 
+*版本: 1.0*

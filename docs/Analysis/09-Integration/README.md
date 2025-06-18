@@ -118,6 +118,7 @@ $C(\mathcal{I}_{complete}) = \max C(\mathcal{I})$
 ## 核心文档
 
 ### 1. IoT系统集成分析
+
 - [01-IoT-System-Integration.md](01-IoT-System-Integration.md) - IoT系统集成分析
 
 ## 集成技术分类
@@ -200,4 +201,4 @@ $C(\mathcal{I}_{complete}) = \max C(\mathcal{I})$
 ---
 
 *最后更新: 2024-12-19*
-*版本: 1.0* 
+*版本: 1.0*

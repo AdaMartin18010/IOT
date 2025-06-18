@@ -117,6 +117,7 @@ $C(\mathcal{S}_{complete}) = \max C(\mathcal{S})$
 ## 核心文档
 
 ### 1. IoT标准规范分析
+
 - [01-IoT-Standards-Analysis.md](01-IoT-Standards-Analysis.md) - IoT标准规范分析
 
 ## 标准分类
@@ -199,4 +200,4 @@ $C(\mathcal{S}_{complete}) = \max C(\mathcal{S})$
 ---
 
 *最后更新: 2024-12-19*
-*版本: 1.0* 
+*版本: 1.0*

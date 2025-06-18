@@ -121,15 +121,19 @@ $V(\mathcal{B}_{opt}) = \max V(\mathcal{B})$
 ## 核心文档
 
 ### 1. IoT业务模型
+
 - [01-IoT-Business-Models.md](01-IoT-Business-Models.md) - IoT业务模型形式化分析
 
 ### 2. IoT行业架构
+
 - [01-IoT-Industry-Architecture.md](01-IoT-Industry-Architecture.md) - IoT行业架构分析
 
 ### 3. 业务模型形式化分析
+
 - [IoT-Business-Models-Formal-Analysis.md](IoT-Business-Models-Formal-Analysis.md) - IoT业务模型形式化分析
 
 ### 4. 业务建模理论
+
 - [IoT-Business-Modeling-Theory.md](IoT-Business-Modeling-Theory.md) - IoT业务建模理论
 
 ## 商业模式分类

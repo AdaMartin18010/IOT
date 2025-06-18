@@ -127,39 +127,51 @@ $C(\mathcal{A}_{opt}) = \min C(\mathcal{A})$
 ## 核心文档
 
 ### 1. IoT算法基础
+
 - [01-IoT-Algorithms.md](01-IoT-Algorithms.md) - IoT算法基础
 
 ### 2. OTA算法
+
 - [01-OTA-Algorithms.md](01-OTA-Algorithms.md) - OTA算法理论与实现
 
 ### 3. 控制算法
+
 - [01-Control-Algorithms.md](01-Control-Algorithms.md) - 控制算法
 
 ### 4. 分布式工作流算法
+
 - [01-Distributed-Workflow-Algorithms.md](01-Distributed-Workflow-Algorithms.md) - 分布式工作流算法
 
 ### 5. 数据压缩算法
+
 - [01-IoT-Data-Compression-Algorithms.md](01-IoT-Data-Compression-Algorithms.md) - IoT数据压缩算法
 
 ### 6. 算法理论与实现
+
 - [IoT-Algorithms-Theory-Implementation.md](IoT-Algorithms-Theory-Implementation.md) - 算法理论与实现
 
 ### 7. 机器学习算法
+
 - [IoT-Machine-Learning-Algorithms-Analysis.md](IoT-Machine-Learning-Algorithms-Analysis.md) - 机器学习算法分析
 
 ### 8. 设计模式算法
+
 - [IoT-Design-Patterns.md](IoT-Design-Patterns.md) - 设计模式算法
 
 ### 9. 通信算法
+
 - [IoT-Communication-Algorithms-Analysis.md](IoT-Communication-Algorithms-Analysis.md) - 通信算法分析
 
 ### 10. 安全算法
+
 - [IoT-Security-Algorithms.md](IoT-Security-Algorithms.md) - 安全算法
 
 ### 11. 数据处理算法
+
 - [IoT-Data-Processing-Algorithms.md](IoT-Data-Processing-Algorithms.md) - 数据处理算法
 
 ### 12. 分布式算法
+
 - [IoT-Distributed-Algorithms.md](IoT-Distributed-Algorithms.md) - 分布式算法
 
 ## 算法分类
@@ -246,4 +258,4 @@ $C(\mathcal{A}_{opt}) = \min C(\mathcal{A})$
 ---
 
 *最后更新: 2024-12-19*
-*版本: 1.0* 
+*版本: 1.0*

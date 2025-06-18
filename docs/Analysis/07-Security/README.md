@@ -121,12 +121,15 @@ $S(\mathcal{P}_{complete}) = \max S(\mathcal{P})$
 ## 核心文档
 
 ### 1. IoT安全分析
+
 - [01-IoT-Security-Analysis.md](01-IoT-Security-Analysis.md) - IoT安全分析
 
 ### 2. IoT安全架构
+
 - [IoT-Security-Architecture.md](IoT-Security-Architecture.md) - IoT安全架构
 
 ### 3. IoT认证系统形式化分析
+
 - [IoT认证系统形式化分析.md](IoT认证系统形式化分析.md) - IoT认证系统形式化分析
 
 ## 安全技术分类
@@ -213,4 +216,4 @@ $S(\mathcal{P}_{complete}) = \max S(\mathcal{P})$
 ---
 
 *最后更新: 2024-12-19*
-*版本: 1.0* 
+*版本: 1.0*
