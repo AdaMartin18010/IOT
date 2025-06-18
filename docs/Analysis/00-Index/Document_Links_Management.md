@@ -44,7 +44,7 @@
 
 ### 1. 主要目录结构
 
-```
+```text
 docs/Analysis/
 ├── 00-Index/                    # 索引和导航
 │   ├── IoT_Analysis_Index.md    # 统一索引

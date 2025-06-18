@@ -323,7 +323,7 @@ impl EnergyOptimizer {
 实时性能满足时间约束：
 $$\mathcal{RT} = \{p \in \mathcal{P} | L(p) \leq \tau_{deadline}\}$$
 
-**算法 4.1 (实时性能分析)**
+**算法 4.1 (实时性能分析)**:
 
 ```rust
 pub struct RealTimePerformanceAnalyzer {
@@ -359,7 +359,7 @@ $$\mathcal{S} = \frac{\Delta P}{\Delta R}$$
 
 其中 $\Delta P$ 是性能变化，$\Delta R$ 是资源变化。
 
-**算法 4.2 (可扩展性分析)**
+**算法 4.2 (可扩展性分析)**:
 
 ```rust
 pub struct ScalabilityAnalyzer {
@@ -398,7 +398,7 @@ impl ScalabilityAnalyzer {
 性能监控是持续收集和分析性能数据的过程：
 $$\mathcal{M}_{perf}: \mathcal{T} \rightarrow \mathcal{D}_{perf}$$
 
-**算法 5.1 (性能监控算法)**
+**算法 5.1 (性能监控算法)**:
 
 ```rust
 pub struct PerformanceMonitor {
@@ -441,7 +441,7 @@ impl PerformanceMonitor {
 性能预测是基于历史数据预测未来性能：
 $$\mathcal{P}_{pred}: \mathcal{D}_{hist} \rightarrow \mathcal{P}_{future}$$
 
-**算法 5.2 (性能预测算法)**
+**算法 5.2 (性能预测算法)**:
 
 ```rust
 pub struct PerformancePredictor {
