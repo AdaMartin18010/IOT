@@ -9,16 +9,19 @@
 ### 1. 内部链接规范
 
 #### 1.1 相对路径链接
+
 - 使用相对路径：`../02-Theory/README.md`
 - 避免绝对路径：`/docs/Analysis/02-Theory/README.md`
 - 使用锚点链接：`../02-Theory/README.md#section-name`
 
 #### 1.2 链接格式
+
 ```markdown
 [链接文本](相对路径#锚点)
 ```
 
 #### 1.3 锚点命名规范
+
 - 使用英文和连字符：`#section-name`
 - 避免中文和特殊字符
 - 保持简洁和描述性
@@ -26,11 +29,13 @@
 ### 2. 外部链接规范
 
 #### 2.1 链接格式
+
 ```markdown
 [链接文本](https://example.com)
 ```
 
 #### 2.2 链接验证
+
 - 定期检查外部链接有效性
 - 提供备用链接或说明
 - 标注链接类型（官方文档、参考、工具等）
@@ -90,16 +95,19 @@ docs/Analysis/
 ### 2. 交叉引用关系
 
 #### 2.1 理论层引用
+
 - 架构层引用理论层：`../02-Theory/README.md`
 - 算法层引用理论层：`../02-Theory/README.md`
 - 技术层引用理论层：`../02-Theory/README.md`
 
 #### 2.2 技术层引用
+
 - 架构层引用技术层：`../04-Technology/README.md`
 - 算法层引用技术层：`../04-Technology/README.md`
 - 业务模型层引用技术层：`../04-Technology/README.md`
 
 #### 2.3 安全层引用
+
 - 所有层都引用安全层：`../07-Security/README.md`
 - 安全层引用其他层：`../01-Architecture/README.md`
 
@@ -212,4 +220,4 @@ find . -name "*.md" -exec grep -l "http" {} \;
 ---
 
 *最后更新: 2024-12-19*
-*版本: 1.0* 
+*版本: 1.0*

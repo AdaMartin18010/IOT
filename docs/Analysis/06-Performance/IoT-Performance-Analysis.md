@@ -63,7 +63,7 @@ $$P_{sys} = f(T_{cpu}, T_{mem}, T_{net}, T_{io})$$
 
 其中 $T_{cpu}, T_{mem}, T_{net}, T_{io}$ 分别是CPU、内存、网络、I/O时间。
 
-**算法 2.1 (性能建模算法)**
+**算法 2.1 (性能建模算法)**:
 
 ```rust
 pub struct PerformanceModeler {
@@ -152,7 +152,7 @@ $$\mathcal{P}_{net} = (B, L, J, P)$$
 - $J$ 是抖动，$J \in \mathbb{R}^+$
 - $P$ 是丢包率，$P \in [0,1]$
 
-**算法 2.2 (网络性能分析)**
+**算法 2.2 (网络性能分析)**:
 
 ```rust
 pub struct NetworkPerformanceAnalyzer {
@@ -208,7 +208,7 @@ $$\mathcal{RA}: \mathcal{T} \rightarrow \mathcal{R}$$
 
 其中 $\mathcal{T}$ 是任务集合，$\mathcal{R}$ 是资源集合。
 
-**算法 3.1 (资源分配优化)**
+**算法 3.1 (资源分配优化)**:
 
 ```rust
 pub struct ResourceAllocationOptimizer {
@@ -269,7 +269,7 @@ impl ResourceAllocationOptimizer {
 能耗模型定义为：
 $$E_{total} = E_{compute} + E_{communication} + E_{sensing} + E_{idle}$$
 
-**算法 3.2 (能耗优化算法)**
+**算法 3.2 (能耗优化算法)**:
 
 ```rust
 pub struct EnergyOptimizer {
