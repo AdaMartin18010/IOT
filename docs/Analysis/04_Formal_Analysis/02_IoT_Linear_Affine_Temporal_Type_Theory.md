@@ -1023,4 +1023,4 @@ IoT线性仿射时态类型理论为物联网系统提供了严格的类型安�
 1. [Linear Logic](https://en.wikipedia.org/wiki/Linear_logic)
 2. [Affine Type Systems](https://en.wikipedia.org/wiki/Affine_type_system)
 3. [Temporal Logic](https://en.wikipedia.org/wiki/Temporal_logic)
-4. [Type Theory](https://en.wikipedia.org/wiki/Type_theory) 
+4. [Type Theory](https://en.wikipedia.org/wiki/Type_theory)

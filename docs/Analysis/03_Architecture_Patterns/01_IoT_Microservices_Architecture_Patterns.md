@@ -863,4 +863,4 @@ IoT微服务架构为物联网系统提供了灵活、可扩展、可维护的�
 1. [Microservices Architecture Patterns](https://microservices.io/patterns/)
 2. [Service Mesh Architecture](https://istio.io/docs/concepts/what-is-istio/)
 3. [Event-Driven Architecture](https://martinfowler.com/articles/201701-event-driven.html)
-4. [Saga Pattern](https://microservices.io/patterns/data/saga.html) 
+4. [Saga Pattern](https://microservices.io/patterns/data/saga.html)

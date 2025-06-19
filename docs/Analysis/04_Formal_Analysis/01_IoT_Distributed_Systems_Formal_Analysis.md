@@ -358,4 +358,4 @@ IoT分布式系统为物联网应用提供了高可用、高可靠、高性能�
 1. [Distributed Systems: Concepts and Design](https://www.pearson.com/us/higher-education/program/Coulouris-Distributed-Systems-Concepts-and-Design-5th-Edition/PGM334067.html)
 2. [Consensus in the Presence of Partial Synchrony](https://dl.acm.org/doi/10.1145/42282.42283)
 3. [Paxos Made Simple](https://lamport.azurewebsites.net/pubs/paxos-simple.pdf)
-4. [In Search of an Understandable Consensus Algorithm](https://raft.github.io/raft.pdf) 
+4. [In Search of an Understandable Consensus Algorithm](https://raft.github.io/raft.pdf)

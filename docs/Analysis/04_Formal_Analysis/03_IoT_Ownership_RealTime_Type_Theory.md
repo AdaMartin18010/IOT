@@ -940,4 +940,4 @@ IoT所有权与实时类型理论为物联网系统提供了内存安全和时�
 1. [Ownership and Borrowing in Rust](https://doc.rust-lang.org/book/ch04-00-understanding-ownership.html)
 2. [Real-Time Systems](https://en.wikipedia.org/wiki/Real-time_computing)
 3. [Scheduling Algorithms](https://en.wikipedia.org/wiki/Scheduling_(computing))
-4. [Type Theory](https://en.wikipedia.org/wiki/Type_theory) 
+4. [Type Theory](https://en.wikipedia.org/wiki/Type_theory)

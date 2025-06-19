@@ -951,4 +951,4 @@ IoT类型转换与统一理论为物联网系统提供了统一的类型安全�
 1. [Type Conversion](https://en.wikipedia.org/wiki/Type_conversion)
 2. [Unified Type Theory](https://en.wikipedia.org/wiki/Type_theory)
 3. [Linear Logic](https://en.wikipedia.org/wiki/Linear_logic)
-4. [Temporal Logic](https://en.wikipedia.org/wiki/Temporal_logic) 
+4. [Temporal Logic](https://en.wikipedia.org/wiki/Temporal_logic)
