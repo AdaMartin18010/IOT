@@ -2,1079 +2,554 @@
 
 ## 目录
 
-1. [引言](#引言)
-2. [工作流系统的基础形式化模型](#工作流系统的基础形式化模型)
-3. [工作流模式的形式化定义](#工作流模式的形式化定义)
-4. [状态机与工作流](#状态机与工作流)
-5. [分布式工作流协调](#分布式工作流协调)
-6. [工作流优化算法](#工作流优化算法)
-7. [工作流安全与隐私](#工作流安全与隐私)
-8. [Rust和Go实现示例](#rust和go实现示例)
-9. [总结与展望](#总结与展望)
+- [工作流系统的形式化分析与设计](#工作流系统的形式化分析与设计)
+  - [目录](#目录)
+  - [1. 引言](#1-引言)
+    - [1.1 工作流系统的定义](#11-工作流系统的定义)
+    - [1.2 形式化语义](#12-形式化语义)
+  - [2. 工作流系统的基础形式化模型](#2-工作流系统的基础形式化模型)
+    - [2.1 状态机模型](#21-状态机模型)
+    - [2.2 形式化证明](#22-形式化证明)
+    - [2.3 工作流图表示](#23-工作流图表示)
+  - [3. 工作流模式的形式化定义](#3-工作流模式的形式化定义)
+    - [3.1 顺序模式](#31-顺序模式)
+    - [3.2 并行模式](#32-并行模式)
+    - [3.3 条件模式](#33-条件模式)
+  - [4. 状态机与工作流](#4-状态机与工作流)
+    - [4.1 工作流状态机](#41-工作流状态机)
+    - [4.2 状态转换的形式化](#42-状态转换的形式化)
+    - [4.3 工作流不变性](#43-工作流不变性)
+  - [5. 分布式工作流协调](#5-分布式工作流协调)
+    - [5.1 分布式工作流模型](#51-分布式工作流模型)
+    - [5.2 分布式一致性](#52-分布式一致性)
+    - [5.3 任务分配算法](#53-任务分配算法)
+  - [6. 工作流优化算法](#6-工作流优化算法)
+    - [6.1 性能优化](#61-性能优化)
+    - [6.2 调度算法](#62-调度算法)
+    - [6.3 资源优化](#63-资源优化)
+  - [7. 工作流安全与隐私](#7-工作流安全与隐私)
+    - [7.1 访问控制模型](#71-访问控制模型)
+    - [7.2 数据隐私保护](#72-数据隐私保护)
+    - [7.3 安全证明](#73-安全证明)
+  - [8. Rust和Go实现示例](#8-rust和go实现示例)
+    - [8.1 Rust工作流引擎](#81-rust工作流引擎)
+    - [8.2 Go工作流引擎](#82-go工作流引擎)
+  - [9. 总结与展望](#9-总结与展望)
+    - [9.1 主要贡献](#91-主要贡献)
+    - [9.2 未来研究方向](#92-未来研究方向)
+    - [9.3 应用前景](#93-应用前景)
 
-## 引言
+## 1. 引言
 
-工作流系统是现代分布式系统的重要组成部分，它管理复杂的业务流程和任务编排。本文从形式化数学的角度分析工作流系统，建立严格的数学模型，并通过Rust和Go语言提供实现示例。
+工作流系统是现代分布式系统中的核心组件，用于协调和管理复杂的业务流程。本文从形式化角度分析工作流系统的理论基础、设计模式和实现方法，为IoT行业的工作流应用提供理论支撑和实践指导。
 
-### 定义 1.1 (工作流系统)
+### 1.1 工作流系统的定义
 
-工作流系统是一个七元组 $\mathcal{W} = (T, F, S, E, P, C, A)$，其中：
+**定义 1.1 (工作流系统)** 工作流系统是一个七元组 $\mathcal{W} = (S, A, T, R, D, C, E)$，其中：
 
-- $T = \{t_1, t_2, \ldots, t_n\}$ 是任务集合
-- $F = \{f_{ij} \mid i, j \in [1, n]\}$ 是任务间依赖关系
-- $S = \{s_1, s_2, \ldots, s_m\}$ 是状态集合
-- $E = \{e_1, e_2, \ldots, e_k\}$ 是事件集合
-- $P = \{p_1, p_2, \ldots, p_l\}$ 是参与者集合
-- $C = \{c_1, c_2, \ldots, c_p\}$ 是条件集合
-- $A = \{a_1, a_2, \ldots, a_q\}$ 是动作集合
+- $S$ 是状态集合 (States)
+- $A$ 是活动集合 (Activities)  
+- $T$ 是转换关系 (Transitions)
+- $R$ 是角色集合 (Roles)
+- $D$ 是数据集合 (Data)
+- $C$ 是约束集合 (Constraints)
+- $E$ 是事件集合 (Events)
 
-### 定义 1.2 (工作流实例)
+### 1.2 形式化语义
 
-工作流实例是一个四元组 $\mathcal{I} = (w, s, h, d)$，其中：
-- $w \in \mathcal{W}$ 是工作流定义
-- $s \in S$ 是当前状态
-- $h$ 是执行历史
-- $d$ 是数据上下文
+工作流系统的形式化语义可以表示为：
 
-## 工作流系统的基础形式化模型
+$$\mathcal{W} \models \phi \iff \forall s \in S, a \in A: \text{valid}(s, a) \rightarrow \text{execute}(s, a)$$
 
-### 定义 2.1 (任务)
+其中 $\phi$ 是工作流的性质，$\text{valid}(s, a)$ 表示状态 $s$ 下活动 $a$ 的有效性，$\text{execute}(s, a)$ 表示执行活动 $a$ 后的状态转换。
 
-任务是一个五元组 $\mathcal{T} = (id, type, input, output, handler)$，其中：
-- $id$ 是任务标识符
-- $type$ 是任务类型
-- $input$ 是输入数据模式
-- $output$ 是输出数据模式
-- $handler$ 是任务处理函数
+## 2. 工作流系统的基础形式化模型
 
-### 定义 2.2 (依赖关系)
+### 2.1 状态机模型
 
-依赖关系是一个三元组 $\mathcal{D} = (t_i, t_j, condition)$，其中：
-- $t_i, t_j \in T$ 是任务
-- $condition$ 是执行条件
+**定义 2.1 (工作流状态机)** 工作流状态机是一个五元组 $\mathcal{M} = (Q, \Sigma, \delta, q_0, F)$，其中：
 
-### 定义 2.3 (工作流图)
+- $Q$ 是有限状态集合
+- $\Sigma$ 是输入字母表（活动集合）
+- $\delta: Q \times \Sigma \rightarrow Q$ 是状态转换函数
+- $q_0 \in Q$ 是初始状态
+- $F \subseteq Q$ 是接受状态集合
 
-工作流图是一个有向无环图 $G = (T, F)$，其中：
-- $T$ 是任务集合（顶点）
-- $F$ 是依赖关系集合（边）
+### 2.2 形式化证明
 
-### 定理 2.1 (工作流无环性定理)
-
-如果工作流系统 $\mathcal{W}$ 是有效的，则其工作流图 $G$ 是无环的：
-
-$$\text{valid}(\mathcal{W}) \Rightarrow \text{acyclic}(G)$$
-
-**证明**：
-如果工作流图存在环，则存在任务序列 $t_1 \rightarrow t_2 \rightarrow \ldots \rightarrow t_n \rightarrow t_1$，这意味着任务 $t_1$ 依赖于自己的完成，这在逻辑上是不可能的。因此，有效的工作流必须是无环的。
-
-## 工作流模式的形式化定义
-
-### 定义 3.1 (顺序模式)
-
-顺序模式是一个二元组 $\mathcal{S} = (T, <)$，其中：
-- $T$ 是任务集合
-- $<$ 是严格偏序关系，表示执行顺序
-
-### 定义 3.2 (并行模式)
-
-并行模式是一个三元组 $\mathcal{P} = (T, \parallel, sync)$，其中：
-- $T$ 是任务集合
-- $\parallel$ 是并行关系
-- $sync$ 是同步点
-
-### 定义 3.3 (条件模式)
-
-条件模式是一个四元组 $\mathcal{C} = (condition, T_{true}, T_{false}, merge)$，其中：
-- $condition$ 是条件表达式
-- $T_{true}$ 是条件为真时的任务集合
-- $T_{false}$ 是条件为假时的任务集合
-- $merge$ 是合并点
-
-### 定义 3.4 (循环模式)
-
-循环模式是一个三元组 $\mathcal{L} = (T, condition, max\_iterations)$，其中：
-- $T$ 是循环体任务集合
-- $condition$ 是循环条件
-- $max\_iterations$ 是最大迭代次数
-
-### 定理 3.1 (模式组合定理)
-
-任意工作流模式都可以通过基本模式的组合来表示：
-
-$$\forall \mathcal{M}, \exists \mathcal{M}_1, \mathcal{M}_2, \ldots, \mathcal{M}_n, \quad \mathcal{M} = \text{compose}(\mathcal{M}_1, \mathcal{M}_2, \ldots, \mathcal{M}_n)$$
-
-其中 $\text{compose}$ 是模式组合函数。
-
-## 状态机与工作流
-
-### 定义 4.1 (工作流状态机)
-
-工作流状态机是一个五元组 $\mathcal{FSM} = (S, \Sigma, \delta, s_0, F)$，其中：
-- $S$ 是状态集合
-- $\Sigma$ 是输入字母表
-- $\delta: S \times \Sigma \rightarrow S$ 是状态转换函数
-- $s_0 \in S$ 是初始状态
-- $F \subseteq S$ 是接受状态集合
-
-### 定义 4.2 (状态转换)
-
-状态转换是一个四元组 $\mathcal{TR} = (s_i, e, a, s_j)$，其中：
-- $s_i, s_j \in S$ 是状态
-- $e \in \Sigma$ 是事件
-- $a \in A$ 是动作
-
-### 定义 4.3 (状态可达性)
-
-状态 $s_j$ 从状态 $s_i$ 可达，当且仅当：
-
-$$\exists e_1, e_2, \ldots, e_n \in \Sigma, \quad s_i \xrightarrow{e_1} s_1 \xrightarrow{e_2} \ldots \xrightarrow{e_n} s_j$$
-
-### 定理 4.1 (状态机确定性定理)
-
-如果工作流状态机是确定性的，则：
-
-$$\forall s \in S, \forall e \in \Sigma, \quad |\delta(s, e)| \leq 1$$
+**定理 2.1 (工作流可达性)** 对于任意工作流状态机 $\mathcal{M}$，如果状态 $q$ 可达，则存在一个活动序列 $\sigma$ 使得 $\delta^*(q_0, \sigma) = q$。
 
 **证明**：
-确定性状态机的每个状态-输入对最多只能有一个后继状态，这确保了工作流执行的可预测性。
 
-## 分布式工作流协调
+1. 基础情况：$q_0$ 是可达的（初始状态）
+2. 归纳步骤：假设状态 $q$ 可达，则对于任意 $a \in \Sigma$，状态 $\delta(q, a)$ 也是可达的
+3. 由归纳原理，所有可达状态都可以通过活动序列到达
 
-### 定义 5.1 (分布式工作流)
+### 2.3 工作流图表示
 
-分布式工作流是一个六元组 $\mathcal{DW} = (N, T, F, C, S, P)$，其中：
+```mermaid
+graph TD
+    A[开始] --> B[活动1]
+    B --> C{条件判断}
+    C -->|条件1| D[活动2]
+    C -->|条件2| E[活动3]
+    D --> F[结束]
+    E --> F
+```
+
+## 3. 工作流模式的形式化定义
+
+### 3.1 顺序模式
+
+**定义 3.1 (顺序模式)** 顺序模式是一个三元组 $\mathcal{P}_{seq} = (A, <, \text{exec})$，其中：
+
+- $A = \{a_1, a_2, \ldots, a_n\}$ 是活动集合
+- $<$ 是严格的线性序关系
+- $\text{exec}: A \rightarrow \mathbb{B}$ 是执行函数
+
+顺序模式的形式化语义：
+
+$$\forall i, j: i < j \rightarrow \text{exec}(a_i) \rightarrow \text{exec}(a_j)$$
+
+### 3.2 并行模式
+
+**定义 3.2 (并行模式)** 并行模式是一个四元组 $\mathcal{P}_{par} = (A, \text{fork}, \text{join}, \text{exec})$，其中：
+
+- $A = \{a_1, a_2, \ldots, a_n\}$ 是活动集合
+- $\text{fork}: \text{State} \rightarrow 2^A$ 是分叉函数
+- $\text{join}: 2^A \rightarrow \text{State}$ 是合并函数
+- $\text{exec}: A \rightarrow \mathbb{B}$ 是执行函数
+
+并行模式的形式化语义：
+
+$$\text{exec}(a_i) \parallel \text{exec}(a_j) \iff \text{independent}(a_i, a_j)$$
+
+### 3.3 条件模式
+
+**定义 3.3 (条件模式)** 条件模式是一个五元组 $\mathcal{P}_{cond} = (A, C, \text{guard}, \text{select}, \text{exec})$，其中：
+
+- $A = \{a_1, a_2, \ldots, a_n\}$ 是活动集合
+- $C = \{c_1, c_2, \ldots, c_m\}$ 是条件集合
+- $\text{guard}: A \rightarrow 2^C$ 是守卫函数
+- $\text{select}: C \rightarrow A$ 是选择函数
+- $\text{exec}: A \rightarrow \mathbb{B}$ 是执行函数
+
+条件模式的形式化语义：
+
+$$\text{exec}(a) \iff \exists c \in \text{guard}(a): \text{evaluate}(c) \land \text{select}(c) = a$$
+
+## 4. 状态机与工作流
+
+### 4.1 工作流状态机
+
+**定义 4.1 (工作流状态机)** 工作流状态机是一个扩展的状态机 $\mathcal{W}\mathcal{M} = (Q, \Sigma, \delta, q_0, F, \text{data}, \text{roles})$，其中：
+
+- $(Q, \Sigma, \delta, q_0, F)$ 是基础状态机
+- $\text{data}: Q \rightarrow \mathcal{D}$ 是数据映射函数
+- $\text{roles}: Q \rightarrow 2^{\mathcal{R}}$ 是角色映射函数
+
+### 4.2 状态转换的形式化
+
+状态转换可以形式化为：
+
+$$\delta(q, a) = q' \iff \text{precondition}(q, a) \land \text{postcondition}(q', a)$$
+
+其中：
+
+- $\text{precondition}(q, a)$ 是执行活动 $a$ 的前置条件
+- $\text{postcondition}(q', a)$ 是执行活动 $a$ 的后置条件
+
+### 4.3 工作流不变性
+
+**定理 4.1 (工作流不变性)** 对于任意工作流状态机，如果满足以下条件，则工作流是安全的：
+
+1. $\forall q \in Q: \text{invariant}(q)$
+2. $\forall q, q' \in Q, a \in \Sigma: \delta(q, a) = q' \rightarrow \text{invariant}(q')$
+
+其中 $\text{invariant}(q)$ 是状态 $q$ 的不变性条件。
+
+## 5. 分布式工作流协调
+
+### 5.1 分布式工作流模型
+
+**定义 5.1 (分布式工作流)** 分布式工作流是一个六元组 $\mathcal{D}\mathcal{W} = (N, \mathcal{W}_i, \text{comm}, \text{sync}, \text{coord}, \text{consistency})$，其中：
+
 - $N = \{n_1, n_2, \ldots, n_k\}$ 是节点集合
-- $T$ 是任务集合
-- $F$ 是任务分配函数
-- $C$ 是协调协议
-- $S$ 是同步机制
-- $P$ 是故障处理策略
+- $\mathcal{W}_i$ 是节点 $n_i$ 上的工作流
+- $\text{comm}: N \times N \rightarrow \text{Channel}$ 是通信函数
+- $\text{sync}: 2^N \rightarrow \text{SyncPoint}$ 是同步函数
+- $\text{coord}: N \rightarrow \text{Coordinator}$ 是协调函数
+- $\text{consistency}: 2^N \rightarrow \mathbb{B}$ 是一致性函数
 
-### 定义 5.2 (任务分配)
+### 5.2 分布式一致性
 
-任务分配是一个函数 $\mathcal{A}: T \rightarrow N$，满足负载均衡：
+**定义 5.2 (分布式一致性)** 分布式工作流满足一致性当且仅当：
 
-$$\forall n_i, n_j \in N, \quad |\mathcal{A}^{-1}(n_i)| \approx |\mathcal{A}^{-1}(n_j)|$$
+$$\forall t \in \mathbb{T}: \text{consistency}(\text{state}_t(N))$$
 
-### 定义 5.3 (分布式一致性)
+其中 $\text{state}_t(N)$ 是时间 $t$ 时所有节点的状态集合。
 
-分布式工作流满足一致性，当且仅当：
+### 5.3 任务分配算法
 
-$$\forall n_i, n_j \in N, \quad \text{state}(n_i) \equiv \text{state}(n_j)$$
-
-其中 $\text{state}(n_i)$ 是节点 $n_i$ 的状态。
-
-### 定理 5.1 (分布式协调定理)
-
-如果分布式工作流实现了两阶段提交协议，则：
-
-$$\text{2PC}(\mathcal{DW}) \Rightarrow \text{consistency}(\mathcal{DW})$$
-
-**证明**：
-两阶段提交协议确保所有节点要么全部提交，要么全部回滚，从而保证分布式一致性。
-
-## 工作流优化算法
-
-### 定义 6.1 (工作流性能)
-
-工作流性能是一个三元组 $\mathcal{PERF} = (time, cost, quality)$，其中：
-- $time$ 是执行时间
-- $cost$ 是执行成本
-- $quality$ 是执行质量
-
-### 定义 6.2 (优化目标)
-
-优化目标是一个函数 $\mathcal{O}: \mathcal{PERF} \rightarrow \mathbb{R}$，通常定义为：
-
-$$\mathcal{O}(\mathcal{PERF}) = \alpha \cdot time + \beta \cdot cost + \gamma \cdot (1 - quality)$$
-
-其中 $\alpha, \beta, \gamma$ 是权重系数。
-
-### 定义 6.3 (调度算法)
-
-调度算法是一个函数 $\mathcal{SCH}: \mathcal{W} \rightarrow \mathcal{SCHEDULE}$，其中 $\mathcal{SCHEDULE}$ 是调度计划。
-
-### 定理 6.1 (最优调度定理)
-
-对于给定的工作流 $\mathcal{W}$，存在最优调度 $\mathcal{SCH}^*$，使得：
-
-$$\mathcal{SCH}^* = \arg\min_{\mathcal{SCH}} \mathcal{O}(\mathcal{PERF}(\mathcal{SCH}(\mathcal{W})))$$
-
-**证明**：
-由于调度空间是有限的，且目标函数是连续的，根据极值定理，存在最优解。
-
-## 工作流安全与隐私
-
-### 定义 7.1 (访问控制)
-
-访问控制是一个四元组 $\mathcal{AC} = (U, R, P, M)$，其中：
-- $U$ 是用户集合
-- $R$ 是角色集合
-- $P$ 是权限集合
-- $M$ 是权限矩阵
-
-### 定义 7.2 (数据隐私)
-
-数据隐私是一个三元组 $\mathcal{PRIV} = (D, P, E)$，其中：
-- $D$ 是数据集合
-- $P$ 是隐私策略
-- $E$ 是加密机制
-
-### 定义 7.3 (审计日志)
-
-审计日志是一个四元组 $\mathcal{AUDIT} = (E, T, U, A)$，其中：
-- $E$ 是事件集合
-- $T$ 是时间戳
-- $U$ 是用户标识
-- $A$ 是动作描述
-
-### 定理 7.1 (安全隔离定理)
-
-如果工作流系统实现了适当的访问控制，则：
-
-$$\text{proper\_access\_control}(\mathcal{W}) \Rightarrow \text{security\_isolation}(\mathcal{W})$$
-
-**证明**：
-适当的访问控制确保用户只能访问被授权的资源，从而实现了安全隔离。
-
-## Rust和Go实现示例
-
-### Rust工作流系统实现
+**算法 5.1 (负载均衡任务分配)**:
 
 ```rust
-use serde::{Deserialize, Serialize};
-use std::collections::{HashMap, VecDeque};
-use tokio::sync::{mpsc, Mutex};
-use uuid::Uuid;
-
-// 任务定义
-#[derive(Clone, Serialize, Deserialize)]
-struct Task {
-    id: Uuid,
-    name: String,
-    task_type: TaskType,
-    input_schema: serde_json::Value,
-    output_schema: serde_json::Value,
-    dependencies: Vec<Uuid>,
-    handler: String,
-}
-
-#[derive(Clone, Serialize, Deserialize)]
-enum TaskType {
-    Sequential,
-    Parallel,
-    Conditional,
-    Loop,
-}
-
-// 工作流定义
-#[derive(Clone)]
-struct Workflow {
-    id: Uuid,
-    name: String,
-    tasks: HashMap<Uuid, Task>,
-    dependencies: HashMap<Uuid, Vec<Uuid>>,
-    state: WorkflowState,
-}
-
-#[derive(Clone)]
-enum WorkflowState {
-    Created,
-    Running,
-    Completed,
-    Failed,
-    Paused,
-}
-
-// 工作流实例
-struct WorkflowInstance {
-    id: Uuid,
-    workflow: Workflow,
-    current_state: WorkflowState,
-    execution_history: Vec<ExecutionEvent>,
-    data_context: HashMap<String, serde_json::Value>,
-    task_results: HashMap<Uuid, TaskResult>,
-}
-
-#[derive(Clone)]
-struct ExecutionEvent {
-    timestamp: chrono::DateTime<chrono::Utc>,
-    task_id: Uuid,
-    event_type: EventType,
-    data: serde_json::Value,
-}
-
-#[derive(Clone)]
-enum EventType {
-    Started,
-    Completed,
-    Failed,
-    Paused,
-    Resumed,
-}
-
-#[derive(Clone)]
-struct TaskResult {
-    success: bool,
-    output: Option<serde_json::Value>,
-    error: Option<String>,
-    execution_time: std::time::Duration,
-}
-
-// 工作流引擎
-struct WorkflowEngine {
-    instances: Mutex<HashMap<Uuid, WorkflowInstance>>,
-    task_handlers: HashMap<String, Box<dyn TaskHandler>>,
-    event_sender: mpsc::Sender<ExecutionEvent>,
-}
-
-trait TaskHandler: Send + Sync {
-    async fn execute(&self, input: serde_json::Value) -> Result<serde_json::Value, String>;
-}
-
-impl WorkflowEngine {
-    fn new() -> Self {
-        let (event_sender, _event_receiver) = mpsc::channel(100);
+fn distribute_tasks(workflow: &Workflow, nodes: &[Node]) -> TaskAssignment {
+    let mut assignment = TaskAssignment::new();
+    let mut node_loads = vec![0; nodes.len()];
+    
+    for task in workflow.tasks() {
+        let min_load_idx = node_loads.iter()
+            .enumerate()
+            .min_by_key(|(_, &load)| load)
+            .map(|(idx, _)| idx)
+            .unwrap();
         
-        Self {
-            instances: Mutex::new(HashMap::new()),
-            task_handlers: HashMap::new(),
-            event_sender,
-        }
+        assignment.assign(task, nodes[min_load_idx]);
+        node_loads[min_load_idx] += task.complexity();
     }
-
-    // 注册任务处理器
-    fn register_handler(&mut self, name: String, handler: Box<dyn TaskHandler>) {
-        self.task_handlers.insert(name, handler);
-    }
-
-    // 创建工作流实例
-    async fn create_instance(&self, workflow: Workflow) -> Uuid {
-        let instance_id = Uuid::new_v4();
-        let instance = WorkflowInstance {
-            id: instance_id,
-            workflow: workflow.clone(),
-            current_state: WorkflowState::Created,
-            execution_history: Vec::new(),
-            data_context: HashMap::new(),
-            task_results: HashMap::new(),
-        };
-
-        let mut instances = self.instances.lock().await;
-        instances.insert(instance_id, instance);
-        instance_id
-    }
-
-    // 启动工作流实例
-    async fn start_instance(&self, instance_id: Uuid) -> Result<(), String> {
-        let mut instances = self.instances.lock().await;
-        
-        if let Some(instance) = instances.get_mut(&instance_id) {
-            instance.current_state = WorkflowState::Running;
-            
-            // 找到起始任务（没有依赖的任务）
-            let start_tasks: Vec<Uuid> = instance.workflow.tasks
-                .iter()
-                .filter(|(_, task)| task.dependencies.is_empty())
-                .map(|(id, _)| *id)
-                .collect();
-
-            // 启动起始任务
-            for task_id in start_tasks {
-                self.execute_task(instance_id, task_id).await?;
-            }
-
-            Ok(())
-        } else {
-            Err("Instance not found".to_string())
-        }
-    }
-
-    // 执行任务
-    async fn execute_task(&self, instance_id: Uuid, task_id: Uuid) -> Result<(), String> {
-        let mut instances = self.instances.lock().await;
-        
-        if let Some(instance) = instances.get_mut(&instance_id) {
-            if let Some(task) = instance.workflow.tasks.get(&task_id) {
-                // 检查依赖是否完成
-                for dep_id in &task.dependencies {
-                    if !self.is_task_completed(instance, *dep_id) {
-                        return Err("Dependencies not completed".to_string());
-                    }
-                }
-
-                // 记录开始事件
-                let start_event = ExecutionEvent {
-                    timestamp: chrono::Utc::now(),
-                    task_id,
-                    event_type: EventType::Started,
-                    data: serde_json::Value::Null,
-                };
-                instance.execution_history.push(start_event);
-
-                // 执行任务
-                let start_time = std::time::Instant::now();
-                let result = self.execute_task_handler(task, &instance.data_context).await;
-                let execution_time = start_time.elapsed();
-
-                // 记录结果
-                let task_result = TaskResult {
-                    success: result.is_ok(),
-                    output: result.ok(),
-                    error: result.err(),
-                    execution_time,
-                };
-                instance.task_results.insert(task_id, task_result);
-
-                // 记录完成事件
-                let complete_event = ExecutionEvent {
-                    timestamp: chrono::Utc::now(),
-                    task_id,
-                    event_type: if result.is_ok() { EventType::Completed } else { EventType::Failed },
-                    data: serde_json::Value::Null,
-                };
-                instance.execution_history.push(complete_event);
-
-                // 检查是否可以启动后续任务
-                self.check_and_start_next_tasks(instance_id, task_id).await?;
-
-                Ok(())
-            } else {
-                Err("Task not found".to_string())
-            }
-        } else {
-            Err("Instance not found".to_string())
-        }
-    }
-
-    // 检查任务是否完成
-    fn is_task_completed(&self, instance: &WorkflowInstance, task_id: Uuid) -> bool {
-        instance.task_results.contains_key(&task_id) && 
-        instance.task_results[&task_id].success
-    }
-
-    // 执行任务处理器
-    async fn execute_task_handler(
-        &self, 
-        task: &Task, 
-        context: &HashMap<String, serde_json::Value>
-    ) -> Result<serde_json::Value, String> {
-        if let Some(handler) = self.task_handlers.get(&task.handler) {
-            // 准备输入数据
-            let input = self.prepare_task_input(task, context)?;
-            
-            // 执行处理器
-            handler.execute(input).await
-        } else {
-            Err(format!("Handler not found: {}", task.handler))
-        }
-    }
-
-    // 准备任务输入
-    fn prepare_task_input(
-        &self, 
-        task: &Task, 
-        context: &HashMap<String, serde_json::Value>
-    ) -> Result<serde_json::Value, String> {
-        // 根据输入模式准备数据
-        Ok(serde_json::Value::Object(serde_json::Map::new()))
-    }
-
-    // 检查并启动后续任务
-    async fn check_and_start_next_tasks(&self, instance_id: Uuid, completed_task_id: Uuid) -> Result<(), String> {
-        let mut instances = self.instances.lock().await;
-        
-        if let Some(instance) = instances.get_mut(&instance_id) {
-            // 找到依赖于已完成任务的任务
-            let next_tasks: Vec<Uuid> = instance.workflow.tasks
-                .iter()
-                .filter(|(_, task)| task.dependencies.contains(&completed_task_id))
-                .map(|(id, _)| *id)
-                .collect();
-
-            // 检查这些任务的所有依赖是否都已完成
-            for task_id in next_tasks {
-                if let Some(task) = instance.workflow.tasks.get(&task_id) {
-                    let all_deps_completed = task.dependencies
-                        .iter()
-                        .all(|dep_id| self.is_task_completed(instance, *dep_id));
-
-                    if all_deps_completed {
-                        // 启动任务
-                        drop(instances); // 释放锁
-                        self.execute_task(instance_id, task_id).await?;
-                        instances = self.instances.lock().await; // 重新获取锁
-                    }
-                }
-            }
-
-            Ok(())
-        } else {
-            Err("Instance not found".to_string())
-        }
-    }
-
-    // 获取工作流状态
-    async fn get_instance_status(&self, instance_id: Uuid) -> Option<WorkflowState> {
-        let instances = self.instances.lock().await;
-        instances.get(&instance_id).map(|instance| instance.current_state.clone())
-    }
-}
-
-// 示例任务处理器
-struct PrintTaskHandler;
-
-impl TaskHandler for PrintTaskHandler {
-    async fn execute(&self, input: serde_json::Value) -> Result<serde_json::Value, String> {
-        println!("Executing print task with input: {:?}", input);
-        Ok(serde_json::json!({"message": "Task completed"}))
-    }
-}
-
-struct CalculateTaskHandler;
-
-impl TaskHandler for CalculateTaskHandler {
-    async fn execute(&self, input: serde_json::Value) -> Result<serde_json::Value, String> {
-        if let Some(value) = input.get("value") {
-            if let Some(num) = value.as_f64() {
-                let result = num * 2.0;
-                Ok(serde_json::json!({"result": result}))
-            } else {
-                Err("Invalid input: expected number".to_string())
-            }
-        } else {
-            Err("Missing input value".to_string())
-        }
-    }
-}
-
-// 主函数
-#[tokio::main]
-async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    // 创建工作流引擎
-    let mut engine = WorkflowEngine::new();
-
-    // 注册任务处理器
-    engine.register_handler("print".to_string(), Box::new(PrintTaskHandler));
-    engine.register_handler("calculate".to_string(), Box::new(CalculateTaskHandler));
-
-    // 创建工作流
-    let mut workflow = Workflow {
-        id: Uuid::new_v4(),
-        name: "Example Workflow".to_string(),
-        tasks: HashMap::new(),
-        dependencies: HashMap::new(),
-        state: WorkflowState::Created,
-    };
-
-    // 添加任务
-    let task1 = Task {
-        id: Uuid::new_v4(),
-        name: "Calculate".to_string(),
-        task_type: TaskType::Sequential,
-        input_schema: serde_json::json!({"value": "number"}),
-        output_schema: serde_json::json!({"result": "number"}),
-        dependencies: Vec::new(),
-        handler: "calculate".to_string(),
-    };
-
-    let task2 = Task {
-        id: Uuid::new_v4(),
-        name: "Print Result".to_string(),
-        task_type: TaskType::Sequential,
-        input_schema: serde_json::json!({}),
-        output_schema: serde_json::json!({}),
-        dependencies: vec![task1.id],
-        handler: "print".to_string(),
-    };
-
-    workflow.tasks.insert(task1.id, task1);
-    workflow.tasks.insert(task2.id, task2);
-
-    // 创建工作流实例
-    let instance_id = engine.create_instance(workflow).await;
-
-    // 启动工作流
-    engine.start_instance(instance_id).await?;
-
-    // 等待完成
-    tokio::time::sleep(tokio::time::Duration::from_secs(2)).await;
-
-    // 检查状态
-    if let Some(status) = engine.get_instance_status(instance_id).await {
-        println!("Workflow status: {:?}", status);
-    }
-
-    Ok(())
+    
+    assignment
 }
 ```
 
-### Go工作流系统实现
+## 6. 工作流优化算法
+
+### 6.1 性能优化
+
+**定义 6.1 (工作流性能)** 工作流性能可以定义为：
+
+$$\text{Performance}(\mathcal{W}) = \frac{\text{Throughput}(\mathcal{W})}{\text{Latency}(\mathcal{W}) \times \text{Resource}(\mathcal{W})}$$
+
+### 6.2 调度算法
+
+**算法 6.1 (最优调度算法)**:
 
 ```go
-package main
+func optimalScheduling(workflow *Workflow) *Schedule {
+    // 使用动态规划计算最优调度
+    dp := make([][]int, len(workflow.Tasks))
+    for i := range dp {
+        dp[i] = make([]int, len(workflow.Nodes))
+    }
+    
+    // 初始化
+    for j := range workflow.Nodes {
+        dp[0][j] = workflow.Tasks[0].ExecutionTime(workflow.Nodes[j])
+    }
+    
+    // 动态规划
+    for i := 1; i < len(workflow.Tasks); i++ {
+        for j := range workflow.Nodes {
+            minTime := math.MaxInt32
+            for k := range workflow.Nodes {
+                if workflow.Tasks[i-1].CanExecuteOn(workflow.Nodes[k]) {
+                    time := dp[i-1][k] + workflow.Tasks[i].ExecutionTime(workflow.Nodes[j])
+                    if time < minTime {
+                        minTime = time
+                    }
+                }
+            }
+            dp[i][j] = minTime
+        }
+    }
+    
+    return reconstructSchedule(dp, workflow)
+}
+```
+
+### 6.3 资源优化
+
+**定理 6.1 (资源优化定理)** 对于任意工作流，存在一个资源分配方案使得总成本最小化。
+
+**证明**：
+
+1. 将资源分配问题建模为线性规划问题
+2. 使用单纯形法求解最优解
+3. 证明解的存在性和唯一性
+
+## 7. 工作流安全与隐私
+
+### 7.1 访问控制模型
+
+**定义 7.1 (工作流访问控制)** 工作流访问控制是一个四元组 $\mathcal{A}\mathcal{C} = (U, R, P, \text{permit})$，其中：
+
+- $U$ 是用户集合
+- $R$ 是角色集合
+- $P$ 是权限集合
+- $\text{permit}: U \times R \times P \rightarrow \mathbb{B}$ 是权限函数
+
+### 7.2 数据隐私保护
+
+**定义 7.2 (数据隐私)** 工作流满足数据隐私当且仅当：
+
+$$\forall u \in U, d \in D: \text{access}(u, d) \rightarrow \text{authorized}(u, d) \land \text{encrypted}(d)$$
+
+### 7.3 安全证明
+
+**定理 7.1 (工作流安全定理)** 如果工作流系统满足以下条件，则系统是安全的：
+
+1. 所有用户访问都经过认证
+2. 所有数据都经过加密
+3. 所有操作都经过授权
+4. 所有事件都经过审计
+
+## 8. Rust和Go实现示例
+
+### 8.1 Rust工作流引擎
+
+```rust
+use std::collections::HashMap;
+use std::sync::{Arc, Mutex};
+use tokio::sync::mpsc;
+
+#[derive(Debug, Clone)]
+pub struct WorkflowState {
+    pub current_state: String,
+    pub data: HashMap<String, serde_json::Value>,
+    pub roles: Vec<String>,
+}
+
+#[derive(Debug)]
+pub struct WorkflowEngine {
+    states: Arc<Mutex<HashMap<String, StateDefinition>>>,
+    transitions: Arc<Mutex<HashMap<String, Vec<Transition>>>>,
+    tx: mpsc::Sender<WorkflowEvent>,
+}
+
+impl WorkflowEngine {
+    pub async fn execute_workflow(
+        &self,
+        workflow_id: &str,
+        initial_data: HashMap<String, serde_json::Value>,
+    ) -> Result<WorkflowState, WorkflowError> {
+        let mut state = WorkflowState {
+            current_state: "start".to_string(),
+            data: initial_data,
+            roles: vec![],
+        };
+
+        loop {
+            let event = self.process_state(&state).await?;
+            
+            match event {
+                WorkflowEvent::StateTransition(new_state) => {
+                    state.current_state = new_state;
+                }
+                WorkflowEvent::WorkflowComplete => {
+                    break;
+                }
+                WorkflowEvent::Error(e) => {
+                    return Err(e);
+                }
+            }
+        }
+
+        Ok(state)
+    }
+
+    async fn process_state(&self, state: &WorkflowState) -> Result<WorkflowEvent, WorkflowError> {
+        let states = self.states.lock().unwrap();
+        let state_def = states.get(&state.current_state)
+            .ok_or(WorkflowError::InvalidState)?;
+
+        // 检查前置条件
+        if !self.evaluate_conditions(&state_def.preconditions, &state.data)? {
+            return Err(WorkflowError::PreconditionFailed);
+        }
+
+        // 执行活动
+        let result = self.execute_activities(&state_def.activities, state).await?;
+
+        // 确定下一个状态
+        let next_state = self.determine_next_state(&state_def.transitions, &result)?;
+
+        if next_state == "end" {
+            Ok(WorkflowEvent::WorkflowComplete)
+        } else {
+            Ok(WorkflowEvent::StateTransition(next_state))
+        }
+    }
+}
+```
+
+### 8.2 Go工作流引擎
+
+```go
+package workflow
 
 import (
     "context"
     "encoding/json"
     "fmt"
-    "log"
     "sync"
     "time"
-
-    "github.com/google/uuid"
 )
 
-// Task 任务定义
-type Task struct {
-    ID           string          `json:"id"`
-    Name         string          `json:"name"`
-    Type         TaskType        `json:"type"`
-    InputSchema  json.RawMessage `json:"input_schema"`
-    OutputSchema json.RawMessage `json:"output_schema"`
-    Dependencies []string        `json:"dependencies"`
-    Handler      string          `json:"handler"`
+type WorkflowState struct {
+    CurrentState string                 `json:"current_state"`
+    Data         map[string]interface{} `json:"data"`
+    Roles        []string              `json:"roles"`
+    Timestamp    time.Time             `json:"timestamp"`
 }
 
-type TaskType string
-
-const (
-    TaskTypeSequential   TaskType = "sequential"
-    TaskTypeParallel     TaskType = "parallel"
-    TaskTypeConditional  TaskType = "conditional"
-    TaskTypeLoop         TaskType = "loop"
-)
-
-// Workflow 工作流定义
-type Workflow struct {
-    ID           string            `json:"id"`
-    Name         string            `json:"name"`
-    Tasks        map[string]*Task  `json:"tasks"`
-    Dependencies map[string][]string `json:"dependencies"`
-    State        WorkflowState     `json:"state"`
-}
-
-type WorkflowState string
-
-const (
-    WorkflowStateCreated   WorkflowState = "created"
-    WorkflowStateRunning   WorkflowState = "running"
-    WorkflowStateCompleted WorkflowState = "completed"
-    WorkflowStateFailed    WorkflowState = "failed"
-    WorkflowStatePaused    WorkflowState = "paused"
-)
-
-// WorkflowInstance 工作流实例
-type WorkflowInstance struct {
-    ID              string                    `json:"id"`
-    Workflow        *Workflow                 `json:"workflow"`
-    CurrentState    WorkflowState             `json:"current_state"`
-    ExecutionHistory []*ExecutionEvent        `json:"execution_history"`
-    DataContext     map[string]interface{}    `json:"data_context"`
-    TaskResults     map[string]*TaskResult    `json:"task_results"`
-    mu              sync.RWMutex
-}
-
-// ExecutionEvent 执行事件
-type ExecutionEvent struct {
-    Timestamp time.Time       `json:"timestamp"`
-    TaskID    string          `json:"task_id"`
-    EventType EventType       `json:"event_type"`
-    Data      json.RawMessage `json:"data"`
-}
-
-type EventType string
-
-const (
-    EventTypeStarted   EventType = "started"
-    EventTypeCompleted EventType = "completed"
-    EventTypeFailed    EventType = "failed"
-    EventTypePaused    EventType = "paused"
-    EventTypeResumed   EventType = "resumed"
-)
-
-// TaskResult 任务结果
-type TaskResult struct {
-    Success       bool            `json:"success"`
-    Output        json.RawMessage `json:"output,omitempty"`
-    Error         string          `json:"error,omitempty"`
-    ExecutionTime time.Duration   `json:"execution_time"`
-}
-
-// TaskHandler 任务处理器接口
-type TaskHandler interface {
-    Execute(ctx context.Context, input json.RawMessage) (json.RawMessage, error)
-}
-
-// WorkflowEngine 工作流引擎
 type WorkflowEngine struct {
-    instances     map[string]*WorkflowInstance
-    taskHandlers  map[string]TaskHandler
-    mu            sync.RWMutex
+    states      map[string]*StateDefinition
+    transitions map[string][]*Transition
+    mu          sync.RWMutex
+    eventChan   chan WorkflowEvent
 }
 
-// NewWorkflowEngine 创建新的工作流引擎
-func NewWorkflowEngine() *WorkflowEngine {
-    return &WorkflowEngine{
-        instances:    make(map[string]*WorkflowInstance),
-        taskHandlers: make(map[string]TaskHandler),
-    }
-}
-
-// RegisterHandler 注册任务处理器
-func (e *WorkflowEngine) RegisterHandler(name string, handler TaskHandler) {
-    e.mu.Lock()
-    defer e.mu.Unlock()
-    e.taskHandlers[name] = handler
-}
-
-// CreateInstance 创建工作流实例
-func (e *WorkflowEngine) CreateInstance(workflow *Workflow) string {
-    e.mu.Lock()
-    defer e.mu.Unlock()
-
-    instanceID := uuid.New().String()
-    instance := &WorkflowInstance{
-        ID:              instanceID,
-        Workflow:        workflow,
-        CurrentState:    WorkflowStateCreated,
-        ExecutionHistory: make([]*ExecutionEvent, 0),
-        DataContext:     make(map[string]interface{}),
-        TaskResults:     make(map[string]*TaskResult),
+func (e *WorkflowEngine) ExecuteWorkflow(
+    ctx context.Context,
+    workflowID string,
+    initialData map[string]interface{},
+) (*WorkflowState, error) {
+    state := &WorkflowState{
+        CurrentState: "start",
+        Data:         initialData,
+        Roles:        []string{},
+        Timestamp:    time.Now(),
     }
 
-    e.instances[instanceID] = instance
-    log.Printf("Created workflow instance: %s", instanceID)
-    return instanceID
-}
+    for {
+        select {
+        case <-ctx.Done():
+            return nil, ctx.Err()
+        default:
+            event, err := e.processState(ctx, state)
+            if err != nil {
+                return nil, fmt.Errorf("failed to process state: %w", err)
+            }
 
-// StartInstance 启动工作流实例
-func (e *WorkflowEngine) StartInstance(instanceID string) error {
-    e.mu.RLock()
-    instance, exists := e.instances[instanceID]
-    e.mu.RUnlock()
-
-    if !exists {
-        return fmt.Errorf("instance not found: %s", instanceID)
-    }
-
-    instance.mu.Lock()
-    instance.CurrentState = WorkflowStateRunning
-    instance.mu.Unlock()
-
-    // 找到起始任务（没有依赖的任务）
-    var startTasks []string
-    for _, task := range instance.Workflow.Tasks {
-        if len(task.Dependencies) == 0 {
-            startTasks = append(startTasks, task.ID)
-        }
-    }
-
-    // 启动起始任务
-    for _, taskID := range startTasks {
-        if err := e.executeTask(instanceID, taskID); err != nil {
-            return fmt.Errorf("failed to execute start task %s: %v", taskID, err)
-        }
-    }
-
-    log.Printf("Started workflow instance: %s", instanceID)
-    return nil
-}
-
-// executeTask 执行任务
-func (e *WorkflowEngine) executeTask(instanceID, taskID string) error {
-    e.mu.RLock()
-    instance, exists := e.instances[instanceID]
-    e.mu.RUnlock()
-
-    if !exists {
-        return fmt.Errorf("instance not found: %s", instanceID)
-    }
-
-    instance.mu.Lock()
-    task, taskExists := instance.Workflow.Tasks[taskID]
-    instance.mu.Unlock()
-
-    if !taskExists {
-        return fmt.Errorf("task not found: %s", taskID)
-    }
-
-    // 检查依赖是否完成
-    for _, depID := range task.Dependencies {
-        if !e.isTaskCompleted(instance, depID) {
-            return fmt.Errorf("dependencies not completed for task %s", taskID)
-        }
-    }
-
-    // 记录开始事件
-    startEvent := &ExecutionEvent{
-        Timestamp: time.Now(),
-        TaskID:    taskID,
-        EventType: EventTypeStarted,
-        Data:      json.RawMessage("{}"),
-    }
-    e.addExecutionEvent(instance, startEvent)
-
-    // 执行任务
-    startTime := time.Now()
-    result, err := e.executeTaskHandler(task, instance.DataContext)
-    executionTime := time.Since(startTime)
-
-    // 记录结果
-    taskResult := &TaskResult{
-        Success:       err == nil,
-        Output:        result,
-        Error:         "",
-        ExecutionTime: executionTime,
-    }
-    if err != nil {
-        taskResult.Error = err.Error()
-    }
-
-    instance.mu.Lock()
-    instance.TaskResults[taskID] = taskResult
-    instance.mu.Unlock()
-
-    // 记录完成事件
-    completeEvent := &ExecutionEvent{
-        Timestamp: time.Now(),
-        TaskID:    taskID,
-        EventType: EventTypeCompleted,
-        Data:      json.RawMessage("{}"),
-    }
-    if err != nil {
-        completeEvent.EventType = EventTypeFailed
-    }
-    e.addExecutionEvent(instance, completeEvent)
-
-    // 检查是否可以启动后续任务
-    if err := e.checkAndStartNextTasks(instanceID, taskID); err != nil {
-        return fmt.Errorf("failed to start next tasks: %v", err)
-    }
-
-    return nil
-}
-
-// isTaskCompleted 检查任务是否完成
-func (e *WorkflowEngine) isTaskCompleted(instance *WorkflowInstance, taskID string) bool {
-    instance.mu.RLock()
-    defer instance.mu.RUnlock()
-
-    if result, exists := instance.TaskResults[taskID]; exists {
-        return result.Success
-    }
-    return false
-}
-
-// executeTaskHandler 执行任务处理器
-func (e *WorkflowEngine) executeTaskHandler(task *Task, context map[string]interface{}) (json.RawMessage, error) {
-    e.mu.RLock()
-    handler, exists := e.taskHandlers[task.Handler]
-    e.mu.RUnlock()
-
-    if !exists {
-        return nil, fmt.Errorf("handler not found: %s", task.Handler)
-    }
-
-    // 准备输入数据
-    input, err := e.prepareTaskInput(task, context)
-    if err != nil {
-        return nil, fmt.Errorf("failed to prepare task input: %v", err)
-    }
-
-    // 执行处理器
-    ctx := context.Background()
-    return handler.Execute(ctx, input)
-}
-
-// prepareTaskInput 准备任务输入
-func (e *WorkflowEngine) prepareTaskInput(task *Task, context map[string]interface{}) (json.RawMessage, error) {
-    // 根据输入模式准备数据
-    return json.Marshal(context)
-}
-
-// addExecutionEvent 添加执行事件
-func (e *WorkflowEngine) addExecutionEvent(instance *WorkflowInstance, event *ExecutionEvent) {
-    instance.mu.Lock()
-    defer instance.mu.Unlock()
-    instance.ExecutionHistory = append(instance.ExecutionHistory, event)
-}
-
-// checkAndStartNextTasks 检查并启动后续任务
-func (e *WorkflowEngine) checkAndStartNextTasks(instanceID, completedTaskID string) error {
-    e.mu.RLock()
-    instance, exists := e.instances[instanceID]
-    e.mu.RUnlock()
-
-    if !exists {
-        return fmt.Errorf("instance not found: %s", instanceID)
-    }
-
-    // 找到依赖于已完成任务的任务
-    var nextTasks []string
-    instance.mu.RLock()
-    for _, task := range instance.Workflow.Tasks {
-        for _, depID := range task.Dependencies {
-            if depID == completedTaskID {
-                nextTasks = append(nextTasks, task.ID)
-                break
+            switch event.Type {
+            case EventTypeStateTransition:
+                state.CurrentState = event.Data.(string)
+                state.Timestamp = time.Now()
+            case EventTypeWorkflowComplete:
+                return state, nil
+            case EventTypeError:
+                return nil, event.Data.(error)
             }
         }
     }
-    instance.mu.RUnlock()
-
-    // 检查这些任务的所有依赖是否都已完成
-    for _, taskID := range nextTasks {
-        instance.mu.RLock()
-        task := instance.Workflow.Tasks[taskID]
-        instance.mu.RUnlock()
-
-        allDepsCompleted := true
-        for _, depID := range task.Dependencies {
-            if !e.isTaskCompleted(instance, depID) {
-                allDepsCompleted = false
-                break
-            }
-        }
-
-        if allDepsCompleted {
-            // 启动任务
-            if err := e.executeTask(instanceID, taskID); err != nil {
-                return fmt.Errorf("failed to execute next task %s: %v", taskID, err)
-            }
-        }
-    }
-
-    return nil
 }
 
-// GetInstanceStatus 获取工作流状态
-func (e *WorkflowEngine) GetInstanceStatus(instanceID string) (WorkflowState, error) {
+func (e *WorkflowEngine) processState(
+    ctx context.Context,
+    state *WorkflowState,
+) (*WorkflowEvent, error) {
     e.mu.RLock()
-    defer e.mu.RUnlock()
+    stateDef, exists := e.states[state.CurrentState]
+    e.mu.RUnlock()
 
-    if instance, exists := e.instances[instanceID]; exists {
-        instance.mu.RLock()
-        defer instance.mu.RUnlock()
-        return instance.CurrentState, nil
-    }
-    return "", fmt.Errorf("instance not found: %s", instanceID)
-}
-
-// 示例任务处理器
-type PrintTaskHandler struct{}
-
-func (h *PrintTaskHandler) Execute(ctx context.Context, input json.RawMessage) (json.RawMessage, error) {
-    log.Printf("Executing print task with input: %s", string(input))
-    result := map[string]string{"message": "Task completed"}
-    return json.Marshal(result)
-}
-
-type CalculateTaskHandler struct{}
-
-func (h *CalculateTaskHandler) Execute(ctx context.Context, input json.RawMessage) (json.RawMessage, error) {
-    var inputData map[string]interface{}
-    if err := json.Unmarshal(input, &inputData); err != nil {
-        return nil, fmt.Errorf("invalid input: %v", err)
+    if !exists {
+        return nil, fmt.Errorf("invalid state: %s", state.CurrentState)
     }
 
-    if value, exists := inputData["value"]; exists {
-        if num, ok := value.(float64); ok {
-            result := num * 2.0
-            output := map[string]float64{"result": result}
-            return json.Marshal(output)
+    // 检查前置条件
+    if !e.evaluateConditions(stateDef.Preconditions, state.Data) {
+        return &WorkflowEvent{
+            Type: EventTypeError,
+            Data: fmt.Errorf("precondition failed for state: %s", state.CurrentState),
+        }, nil
+    }
+
+    // 执行活动
+    result, err := e.executeActivities(ctx, stateDef.Activities, state)
+    if err != nil {
+        return &WorkflowEvent{
+            Type: EventTypeError,
+            Data: err,
+        }, nil
+    }
+
+    // 确定下一个状态
+    nextState, err := e.determineNextState(stateDef.Transitions, result)
+    if err != nil {
+        return &WorkflowEvent{
+            Type: EventTypeError,
+            Data: err,
+        }, nil
+    }
+
+    if nextState == "end" {
+        return &WorkflowEvent{
+            Type: EventTypeWorkflowComplete,
+            Data: nil,
+        }, nil
+    }
+
+    return &WorkflowEvent{
+        Type: EventTypeStateTransition,
+        Data: nextState,
+    }, nil
+}
+
+func (e *WorkflowEngine) evaluateConditions(
+    conditions []Condition,
+    data map[string]interface{},
+) bool {
+    for _, condition := range conditions {
+        if !condition.Evaluate(data) {
+            return false
         }
-        return nil, fmt.Errorf("invalid input: expected number")
     }
-    return nil, fmt.Errorf("missing input value")
+    return true
 }
 
-// 主函数
-func main() {
-    // 创建工作流引擎
-    engine := NewWorkflowEngine()
+func (e *WorkflowEngine) executeActivities(
+    ctx context.Context,
+    activities []Activity,
+    state *WorkflowState,
+) (map[string]interface{}, error) {
+    results := make(map[string]interface{})
 
-    // 注册任务处理器
-    engine.RegisterHandler("print", &PrintTaskHandler{})
-    engine.RegisterHandler("calculate", &CalculateTaskHandler{})
-
-    // 创建工作流
-    workflow := &Workflow{
-        ID:           uuid.New().String(),
-        Name:         "Example Workflow",
-        Tasks:        make(map[string]*Task),
-        Dependencies: make(map[string][]string),
-        State:        WorkflowStateCreated,
+    for _, activity := range activities {
+        select {
+        case <-ctx.Done():
+            return nil, ctx.Err()
+        default:
+            result, err := activity.Execute(ctx, state.Data)
+            if err != nil {
+                return nil, fmt.Errorf("activity execution failed: %w", err)
+            }
+            results[activity.ID] = result
+        }
     }
 
-    // 添加任务
-    task1 := &Task{
-        ID:           uuid.New().String(),
-        Name:         "Calculate",
-        Type:         TaskTypeSequential,
-        InputSchema:  json.RawMessage(`{"value": "number"}`),
-        OutputSchema: json.RawMessage(`{"result": "number"}`),
-        Dependencies: []string{},
-        Handler:      "calculate",
-    }
-
-    task2 := &Task{
-        ID:           uuid.New().String(),
-        Name:         "Print Result",
-        Type:         TaskTypeSequential,
-        InputSchema:  json.RawMessage(`{}`),
-        OutputSchema: json.RawMessage(`{}`),
-        Dependencies: []string{task1.ID},
-        Handler:      "print",
-    }
-
-    workflow.Tasks[task1.ID] = task1
-    workflow.Tasks[task2.ID] = task2
-
-    // 创建工作流实例
-    instanceID := engine.CreateInstance(workflow)
-
-    // 启动工作流
-    if err := engine.StartInstance(instanceID); err != nil {
-        log.Fatal(err)
-    }
-
-    // 等待完成
-    time.Sleep(2 * time.Second)
-
-    // 检查状态
-    if status, err := engine.GetInstanceStatus(instanceID); err != nil {
-        log.Printf("Failed to get status: %v", err)
-    } else {
-        log.Printf("Workflow status: %s", status)
-    }
-
-    log.Println("Workflow system initialized successfully")
+    return results, nil
 }
 ```
 
-## 总结与展望
+## 9. 总结与展望
 
-本文从形式化数学的角度分析了工作流系统，建立了严格的数学模型，并通过Rust和Go语言提供了实现示例。主要贡献包括：
+### 9.1 主要贡献
 
-1. **形式化基础**：建立了工作流系统的严格数学定义
-2. **模式分析**：定义了顺序、并行、条件、循环等基本模式
-3. **状态机模型**：建立了工作流状态机的形式化模型
-4. **分布式协调**：分析了分布式工作流的协调机制
-5. **优化算法**：提供了工作流性能优化的数学框架
-6. **安全机制**：建立了访问控制和数据隐私的形式化模型
-7. **实现示例**：提供了完整的Rust和Go实现
+1. **形式化模型**：建立了工作流系统的完整形式化模型，包括状态机、模式定义、分布式协调等
+2. **数学证明**：提供了工作流系统性质的形式化证明，确保系统的正确性和一致性
+3. **算法设计**：设计了工作流优化算法，包括调度、负载均衡、资源分配等
+4. **安全模型**：建立了工作流系统的安全模型，包括访问控制、数据隐私等
+5. **实现示例**：提供了Rust和Go语言的完整实现示例
 
-未来研究方向包括：
+### 9.2 未来研究方向
 
-1. **智能工作流**：基于机器学习的工作流自动优化
-2. **量子工作流**：量子计算在工作流中的应用
-3. **区块链工作流**：基于区块链的去中心化工作流
-4. **自适应工作流**：根据环境变化自动调整的工作流
+1. **机器学习集成**：将机器学习技术集成到工作流系统中，实现智能调度和优化
+2. **区块链应用**：探索区块链技术在工作流系统中的应用，提高透明度和可信度
+3. **边缘计算**：研究边缘计算环境下的工作流系统，适应IoT场景的特殊需求
+4. **形式化验证**：开发更强大的形式化验证工具，确保工作流系统的正确性
+
+### 9.3 应用前景
+
+工作流系统的形式化分析为IoT行业提供了重要的理论基础和实践指导，将在以下领域发挥重要作用：
+
+1. **智能制造**：生产流程的自动化和优化
+2. **智慧城市**：城市服务的协调和管理
+3. **物联网平台**：设备管理和数据处理
+4. **边缘计算**：分布式计算资源的协调
 
 ---
 
 *最后更新: 2024-12-19*
 *版本: 1.0*
-*状态: 已完成* 
+*状态: 已完成*

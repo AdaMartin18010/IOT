@@ -176,6 +176,7 @@ IoT设备层次可建模为：
 $$\mathcal{H} = \{L_1, L_2, L_3, L_4\}$$
 
 其中：
+
 - $L_1$: 受限终端设备 (Constrained End Devices)
 - $L_2$: 标准终端设备 (Standard End Devices)
 - $L_3$: 边缘网关设备 (Edge Gateway Devices)
@@ -241,6 +242,7 @@ $$\text{Security}(\mathcal{C}) = \text{Security}(\mathcal{R}) \oplus \text{Secur
 $$\mathcal{S}_{\text{Industrial}} = (\text{Sensors}, \text{Controllers}, \text{Actuators}, \text{Network})$$
 
 **Rust实现**:
+
 ```rust
 // 传感器数据采集
 #[derive(Debug, Clone)]
@@ -292,6 +294,7 @@ $$\text{Correctness}(\text{Controller}) \land \text{Safety}(\text{Controller}) \
 $$\mathcal{S}_{\text{Home}} = (\text{Devices}, \text{Gateway}, \text{Cloud}, \text{User})$$
 
 **Go实现**:
+
 ```go
 // 设备抽象
 type Device interface {
@@ -347,7 +350,7 @@ $$\text{Isolation}(\text{Plugins}) \land \text{Reliability}(\text{Gateway}) \imp
 
 1. **形式化基础**: Rust+WASM组合具有坚实的理论基础，通过形式化方法可以证明其安全性和性能特性。
 
-2. **技术优势**: 
+2. **技术优势**:
    - Rust提供编译时内存安全和并发安全
    - WebAssembly提供运行时隔离和跨平台一致性
    - 组合使用实现双重安全保障
@@ -370,4 +373,4 @@ $$\lim_{t \to \infty} \text{Adoption}(\text{Rust+WASM}, \text{IoT}) = \text{Main
 
 *文档版本: 1.0*
 *最后更新: 2024-12-19*
-*状态: 已完成* 
+*状态: 已完成*

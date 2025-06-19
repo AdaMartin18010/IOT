@@ -246,7 +246,7 @@ pub struct PredictionModel {
 内存效率定义为：
 $$\eta = \frac{\text{有效内存使用}}{\text{总内存分配}}$$
 
-**算法 2.1 (智能内存池算法)**
+**算法 2.1 (智能内存池算法)**:
 
 ```rust
 pub struct SmartMemoryPool {
@@ -452,7 +452,7 @@ impl FragmentationMonitor {
 - $D$ 是目标数据位置
 - $T$ 是传输方式
 
-**算法 2.2 (零拷贝数据传输算法)**
+**算法 2.2 (零拷贝数据传输算法)**:
 
 ```rust
 pub struct ZeroCopyTransmitter {
@@ -666,7 +666,7 @@ impl DMAChannel {
 并发度定义为：
 $$\text{Concurrency} = \frac{\text{并发执行的任务数}}{\text{总任务数}}$$
 
-**算法 3.1 (无锁并发算法)**
+**算法 3.1 (无锁并发算法)**:
 
 ```rust
 pub struct LockFreeConcurrency {
@@ -922,7 +922,7 @@ struct Node<K, V> {
 - $F$ 是Future集合
 - $C$ 是协程集合
 
-**算法 3.2 (异步任务调度算法)**
+**算法 3.2 (异步任务调度算法)**:
 
 ```rust
 pub struct AsyncTaskScheduler {

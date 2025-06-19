@@ -2,16 +2,37 @@
 
 ## 目录
 
-1. [引言](#1-引言)
-2. [区块链IoT系统形式化模型](#2-区块链iot系统形式化模型)
-3. [IoT区块链共识机制](#3-iot区块链共识机制)
-4. [智能合约在IoT中的应用](#4-智能合约在iot中的应用)
-5. [IoT区块链安全机制](#5-iot区块链安全机制)
-6. [性能优化与扩展性](#6-性能优化与扩展性)
-7. [Rust实现示例](#7-rust实现示例)
-8. [实际应用案例分析](#8-实际应用案例分析)
-9. [未来发展趋势](#9-未来发展趋势)
-10. [结论](#10-结论)
+- [区块链技术在IoT中的形式化分析与应用](#区块链技术在iot中的形式化分析与应用)
+  - [目录](#目录)
+  - [1. 引言](#1-引言)
+    - [1.1 区块链与IoT的融合背景](#11-区块链与iot的融合背景)
+    - [1.2 核心价值主张](#12-核心价值主张)
+  - [2. 区块链IoT系统形式化模型](#2-区块链iot系统形式化模型)
+    - [2.1 IoT设备状态模型](#21-iot设备状态模型)
+    - [2.2 区块链状态转换函数](#22-区块链状态转换函数)
+    - [2.3 IoT数据验证模型](#23-iot数据验证模型)
+  - [3. IoT区块链共识机制](#3-iot区块链共识机制)
+    - [3.1 轻量级共识协议](#31-轻量级共识协议)
+    - [3.2 拜占庭容错分析](#32-拜占庭容错分析)
+  - [4. 智能合约在IoT中的应用](#4-智能合约在iot中的应用)
+    - [4.1 IoT智能合约模型](#41-iot智能合约模型)
+    - [4.2 自动化设备管理合约](#42-自动化设备管理合约)
+  - [5. IoT区块链安全机制](#5-iot区块链安全机制)
+    - [5.1 设备身份认证](#51-设备身份认证)
+    - [5.2 数据隐私保护](#52-数据隐私保护)
+  - [6. 性能优化与扩展性](#6-性能优化与扩展性)
+    - [6.1 分片技术](#61-分片技术)
+    - [6.2 状态通道](#62-状态通道)
+  - [7. Rust实现示例](#7-rust实现示例)
+    - [7.1 IoT区块链核心结构](#71-iot区块链核心结构)
+    - [7.2 智能合约执行引擎](#72-智能合约执行引擎)
+  - [8. 实际应用案例分析](#8-实际应用案例分析)
+    - [8.1 智能城市IoT区块链](#81-智能城市iot区块链)
+    - [8.2 工业IoT区块链](#82-工业iot区块链)
+  - [9. 未来发展趋势](#9-未来发展趋势)
+    - [9.1 技术演进方向](#91-技术演进方向)
+    - [9.2 标准化发展](#92-标准化发展)
+  - [10. 结论](#10-结论)
 
 ## 1. 引言
 
@@ -110,10 +131,12 @@ $$s_n = \delta^*(s_0, TX) = \delta(\delta(...\delta(s_0, tx_1), ...), tx_n)$$
 
 **定义 3.2** (轻量级PoS)：轻量级权益证明协议定义为：
 
-$$consensus(d_i, block) = \begin{cases}
+$$
+consensus(d_i, block) = \begin{cases}
 true & \text{if } stake(d_i) \geq threshold \\
 false & \text{otherwise}
-\end{cases}$$
+\end{cases}
+$$
 
 其中 $stake(d_i)$ 是设备 $d_i$ 的权益值，$threshold$ 是共识阈值。
 
@@ -135,10 +158,12 @@ false & \text{otherwise}
 
 **定义 4.2** (合约执行语义)：智能合约执行函数定义为：
 
-$$execute(sc, state) = \begin{cases}
+$$
+execute(sc, state) = \begin{cases}
 action & \text{if } evaluate(trigger, state) \land evaluate(condition, state) \\
 \emptyset & \text{otherwise}
-\end{cases}$$
+\end{cases}
+$$
 
 ### 4.2 自动化设备管理合约
 
@@ -191,6 +216,7 @@ impl IoTDeviceContract {
 $$ID_i = (public_key_i, certificate_i, device_hash_i)$$
 
 其中：
+
 - $public_key_i$ 是设备公钥
 - $certificate_i$ 是设备证书
 - $device_hash_i = H(hardware_id_i || firmware_hash_i)$
@@ -234,6 +260,7 @@ $$channel(d_i, d_j) = (balance_i, balance_j, state_hash, timeout)$$
 $$update_channel(channel, tx) = channel'$$
 
 其中 $channel'$ 满足：
+
 - $channel'.state_hash = H(channel.state_hash || tx)$
 - $channel'.balance_i' = channel.balance_i - tx.amount$
 - $channel'.balance_j' = channel.balance_j + tx.amount$
@@ -573,12 +600,14 @@ impl ContractEngine {
 **应用场景**：智能城市中的交通监控、环境监测、能源管理等IoT设备数据管理。
 
 **架构设计**：
+
 - 设备层：传感器、摄像头、控制器等IoT设备
 - 网络层：5G/6G网络、边缘计算节点
 - 区块链层：分布式账本、智能合约
 - 应用层：城市管理应用、数据分析平台
 
 **技术特点**：
+
 1. 高并发处理：支持大量设备同时接入
 2. 实时响应：毫秒级数据上链和合约执行
 3. 隐私保护：敏感数据加密存储
@@ -589,6 +618,7 @@ impl ContractEngine {
 **应用场景**：制造业设备监控、供应链管理、质量控制等。
 
 **核心功能**：
+
 1. 设备生命周期管理
 2. 供应链追溯
 3. 质量数据不可篡改

@@ -150,6 +150,7 @@ pub struct RequestVoteResponse {
 **定理 2.1.1 (Raft安全性)** Raft算法保证在任何时刻最多只有一个领导者。
 
 **证明：**
+
 1. 每个任期最多只能有一个领导者
 2. 如果两个候选者在同一任期获得多数票，则它们的日志必须相同
 3. 根据日志匹配属性，不可能有两个不同的领导者
@@ -389,6 +390,7 @@ impl PBFTNode {
 $$G = (V, E, W)$$
 
 其中：
+
 - $V$ 是节点集合（设备）
 - $E$ 是边集合（连接）
 - $W: E \rightarrow \mathbb{R}^+$ 是权重函数
@@ -537,6 +539,7 @@ impl NetworkGraph {
 **定理 3.1.1 (Dijkstra正确性)** Dijkstra算法找到从起点到终点的最短路径。
 
 **证明：**
+
 1. 算法维护距离数组，初始时起点距离为0，其他为无穷大
 2. 每次选择距离最小的未访问节点
 3. 更新该节点的邻居距离
@@ -836,6 +839,7 @@ impl ConsistentHashRing {
 **定理 4.1.1 (一致性哈希平衡性)** 一致性哈希算法在节点数量足够大时，数据分布趋于均匀。
 
 **证明：**
+
 1. 虚拟节点增加了哈希环的密度
 2. 当虚拟节点数量足够大时，每个真实节点在环上的分布趋于均匀
 3. 因此数据分布也趋于均匀。$\square$
@@ -968,6 +972,7 @@ impl DistributedCacheNode {
 **定理 5.1.1 (Raft时间复杂度)** Raft算法的领导者选举时间复杂度为 $O(n)$，其中 $n$ 是节点数量。
 
 **证明：**
+
 1. 每个节点最多发送一次RequestVote RPC
 2. 每个节点最多接收 $n-1$ 个RequestVote RPC
 3. 总时间复杂度为 $O(n)$。$\square$
@@ -975,6 +980,7 @@ impl DistributedCacheNode {
 **定理 5.1.2 (Dijkstra时间复杂度)** Dijkstra算法的时间复杂度为 $O((V + E) \log V)$，其中 $V$ 是节点数，$E$ 是边数。
 
 **证明：**
+
 1. 使用优先队列，每次操作时间复杂度为 $O(\log V)$
 2. 最多进行 $V$ 次出队操作
 3. 最多进行 $E$ 次入队操作
@@ -985,6 +991,7 @@ impl DistributedCacheNode {
 **定理 5.2.1 (一致性哈希空间复杂度)** 一致性哈希算法的空间复杂度为 $O(n \times v)$，其中 $n$ 是节点数，$v$ 是虚拟节点数。
 
 **证明：**
+
 1. 每个真实节点创建 $v$ 个虚拟节点
 2. 总共需要存储 $n \times v$ 个哈希映射
 3. 空间复杂度为 $O(n \times v)$。$\square$
@@ -999,6 +1006,7 @@ impl DistributedCacheNode {
 4. **数据算法**：一致性哈希、分布式缓存
 
 每个算法都提供了：
+
 - 形式化定义和数学分析
 - 详细的Rust实现
 - 复杂度分析和正确性证明
@@ -1008,7 +1016,8 @@ impl DistributedCacheNode {
 ---
 
 **参考文献：**
+
 1. Diego Ongaro and John Ousterhout. "In Search of an Understandable Consensus Algorithm"
 2. Miguel Castro and Barbara Liskov. "Practical Byzantine Fault Tolerance"
 3. Edsger W. Dijkstra. "A Note on Two Problems in Connexion with Graphs"
-4. David Karger, Eric Lehman, Tom Leighton, Rina Panigrahy, Matthew Levine, and Daniel Lewin. "Consistent Hashing and Random Trees: Distributed Caching Protocols for Relieving Hot Spots on the World Wide Web" 
+4. David Karger, Eric Lehman, Tom Leighton, Rina Panigrahy, Matthew Levine, and Daniel Lewin. "Consistent Hashing and Random Trees: Distributed Caching Protocols for Relieving Hot Spots on the World Wide Web"

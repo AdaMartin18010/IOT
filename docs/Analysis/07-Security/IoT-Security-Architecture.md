@@ -29,6 +29,7 @@ $$\mathcal{SA} = \{\text{机密性}, \text{完整性}, \text{可用性}, \text{�
 
 **定义 1.3 (安全威胁)**
 安全威胁是一个三元组 $\mathcal{TH} = (A, T, I)$，其中：
+
 - $A$ 是攻击者
 - $T$ 是攻击类型
 - $I$ 是攻击影响
@@ -70,7 +71,7 @@ IoT威胁按攻击向量分类：
 3. **应用攻击**：$\mathcal{T}_{application} = \{\text{代码注入}, \text{缓冲区溢出}, \text{逻辑缺陷}\}$
 4. **供应链攻击**：$\mathcal{T}_{supply} = \{\text{恶意硬件}, \text{后门植入}, \text{伪劣组件}\}$
 
-**算法 2.1 (威胁分析算法)**
+**算法 2.1 (威胁分析算法)**:
 
 ```rust
 pub struct ThreatAnalyzer {
@@ -153,7 +154,7 @@ impl ThreatAnalyzer {
 - $V$ 是攻击节点集合
 - $E$ 是攻击关系集合
 
-**算法 2.2 (攻击树构建算法)**
+**算法 2.2 (攻击树构建算法)**:
 
 ```rust
 pub struct AttackTreeBuilder {
@@ -208,7 +209,7 @@ impl AttackTreeBuilder {
 - $\mathcal{E}$ 是加密函数
 - $\mathcal{D}$ 是解密函数
 
-**算法 3.1 (轻量级加密算法)**
+**算法 3.1 (轻量级加密算法)**:
 
 ```rust
 pub struct LightweightCrypto {
@@ -452,6 +453,7 @@ impl ZeroTrustArchitecture {
 $$\mathcal{KM} = (\mathcal{K}, \mathcal{G}, \mathcal{D}, \mathcal{R})$$
 
 其中：
+
 - $\mathcal{K}$ 是密钥集合
 - $\mathcal{G}$ 是密钥生成函数
 - $\mathcal{D}$ 是密钥分发函数
@@ -509,6 +511,7 @@ impl KeyManagementProtocol {
 $$\mathcal{SC} = (\mathcal{E}, \mathcal{A}, \mathcal{I}, \mathcal{N})$$
 
 其中：
+
 - $\mathcal{E}$ 是加密函数
 - $\mathcal{A}$ 是认证函数
 - $\mathcal{I}$ 是完整性函数
@@ -678,4 +681,4 @@ impl SecurityTestFramework {
 5. **安全协议**：实现了密钥管理和安全通信协议
 6. **工程实现**：提供了Rust安全框架和测试系统
 
-该安全架构为IoT系统提供了完整的安全防护体系，确保系统的机密性、完整性和可用性。 
+该安全架构为IoT系统提供了完整的安全防护体系，确保系统的机密性、完整性和可用性。

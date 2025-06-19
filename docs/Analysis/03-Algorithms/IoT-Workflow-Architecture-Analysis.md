@@ -83,6 +83,7 @@ $$\sum_{r \in R} \text{usage}(r) \leq \text{capacity}(\mathcal{N})$$
 
 **证明：**
 通过资源分配的不变性证明：
+
 1. 初始状态：所有资源使用为0
 2. 分配操作：每次分配后检查约束
 3. 释放操作：释放后更新使用量
@@ -562,4 +563,4 @@ impl IoTDeviceManagementWorkflow {
 
 *最后更新: 2024-12-19*
 *版本: 1.0*
-*状态: 已完成* 
+*状态: 已完成*
