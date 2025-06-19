@@ -10,6 +10,7 @@
 
 **定义 2.1 (IoT安全系统)**
 IoT安全系统是一个六元组 $\mathcal{S} = (D, U, C, A, E, P)$，其中：
+
 - $D$ 是设备集合
 - $U$ 是用户集合
 - $C$ 是通信通道集合
@@ -19,6 +20,7 @@ IoT安全系统是一个六元组 $\mathcal{S} = (D, U, C, A, E, P)$，其中：
 
 **定义 2.2 (安全属性)**
 IoT系统必须满足以下安全属性：
+
 1. **机密性**: $\forall d \in D, \forall c \in C, \text{Confidential}(d, c)$
 2. **完整性**: $\forall d \in D, \forall c \in C, \text{Integrity}(d, c)$
 3. **可用性**: $\forall d \in D, \text{Available}(d)$
@@ -28,6 +30,7 @@ IoT系统必须满足以下安全属性：
 
 **定义 2.3 (威胁模型)**
 IoT威胁模型是一个三元组 $\mathcal{T} = (A, C, I)$，其中：
+
 - $A$ 是攻击者能力集合
 - $C$ 是攻击成本函数
 - $I$ 是攻击影响评估函数
@@ -43,6 +46,7 @@ $$\forall a \in A, C(a) > \text{threshold}$$
 
 **定义 3.1 (数字证书)**
 数字证书是一个五元组 $C = (PK, ID, T, S, A)$，其中：
+
 - $PK$ 是公钥
 - $ID$ 是设备标识符
 - $T$ 是有效期
@@ -216,6 +220,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
 **定义 3.2 (JWT令牌)**
 JWT令牌是一个三元组 $J = (H, P, S)$，其中：
+
 - $H$ 是头部（算法信息）
 - $P$ 是载荷（声明信息）
 - $S$ 是签名
@@ -401,6 +406,7 @@ func ExampleJWTAuthentication() {
 
 **定义 4.1 (对称加密)**
 对称加密是一个三元组 $\mathcal{E} = (K, E, D)$，其中：
+
 - $K$ 是密钥空间
 - $E: K \times M \rightarrow C$ 是加密函数
 - $D: K \times C \rightarrow M$ 是解密函数
@@ -448,6 +454,7 @@ impl SymmetricEncryption {
 
 **定义 4.2 (非对称加密)**
 非对称加密是一个五元组 $\mathcal{A} = (K, PK, SK, E, D)$，其中：
+
 - $K$ 是密钥对空间
 - $PK$ 是公钥空间
 - $SK$ 是私钥空间
@@ -515,6 +522,7 @@ func (r *RSAEncryption) Verify(data, signature []byte) error {
 数据集 $D$ 满足k-匿名性，当且仅当对于任意准标识符 $q$，至少有 $k$ 个记录具有相同的 $q$ 值。
 
 **算法 5.1 (数据匿名化)**
+
 ```rust
 use std::collections::HashMap;
 
@@ -550,6 +558,7 @@ impl KAnonymizer {
 $$\Pr[\mathcal{A}(D_1) \in S] \leq e^\epsilon \cdot \Pr[\mathcal{A}(D_2) \in S]$$
 
 **算法 5.2 (拉普拉斯机制)**
+
 ```rust
 use rand::distributions::{Distribution, Laplace};
 
@@ -576,6 +585,7 @@ impl DifferentialPrivacy {
 
 **定义 6.1 (TLS握手)**
 TLS握手是一个四阶段协议：
+
 1. **ClientHello**: 客户端发送支持的加密套件
 2. **ServerHello**: 服务器选择加密套件并发送证书
 3. **KeyExchange**: 密钥交换和协商
@@ -637,6 +647,7 @@ func (tc *TLSClient) Connect(addr string) (*tls.Conn, error) {
 入侵检测是一个函数 $ID: E \rightarrow \{0, 1\}$，其中 $E$ 是事件集合，$ID(e) = 1$ 表示检测到入侵。
 
 **算法 7.1 (基于规则的入侵检测)**
+
 ```rust
 use std::collections::HashMap;
 
@@ -677,4 +688,4 @@ impl IntrusionDetector {
 4. **安全协议**：TLS等安全通信协议
 5. **安全监控**：入侵检测和威胁响应
 
-所有安全机制都提供了形式化的数学定义和完整的实现示例，确保IoT系统的安全性、完整性和隐私保护。 
+所有安全机制都提供了形式化的数学定义和完整的实现示例，确保IoT系统的安全性、完整性和隐私保护。

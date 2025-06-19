@@ -10,6 +10,7 @@ This document presents a formal mathematical framework for IoT performance optim
 
 **Definition 1.1 (Performance Optimization Problem)**
 Given an IoT system $\mathcal{S} = (D, N, P, R)$ where:
+
 - $D$ is the set of devices
 - $N$ is the network topology
 - $P$ is the processing capabilities
@@ -30,6 +31,7 @@ The latency $L$ of a system is defined as:
 $$L = \sum_{i=1}^{n} (t_{proc,i} + t_{trans,i} + t_{queue,i})$$
 
 where:
+
 - $t_{proc,i}$ is processing time
 - $t_{trans,i}$ is transmission time
 - $t_{queue,i}$ is queuing time
@@ -71,6 +73,7 @@ CPU utilization $U_{cpu}$ is:
 $$U_{cpu} = \frac{t_{active}}{t_{total}} \times 100\%$$
 
 **Algorithm 2.1: Adaptive CPU Scheduling**
+
 ```rust
 use std::collections::BinaryHeap;
 use std::cmp::Ordering;
@@ -169,6 +172,7 @@ $$\min_{P} \sum_{(i,j) \in P} l_{ij}$$
 where $l_{ij}$ is the latency of edge $(i,j)$ and $P$ is a path from source to destination.
 
 **Algorithm 3.1: Latency-Aware Routing**
+
 ```rust
 use std::collections::{BinaryHeap, HashMap};
 use std::cmp::Ordering;
@@ -279,6 +283,7 @@ For a stable queuing system:
 $$L = \lambda W$$
 
 where:
+
 - $L$ is the average number of customers in the system
 - $\lambda$ is the arrival rate
 - $W$ is the average waiting time
@@ -298,6 +303,7 @@ $$T_{max} = \frac{1}{\max_{i=1}^{n} t_i}$$
 where $t_i$ is the processing time of stage $i$.
 
 **Algorithm 4.1: Pipeline Optimization**
+
 ```rust
 use std::sync::{Arc, Mutex};
 use std::thread;
@@ -400,6 +406,7 @@ $$\sum_{j \in S_i} t_j \leq d_i, \quad \forall i$$
 where $P_i$ is power consumption, $t_i$ is execution time, and $d_i$ is deadline.
 
 **Algorithm 5.1: Energy-Aware Task Scheduling**
+
 ```rust
 use std::collections::BinaryHeap;
 use std::cmp::Ordering;
@@ -499,6 +506,7 @@ impl EnergyOptimizer {
 A device can be in states $S = \{active, idle, sleep, deep\_sleep\}$ with power consumption $P_s$ for state $s \in S$.
 
 **Algorithm 5.2: Dynamic Power Management**
+
 ```rust
 use std::time::{Duration, Instant};
 
@@ -601,6 +609,7 @@ For a system with parallelizable fraction $p$, the maximum speedup is:
 $$S_{max} = \frac{1}{1 - p + \frac{p}{n}}$$
 
 **Algorithm 6.1: Scalable Load Balancing**
+
 ```rust
 use std::collections::HashMap;
 use std::sync::{Arc, Mutex};
@@ -700,6 +709,7 @@ impl ScalableLoadBalancer {
 A performance vector $P = (p_1, p_2, \ldots, p_n)$ where each $p_i$ represents a performance metric.
 
 **Algorithm 7.1: Performance Monitor**
+
 ```rust
 use std::collections::VecDeque;
 use std::time::{Duration, Instant};
@@ -818,4 +828,4 @@ The Rust implementations demonstrate practical applications of the theoretical c
 2. Kleinrock, L. (1975). Queueing systems, volume 1: Theory. Wiley.
 3. Amdahl, G. M. (1967). Validity of the single processor approach to achieving large scale computing capabilities. AFIPS Conference Proceedings.
 4. Little, J. D. C. (1961). A proof for the queuing formula: L= λW. Operations Research.
-5. Rust Programming Language. (2023). The Rust Programming Language. https://www.rust-lang.org/ 
+5. Rust Programming Language. (2023). The Rust Programming Language. <https://www.rust-lang.org/>

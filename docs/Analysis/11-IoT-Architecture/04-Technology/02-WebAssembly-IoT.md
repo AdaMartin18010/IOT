@@ -37,6 +37,7 @@ wasm3 = "0.5"
 ## WASM IoT架构
 
 ### 定义 1.1 (WASM IoT架构)
+
 WASM IoT架构是一个四元组 $WA = (H, R, M, I)$，其中：
 
 - $H$ 是主机环境 (Host Environment)
@@ -48,6 +49,7 @@ WASM IoT架构是一个四元组 $WA = (H, R, M, I)$，其中：
 $$WA = \{(h, r, m, i) | h \in H, r \in R, m \in M, i \in I\}$$
 
 ### 定义 1.2 (WASM IoT模块)
+
 WASM IoT模块是一个三元组 $WM = (C, F, S)$，其中：
 
 - $C$ 是代码段 (Code Section)
@@ -58,6 +60,7 @@ WASM IoT模块是一个三元组 $WM = (C, F, S)$，其中：
 $$WM = \{(c, f, s) | c \in C, f \in F, s \in S\}$$
 
 ### 定理 1.1 (WASM安全性)
+
 如果WASM模块 $WM$ 在沙箱环境中执行，则：
 
 1. **内存隔离**: $M_{WM} \cap M_{Host} = \emptyset$
@@ -66,6 +69,7 @@ $$WM = \{(c, f, s) | c \in C, f \in F, s \in S\}$$
 
 **证明**：
 WASM的安全保证来自：
+
 1. **线性内存**: 每个模块有独立的线性内存空间
 2. **函数表**: 只能调用预定义的函数
 3. **能力模型**: 基于权限的资源访问控制
@@ -388,11 +392,13 @@ impl EmbeddedWasmRuntime {
 ## WASI IoT应用
 
 ### 定义 2.1 (WASI IoT)
+
 WASI IoT是WebAssembly系统接口在IoT领域的应用：
 
 $$\text{WASI IoT} = \{\text{File System}, \text{Network}, \text{Clock}, \text{Random}, \text{Environment}\}$$
 
 ### 定理 2.1 (WASI IoT功能)
+
 WASI提供IoT设备需要的系统接口：
 
 ```rust
@@ -422,11 +428,13 @@ fn wasi_iot_app() -> Result<(), Box<dyn std::error::Error>> {
 ## 异步编程在IoT中的应用
 
 ### 定义 3.1 (异步IoT架构)
+
 异步IoT架构定义为：
 
 $$\mathcal{A}_{\text{Async-IoT}} = (\text{Event Loop}, \text{Async Tasks}, \text{Channels}, \text{Streams})$$
 
 ### 定理 3.1 (异步IoT优势)
+
 异步编程在IoT中提供：
 
 1. **并发处理**: 多个传感器和执行器并发工作
@@ -812,4 +820,4 @@ WebAssembly在IoT领域的应用提供了以下优势：
 4. **高性能**: 接近原生性能的执行效率
 5. **语言灵活性**: 支持多种编程语言
 
-通过合理的技术选型和架构设计，WASM能够为IoT系统提供安全、高效、可移植的执行环境。 
+通过合理的技术选型和架构设计，WASM能够为IoT系统提供安全、高效、可移植的执行环境。

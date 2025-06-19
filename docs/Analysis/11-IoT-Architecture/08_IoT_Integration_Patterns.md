@@ -10,6 +10,7 @@ This document presents a formal mathematical framework for IoT integration patte
 
 **Definition 1.1 (Integration Pattern)**
 An integration pattern $\mathcal{I} = (C, P, T, R)$ consists of:
+
 - $C$: Components to be integrated
 - $P$: Integration protocols
 - $T$: Transformation rules
@@ -20,6 +21,7 @@ Integration quality $Q$ is defined as:
 $$Q = \alpha \cdot I + \beta \cdot P + \gamma \cdot S + \delta \cdot M$$
 
 where:
+
 - $I$: Interoperability score
 - $P$: Performance score
 - $S$: Scalability score
@@ -47,6 +49,7 @@ A service $S$ is defined as:
 $$S = (I, O, F, Q)$$
 
 where:
+
 - $I$: Input interface
 - $O$: Output interface
 - $F$: Functionality
@@ -65,6 +68,7 @@ $$\forall x \in I_1, \quad F_C(x) = F_n \circ F_{n-1} \circ \ldots \circ F_1(x)$
 where $F_i$ is the functionality of service $S_i$.
 
 **Algorithm 2.1: Service Composition Engine**
+
 ```rust
 use std::collections::HashMap;
 use std::sync::{Arc, Mutex};
@@ -211,6 +215,7 @@ Service orchestration $O$ is:
 $$O = (S, W, E, C)$$
 
 where:
+
 - $S$: Set of services
 - $W$: Workflow definition
 - $E$: Execution engine
@@ -221,6 +226,7 @@ An orchestration is complete if:
 $$\forall s \in S, \quad \exists w \in W : s \in w$$
 
 **Algorithm 2.2: Service Orchestrator**
+
 ```rust
 use std::collections::{HashMap, VecDeque};
 
@@ -369,6 +375,7 @@ A data schema $\Sigma$ is:
 $$\Sigma = (A, T, C)$$
 
 where:
+
 - $A$: Set of attributes
 - $T$: Type definitions
 - $C$: Constraints
@@ -384,6 +391,7 @@ $$\forall d \in D_1, \quad \tau(d) \in D_2$$
 where $D_1, D_2$ are the data domains.
 
 **Algorithm 3.1: Data Transformation Engine**
+
 ```rust
 use std::collections::HashMap;
 
@@ -560,6 +568,7 @@ A protocol $P$ is defined as:
 $$P = (M, F, E, V)$$
 
 where:
+
 - $M$: Message format
 - $F$: Functionality
 - $E$: Encoding rules
@@ -570,6 +579,7 @@ A protocol adapter $\alpha$ is:
 $$\alpha: P_1 \rightarrow P_2$$
 
 **Algorithm 4.1: Protocol Adapter Engine**
+
 ```rust
 use std::collections::HashMap;
 
@@ -739,6 +749,7 @@ Interoperability level $L$ is:
 $$L = \min(L_s, L_p, L_d, L_s)$$
 
 where:
+
 - $L_s$: Syntactic interoperability
 - $L_p$: Protocol interoperability
 - $L_d$: Data interoperability
@@ -751,6 +762,7 @@ $$I = \frac{\sum_{i=1}^{n} w_i \cdot m_i}{\sum_{i=1}^{n} w_i}$$
 where $m_i$ are interoperability metrics and $w_i$ are weights.
 
 **Algorithm 5.1: Interoperability Assessment Engine**
+
 ```rust
 use std::collections::HashMap;
 
@@ -913,12 +925,14 @@ An integration test $T$ is:
 $$T = (S, I, O, V)$$
 
 where:
+
 - $S$: Test scenario
 - $I$: Input data
 - $O$: Expected output
 - $V$: Validation rules
 
 **Algorithm 5.2: Integration Test Runner**
+
 ```rust
 use std::collections::HashMap;
 
@@ -1065,5 +1079,5 @@ The Rust implementations demonstrate practical applications of the theoretical c
 1. Hohpe, G., & Woolf, B. (2003). Enterprise integration patterns. Addison-Wesley.
 2. Erl, T. (2008). SOA design patterns. Prentice Hall.
 3. Fowler, M. (2018). Patterns of enterprise application architecture. Addison-Wesley.
-4. Rust Programming Language. (2023). The Rust Programming Language. https://www.rust-lang.org/
-5. ISO/IEC 25010. (2011). Systems and software Quality Requirements and Evaluation (SQuaRE). 
+4. Rust Programming Language. (2023). The Rust Programming Language. <https://www.rust-lang.org/>
+5. ISO/IEC 25010. (2011). Systems and software Quality Requirements and Evaluation (SQuaRE).

@@ -10,6 +10,7 @@ This document presents a formal mathematical framework for IoT edge computing, c
 
 **Definition 1.1 (Edge Computing System)**
 An edge computing system $\mathcal{E} = (N, C, E, P)$ consists of:
+
 - $N$: Set of edge nodes
 - $C$: Cloud infrastructure
 - $E$: Edge-cloud communication links
@@ -20,6 +21,7 @@ An edge node $n_i \in N$ is characterized by:
 $$n_i = (L_i, S_i, P_i, B_i, R_i)$$
 
 where:
+
 - $L_i$: Location coordinates
 - $S_i$: Storage capacity
 - $P_i$: Processing power
@@ -37,6 +39,7 @@ $$R_i(x) \geq R_{min}, \quad \forall i$$
 $$B_i(x) \geq B_{min}, \quad \forall i$$
 
 where:
+
 - $L_i(x)$: Latency for node $i$
 - $E_i(x)$: Energy consumption for node $i$
 - $C_i(x)$: Cost for node $i$
@@ -51,6 +54,7 @@ The architecture of edge node $n_i$ is defined as:
 $$A_i = (H_i, V_i, M_i, I_i)$$
 
 where:
+
 - $H_i$: Hardware layer
 - $V_i$: Virtualization layer
 - $M_i$: Middleware layer
@@ -71,6 +75,7 @@ $$C_i \leq B_i \times \eta_i$$
 Therefore, $C_i = \min(P_i, S_i, B_i) \times \eta_i$
 
 **Algorithm 2.1: Edge Node Implementation**
+
 ```rust
 use std::collections::HashMap;
 use std::sync::{Arc, Mutex};
@@ -214,6 +219,7 @@ For a given set of edge nodes $N$, the optimal clustering minimizes:
 $$\min_{C} \sum_{k=1}^{K} \sum_{n_i \in C_k} d(n_i, c_k)^2$$
 
 **Algorithm 2.2: Edge Node Clustering**
+
 ```rust
 use std::collections::HashMap;
 
@@ -313,6 +319,7 @@ A distributed task $T$ is defined as:
 $$T = (W, D, P, R)$$
 
 where:
+
 - $W$: Workload size
 - $D$: Data dependencies
 - $P$: Priority
@@ -333,6 +340,7 @@ $$\sum_{i=1}^{n} w_i x_{ij} \leq C_j, \quad \forall j$$
 where $c_{ij}$ is the cost of assigning task $i$ to node $j$.
 
 **Algorithm 3.1: Distributed Task Scheduler**
+
 ```rust
 use std::collections::{BinaryHeap, HashMap};
 use std::cmp::Ordering;
@@ -450,6 +458,7 @@ impl DistributedScheduler {
 
 **Definition 3.3 (Data Flow Graph)**
 A data flow graph $G = (V, E, W)$ where:
+
 - $V$: Set of processing nodes
 - $E$: Set of data flow edges
 - $W$: Edge weights (data transfer costs)
@@ -470,6 +479,7 @@ where $f_{ij}$ is flow on edge $(i,j)$, $c_{ij}$ is cost, and $u_{ij}$ is capaci
 
 **Definition 4.1 (Edge-Cloud System)**
 An edge-cloud system $\mathcal{EC} = (E, C, L, S)$ consists of:
+
 - $E$: Edge layer
 - $C$: Cloud layer
 - $L$: Communication links
@@ -486,7 +496,7 @@ $$\phi(T, n_i) = \begin{cases}
 ```rust
 use std::time::{Duration, Instant};
 
-#[derive(Debug, Clone)]
+# [derive(Debug, Clone)]
 struct CloudNode {
     id: String,
     processing_power: f64,
@@ -494,7 +504,7 @@ struct CloudNode {
     latency_to_edge: Duration,
 }
 
-#[derive(Debug, Clone)]
+# [derive(Debug, Clone)]
 struct OffloadingDecision {
     task_id: String,
     should_offload: bool,
@@ -527,25 +537,25 @@ impl EdgeCloudCoordinator {
 
     fn make_offloading_decision(&self, task: &Task, edge_node_id: &str) -> OffloadingDecision {
         let edge_node = &self.edge_nodes[edge_node_id];
-        
+
         // Calculate local processing time
         let local_processing_time = task.workload / edge_node.get_capacity();
-        
+
         // Calculate cloud processing time
         let best_cloud = self.cloud_nodes.iter()
             .min_by(|a, b| a.current_load.partial_cmp(&b.current_load).unwrap_or(std::cmp::Ordering::Equal))
             .unwrap();
-        
+
         let cloud_processing_time = task.workload / best_cloud.processing_power;
         let total_cloud_time = cloud_processing_time + self.network_latency.as_secs_f64();
-        
+
         let should_offload = total_cloud_time < local_processing_time;
         let target_node = if should_offload {
             best_cloud.id.clone()
         } else {
             edge_node_id.to_string()
         };
-        
+
         let estimated_benefit = local_processing_time - total_cloud_time;
 
         OffloadingDecision {
@@ -562,7 +572,7 @@ impl EdgeCloudCoordinator {
                 let best_edge = self.edge_nodes.values()
                     .min_by(|a, b| a.get_utilization().partial_cmp(&b.get_utilization()).unwrap_or(std::cmp::Ordering::Equal))
                     .unwrap();
-                
+
                 self.make_offloading_decision(task, &best_edge.id)
             })
             .collect()
@@ -608,7 +618,7 @@ where $E$ is the edge environment and $M'$ is the adapted model.
 ```rust
 use std::collections::HashMap;
 
-#[derive(Debug, Clone)]
+# [derive(Debug, Clone)]
 struct AIModel {
     id: String,
     algorithm: String,
@@ -618,7 +628,7 @@ struct AIModel {
     model_size: f64,
 }
 
-#[derive(Debug, Clone)]
+# [derive(Debug, Clone)]
 struct ModelAdaptation {
     original_model: AIModel,
     adapted_model: AIModel,
@@ -665,7 +675,7 @@ impl EdgeAIManager {
 
     fn create_adapted_model(&self, original: &AIModel, constraints: &EdgeConstraints) -> AIModel {
         let mut adapted = original.clone();
-        
+
         // Reduce model complexity based on constraints
         if constraints.max_model_size < original.model_size {
             adapted.model_size = constraints.max_model_size;
@@ -695,7 +705,7 @@ impl EdgeAIManager {
     }
 }
 
-#[derive(Debug, Clone)]
+# [derive(Debug, Clone)]
 struct EdgeConstraints {
     max_model_size: f64,
     max_processing_time: Duration,
@@ -729,7 +739,7 @@ $$U = \frac{\sum_{i=1}^{n} R_i^{used}}{\sum_{i=1}^{n} R_i^{total}}$$
 ```rust
 use std::collections::HashMap;
 
-#[derive(Debug, Clone)]
+# [derive(Debug, Clone)]
 struct ResourceAllocation {
     node_id: String,
     cpu_allocation: f64,
@@ -757,12 +767,12 @@ impl EdgeResourceOptimizer {
 
     fn optimize_allocations(&mut self, workloads: &HashMap<String, f64>) -> Vec<ResourceAllocation> {
         let mut allocations = Vec::new();
-        
+
         for (node_id, workload) in workloads {
             if let Some(node) = self.nodes.get(node_id) {
                 let capacity = node.get_capacity();
                 let utilization = workload / capacity;
-                
+
                 let allocation = ResourceAllocation {
                     node_id: node_id.clone(),
                     cpu_allocation: utilization * node.resources.cpu_cores as f64,
@@ -770,11 +780,11 @@ impl EdgeResourceOptimizer {
                     storage_allocation: utilization * node.resources.storage_gb,
                     bandwidth_allocation: utilization * node.resources.bandwidth_mbps,
                 };
-                
+
                 allocations.push(allocation);
             }
         }
-        
+
         self.allocations = allocations.clone();
         allocations
     }
@@ -783,11 +793,11 @@ impl EdgeResourceOptimizer {
         if self.allocations.is_empty() {
             return 0.0;
         }
-        
+
         let total_utilization: f64 = self.allocations.iter()
             .map(|a| (a.cpu_allocation + a.memory_allocation + a.storage_allocation + a.bandwidth_allocation) / 4.0)
             .sum();
-        
+
         total_utilization / self.allocations.len() as f64
     }
 }
@@ -823,4 +833,4 @@ The Rust implementations demonstrate practical applications of the theoretical c
 2. Shi, W., et al. (2016). Edge computing: Vision and challenges. IEEE Internet of Things Journal.
 3. McMahan, B., et al. (2017). Communication-efficient learning of deep networks from decentralized data. AISTATS.
 4. Rust Programming Language. (2023). The Rust Programming Language. https://www.rust-lang.org/
-5. Bertsekas, D. P. (2015). Convex optimization algorithms. Athena Scientific. 
+5. Bertsekas, D. P. (2015). Convex optimization algorithms. Athena Scientific.

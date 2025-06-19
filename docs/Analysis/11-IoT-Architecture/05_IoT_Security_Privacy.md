@@ -22,6 +22,7 @@ IoT安全与隐私是保护设备、数据和用户隐私的核心技术。本�
 $$\mathcal{S} = (A, E, I, P, M, T)$$
 
 其中：
+
 - $A$: 认证系统
 - $E$: 加密系统
 - $I$: 完整性保护
@@ -38,6 +39,7 @@ $$\mathcal{S} = (A, E, I, P, M, T)$$
 $$\mathcal{T} = (A, R, C, I)$$
 
 其中：
+
 - $A$: 攻击者能力
 - $R$: 攻击资源
 - $C$: 攻击成本
@@ -46,6 +48,7 @@ $$\mathcal{T} = (A, R, C, I)$$
 ### 定义 5.3 (攻击类型)
 
 常见攻击类型：
+
 - 重放攻击：$replay(m) = m'$
 - 中间人攻击：$mitm(m) = intercept(m)$
 - 拒绝服务：$dos(service) = \bot$
@@ -58,6 +61,7 @@ $$\mathcal{T} = (A, R, C, I)$$
 $$P(attack\_success) > 0$$
 
 **证明**：
+
 - 基于信息论的安全边界
 - 完美安全在现实中不可达
 
@@ -82,6 +86,7 @@ $$authorize: Identity \times Resource \times Action \rightarrow \{permit, deny\}
 $$\forall c \in ValidCredentials: authenticate(c, challenge) = valid$$
 
 **证明**：
+
 - 有效凭据必须通过认证
 - 无效凭据必须被拒绝
 
@@ -94,6 +99,7 @@ $$\forall c \in ValidCredentials: authenticate(c, challenge) = valid$$
 $$E = (Gen, Enc, Dec)$$
 
 其中：
+
 - $Gen$: 密钥生成
 - $Enc$: 加密函数
 - $Dec$: 解密函数
@@ -105,6 +111,7 @@ $$E = (Gen, Enc, Dec)$$
 $$Dec_k(Enc_k(m)) = m$$
 
 **证明**：
+
 - 加密和解密是逆操作
 - 确保数据可恢复性
 
@@ -129,6 +136,7 @@ $$\forall D, D': |D \triangle D'| = 1 \Rightarrow P(M(D) \in S) \leq e^\epsilon 
 $$P(privacy\_leak) \geq \frac{1}{|Data|}$$
 
 **证明**：
+
 - 基于信息论的下界
 - 完美隐私保护不可达
 
@@ -147,6 +155,7 @@ $$U = (verify, backup, install, rollback)$$
 $$P(update\_success) \geq 0.99 \land P(rollback\_success) \geq 0.99$$
 
 **证明**：
+
 - 更新成功率必须大于99%
 - 回滚成功率必须大于99%
 
@@ -593,4 +602,4 @@ mod tests {
 
 *最后更新: 2024-12-19*
 *文档状态: 完成*
-*下一步: [IoT性能优化理论](./06_IoT_Performance_Optimization.md)* 
+*下一步: [IoT性能优化理论](./06_IoT_Performance_Optimization.md)*

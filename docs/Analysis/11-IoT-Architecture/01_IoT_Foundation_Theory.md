@@ -24,6 +24,7 @@
 $$\mathcal{I} = (D, N, P, S, C, A, T)$$
 
 其中：
+
 - $D = \{d_1, d_2, ..., d_n\}$ 是设备集合
 - $N = (V, E)$ 是网络拓扑图
 - $P = \{p_1, p_2, ..., p_m\}$ 是协议集合
@@ -35,6 +36,7 @@ $$\mathcal{I} = (D, N, P, S, C, A, T)$$
 ### 定理 1.1 (IoT系统完整性)
 
 对于任意IoT系统 $\mathcal{I}$，如果满足以下条件：
+
 1. $\forall d \in D, \exists n \in V: d \text{ 连接到 } n$
 2. $\forall p \in P, \exists d_1, d_2 \in D: p \text{ 支持 } d_1 \text{ 与 } d_2 \text{ 通信}$
 3. $\forall s \in S, \exists d \in D: s \text{ 运行在 } d \text{ 上}$
@@ -42,6 +44,7 @@ $$\mathcal{I} = (D, N, P, S, C, A, T)$$
 则称 $\mathcal{I}$ 是完整的。
 
 **证明**：
+
 - 条件1确保所有设备都有网络连接
 - 条件2确保协议覆盖所有设备间通信需求
 - 条件3确保服务有执行环境
@@ -56,6 +59,7 @@ IoT系统采用分层架构模型：
 $$\mathcal{L} = \{L_1, L_2, L_3, L_4, L_5\}$$
 
 其中：
+
 - $L_1$: 感知层 (Perception Layer)
 - $L_2$: 网络层 (Network Layer)  
 - $L_3$: 边缘层 (Edge Layer)
@@ -246,7 +250,7 @@ use serde::{Deserialize, Serialize};
 use tokio::time::{Duration, Instant};
 
 /// IoT设备类型
-#[derive(Debug, Clone, Serialize, Deserialize)]
+# [derive(Debug, Clone, Serialize, Deserialize)]
 pub enum DeviceType {
     Sensor,
     Actuator,
@@ -256,7 +260,7 @@ pub enum DeviceType {
 }
 
 /// 设备能力
-#[derive(Debug, Clone, Serialize, Deserialize)]
+# [derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Capability {
     pub function: String,
     pub input_type: String,
@@ -264,7 +268,7 @@ pub struct Capability {
 }
 
 /// 资源约束
-#[derive(Debug, Clone, Serialize, Deserialize)]
+# [derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Resources {
     pub cpu: f64,      // CPU使用率 (0.0-1.0)
     pub memory: u64,   // 内存使用量 (bytes)
@@ -273,7 +277,7 @@ pub struct Resources {
 }
 
 /// 设备状态
-#[derive(Debug, Clone, Serialize, Deserialize)]
+# [derive(Debug, Clone, Serialize, Deserialize)]
 pub struct DeviceState {
     pub status: DeviceStatus,
     pub data: HashMap<String, serde_json::Value>,
@@ -281,7 +285,7 @@ pub struct DeviceState {
 }
 
 /// 设备状态枚举
-#[derive(Debug, Clone, Serialize, Deserialize)]
+# [derive(Debug, Clone, Serialize, Deserialize)]
 pub enum DeviceStatus {
     Online,
     Offline,
@@ -290,7 +294,7 @@ pub enum DeviceStatus {
 }
 
 /// IoT设备
-#[derive(Debug, Clone)]
+# [derive(Debug, Clone)]
 pub struct IoTDevice {
     pub id: String,
     pub device_type: DeviceType,
@@ -349,7 +353,7 @@ impl IoTDevice {
 }
 
 /// 数据流
-#[derive(Debug, Clone)]
+# [derive(Debug, Clone)]
 pub struct DataFlow {
     pub source_id: String,
     pub sink_id: String,
@@ -359,7 +363,7 @@ pub struct DataFlow {
 }
 
 /// IoT系统
-#[derive(Debug)]
+# [derive(Debug)]
 pub struct IoTSystem {
     pub devices: HashMap<String, IoTDevice>,
     pub data_flows: Vec<DataFlow>,
@@ -442,7 +446,7 @@ impl IoTSystem {
 }
 
 /// 系统性能指标
-#[derive(Debug)]
+# [derive(Debug)]
 pub struct SystemPerformance {
     pub throughput: usize,
     pub average_latency: Duration,
@@ -450,7 +454,7 @@ pub struct SystemPerformance {
     pub device_count: usize,
 }
 
-#[cfg(test)]
+# [cfg(test)]
 mod tests {
     use super::*;
 
@@ -602,4 +606,4 @@ mod tests {
 
 *最后更新: 2024-12-19*
 *文档状态: 完成*
-*下一步: [IoT网络通信理论](./02_IoT_Network_Theory.md)* 
+*下一步: [IoT网络通信理论](./02_IoT_Network_Theory.md)*
