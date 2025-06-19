@@ -23,6 +23,7 @@ IoT数据处理是处理大规模、高频率、多源异构数据的核心技�
 $$\mathcal{P} = (S, F, A, D, Q, C, T)$$
 
 其中：
+
 - $S = \{s_1, s_2, ..., s_n\}$ 是数据源集合
 - $F$ 是数据流处理引擎
 - $A$ 是实时分析引擎
@@ -48,6 +49,7 @@ $$stream = \langle d_1, d_2, d_3, ... \rangle$$
 $$operator: Stream \times Window \times Function \rightarrow Stream$$
 
 其中：
+
 - $Stream$ 是数据流
 - $Window$ 是滑动窗口
 - $Function$ 是处理函数
@@ -59,6 +61,7 @@ $$operator: Stream \times Window \times Function \rightarrow Stream$$
 $$window = (size, slide, type)$$
 
 其中：
+
 - $size$: 窗口大小
 - $slide$: 滑动步长
 - $type \in \{tumbling, sliding, session\}$: 窗口类型
@@ -70,6 +73,7 @@ $$window = (size, slide, type)$$
 $$\forall i \geq 0: result_i = f(window_i(S))$$
 
 **证明**：
+
 - 每个窗口都应用相同的处理函数
 - 结果与窗口内容一一对应
 
@@ -115,6 +119,7 @@ async fn sliding_window_processing<T, R>(
 $$\mathcal{A} = (query, window, aggregation, output)$$
 
 其中：
+
 - $query$: 查询条件
 - $window$: 时间窗口
 - $aggregation$: 聚合函数
@@ -127,6 +132,7 @@ $$\mathcal{A} = (query, window, aggregation, output)$$
 $$agg: P(\mathbb{R}) \rightarrow \mathbb{R}$$
 
 常见的聚合函数包括：
+
 - 平均值：$avg(X) = \frac{1}{|X|} \sum_{x \in X} x$
 - 最大值：$max(X) = \max_{x \in X} x$
 - 最小值：$min(X) = \min_{x \in X} x$
@@ -140,6 +146,7 @@ $$agg: P(\mathbb{R}) \rightarrow \mathbb{R}$$
 $$\forall X, Y \subseteq \mathbb{R}: X \subseteq Y \Rightarrow f(X) \leq f(Y)$$
 
 **证明**：
+
 - 基于集合包含关系的单调性
 - 适用于max、sum等函数
 
@@ -210,6 +217,7 @@ impl<T: Copy + Into<f64>> Aggregator<T> for AverageAggregator {
 $$\mathcal{D} = (schema, index, partition, replication, consistency)$$
 
 其中：
+
 - $schema$: 数据模式
 - $index$: 索引结构
 - $partition$: 分区策略
@@ -223,6 +231,7 @@ $$\mathcal{D} = (schema, index, partition, replication, consistency)$$
 $$TS = (timestamp, value, metadata, compression)$$
 
 其中：
+
 - $timestamp$: 时间戳
 - $value$: 数据值
 - $metadata$: 元数据
@@ -237,6 +246,7 @@ $$\min_{S} \sum_{i=1}^{n} (access\_time(i) + storage\_cost(i))$$
 subject to: $capacity\_constraint$
 
 **证明**：
+
 - 平衡访问时间和存储成本
 - 在容量约束下优化性能
 
@@ -344,6 +354,7 @@ $$compression\_ratio = \frac{original\_size}{compressed\_size}$$
 $$compression\_ratio \geq 1$$
 
 **证明**：
+
 - 基于信息论的无损压缩下界
 - 不可能对所有数据都实现压缩
 
@@ -441,6 +452,7 @@ $$quality: Dataset \rightarrow [0,1]$$
 $$quality(D_1 \cup D_2) \geq \min(quality(D_1), quality(D_2))$$
 
 **证明**：
+
 - 并集的质量不低于最低质量
 - 基于最坏情况分析
 
@@ -520,6 +532,7 @@ impl AnomalyDetector {
 $$\mathcal{E} = (nodes, computation, communication, coordination)$$
 
 其中：
+
 - $nodes$: 边缘节点集合
 - $computation$: 计算能力
 - $communication$: 通信能力
@@ -540,6 +553,7 @@ $$\min_{x} \sum_{i=1}^{n} (compute\_cost(i) + communication\_cost(i))$$
 subject to: $latency\_constraint$
 
 **证明**：
+
 - 平衡计算成本和通信成本
 - 在延迟约束下优化性能
 
@@ -1055,4 +1069,4 @@ mod tests {
 
 *最后更新: 2024-12-19*
 *文档状态: 完成*
-*下一步: [IoT安全与隐私理论](./05_IoT_Security_Privacy.md)* 
+*下一步: [IoT安全与隐私理论](./05_IoT_Security_Privacy.md)*
