@@ -10,6 +10,7 @@
 
 **定义 2.1 (IoT算法系统)**
 IoT算法系统是一个五元组 $\mathcal{A} = (S, I, O, F, T)$，其中：
+
 - $S$ 是状态空间
 - $I$ 是输入空间
 - $O$ 是输出空间
@@ -28,6 +29,7 @@ $$\frac{dV}{dt} < 0$$
 
 **定义 2.2 (IoT算法复杂度)**
 IoT算法的复杂度由以下三个维度定义：
+
 1. **时间复杂度**: $T(n) = O(f(n))$
 2. **空间复杂度**: $S(n) = O(g(n))$
 3. **能耗复杂度**: $E(n) = O(h(n))$
@@ -40,6 +42,7 @@ IoT算法的复杂度由以下三个维度定义：
 
 **定义 3.1 (观察者模式)**
 观察者模式是一个四元组 $\mathcal{O} = (Subject, Observer, Event, Notification)$，其中：
+
 - $Subject$ 是被观察对象集合
 - $Observer$ 是观察者集合
 - $Event$ 是事件类型集合
@@ -195,6 +198,7 @@ async fn main() {
 
 **定义 3.2 (策略模式)**
 策略模式是一个三元组 $\mathcal{S} = (Context, Strategy, Algorithm)$，其中：
+
 - $Context$ 是上下文环境
 - $Strategy$ 是策略集合
 - $Algorithm: Context \times Strategy \rightarrow Result$ 是算法执行函数
@@ -321,6 +325,7 @@ func ExampleStrategyPattern() {
 滑动窗口是一个固定大小的时间窗口 $W = [t - \Delta, t]$，其中 $\Delta$ 是窗口大小。
 
 **算法 4.1 (滑动窗口平均)**
+
 ```rust
 use std::collections::VecDeque;
 use std::time::{Duration, Instant};
@@ -392,6 +397,7 @@ async fn main() {
 异常检测是一个函数 $f: \mathbb{R}^n \rightarrow \{0, 1\}$，其中 $f(x) = 1$ 表示异常，$f(x) = 0$ 表示正常。
 
 **算法 4.2 (Z-Score异常检测)**
+
 ```rust
 use std::collections::VecDeque;
 
@@ -481,11 +487,13 @@ async fn main() {
 
 **定义 5.1 (设备发现图)**
 设备发现图是一个无向图 $G = (V, E)$，其中：
+
 - $V$ 是设备节点集合
 - $E$ 是连接边集合
 - 每条边 $(u, v) \in E$ 表示设备 $u$ 和 $v$ 可以直接通信
 
 **算法 5.1 (泛洪发现算法)**
+
 ```rust
 use std::collections::{HashMap, HashSet, VecDeque};
 use std::sync::{Arc, Mutex};
@@ -630,11 +638,13 @@ async fn main() {
 
 **定义 5.2 (信标)**
 信标是一个三元组 $B = (id, position, range)$，其中：
+
 - $id$ 是信标标识符
 - $position$ 是信标位置
 - $range$ 是信标覆盖范围
 
 **算法 5.2 (信标发现算法)**
+
 ```go
 package iot
 
@@ -822,11 +832,13 @@ func ExampleBeaconDiscovery() {
 
 **定义 6.1 (网络图)**
 网络图是一个带权有向图 $G = (V, E, w)$，其中：
+
 - $V$ 是节点集合（设备）
 - $E$ 是边集合（连接）
 - $w: E \rightarrow \mathbb{R}^+$ 是权重函数（延迟、带宽等）
 
 **算法 6.1 (Dijkstra最短路径)**
+
 ```rust
 use std::collections::{BinaryHeap, HashMap, HashSet};
 use std::cmp::Ordering;
@@ -1011,6 +1023,7 @@ async fn main() {
 $$\sum_{i=1}^m load(node_i) \approx \frac{\sum_{i=1}^n weight(req_i)}{m}$$
 
 **算法 6.2 (加权轮询负载均衡)**
+
 ```go
 package iot
 
@@ -1144,6 +1157,7 @@ func ExampleLoadBalancing() {
 滑动窗口平均算法的时间复杂度为 $O(1)$，空间复杂度为 $O(w)$，其中 $w$ 是窗口大小。
 
 **证明**：
+
 - 时间复杂度：每次添加数据点只需要常数时间操作（添加、删除）
 - 空间复杂度：窗口最多存储 $w$ 个数据点
 
@@ -1151,6 +1165,7 @@ func ExampleLoadBalancing() {
 Dijkstra最短路径算法的时间复杂度为 $O((V + E) \log V)$，其中 $V$ 是节点数，$E$ 是边数。
 
 **证明**：
+
 - 每个节点最多被访问一次
 - 每次访问需要更新邻居节点的距离
 - 使用优先队列维护最小距离节点，每次操作需要 $O(\log V)$ 时间
@@ -1162,12 +1177,14 @@ IoT设备的能耗模型为：
 $$E_{total} = E_{compute} + E_{communication} + E_{sensing} + E_{idle}$$
 
 其中：
+
 - $E_{compute}$ 是计算能耗
 - $E_{communication}$ 是通信能耗
 - $E_{sensing}$ 是感知能耗
 - $E_{idle}$ 是空闲能耗
 
 **算法 7.1 (能耗优化)**
+
 ```rust
 use std::collections::HashMap;
 
@@ -1274,4 +1291,4 @@ async fn main() {
 4. **路由算法**：最短路径、负载均衡等网络路由算法
 5. **性能分析**：复杂度分析和能耗优化
 
-所有算法都提供了形式化的数学定义、严格的证明和完整的Rust/Go实现示例，确保理论严谨性和实现可行性。 
+所有算法都提供了形式化的数学定义、严格的证明和完整的Rust/Go实现示例，确保理论严谨性和实现可行性。

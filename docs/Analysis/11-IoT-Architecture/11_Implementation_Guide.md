@@ -3,11 +3,13 @@
 ## 11.1 架构设计最佳实践
 
 ### 11.1.1 分层设计原则
+
 - **关注点分离**：设备层、边缘层、云层职责明确
 - **松耦合**：组件间通过标准接口通信
 - **高内聚**：相关功能聚合在同一模块
 
 ### 11.1.2 可扩展性设计
+
 - **水平扩展**：支持设备数量线性增长
 - **垂直扩展**：支持单设备功能增强
 - **功能扩展**：支持新协议、新算法集成
@@ -430,12 +432,14 @@ impl IoTDevice {
 ```
 
 ## 11.8 跨主题引用
+
 - 基础理论与行业标准详见[1. IoT基础理论与行业标准](01_Foundation.md)
 - 设备管理与生命周期详见[2. IoT设备管理与生命周期](02_Device_Management.md)
 - 性能与可靠性详见[5. IoT性能与可靠性](05_Performance_Reliability.md)
 
 ## 11.9 参考与扩展阅读
+
 - [Rust异步编程指南](https://rust-lang.github.io/async-book/)
 - [Golang并发编程](https://golang.org/doc/effective_go.html#concurrency)
 - [IoT部署最佳实践](https://docs.microsoft.com/en-us/azure/iot-edge/)
-- [性能优化指南](https://doc.rust-lang.org/book/ch13-00-functional-features.html) 
+- [性能优化指南](https://doc.rust-lang.org/book/ch13-00-functional-features.html)

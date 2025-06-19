@@ -40,8 +40,9 @@ impl TelemetryProcessor {
 ```
 
 ## 3.4 参考与扩展阅读
+
 - [OGC SensorML](https://www.ogc.org/standards/sensorml/)
-- [SenML](https://datatracker.ietf.org/doc/html/rfc8428) 
+- [SenML](https://datatracker.ietf.org/doc/html/rfc8428)
 
 ## 3.5 形式化定理与推论
 
@@ -65,5 +66,6 @@ graph TD
 ```
 
 ## 3.7 跨主题引用
+
 - 安全与隐私详见[4. IoT安全与隐私](04_Security_Privacy.md)
-- 边缘计算与WebAssembly详见[6. IoT边缘计算与WebAssembly](06_Edge_Computing_WASM.md) 
+- 边缘计算与WebAssembly详见[6. IoT边缘计算与WebAssembly](06_Edge_Computing_WASM.md)

@@ -23,6 +23,7 @@ IoT设备管理是确保大规模分布式设备正常运行的核心技术。�
 $$\mathcal{M} = (D, R, M, U, C, S, L, T)$$
 
 其中：
+
 - $D = \{d_1, d_2, ..., d_n\}$ 是设备集合
 - $R$ 是注册服务
 - $M$ 是监控服务
@@ -41,6 +42,7 @@ $$\mathcal{M} = (D, R, M, U, C, S, L, T)$$
 $$\mathcal{L} = (S, \Sigma, \delta, s_0, F)$$
 
 其中：
+
 - $S = \{manufactured, registered, active, inactive, maintenance, retired\}$ 是状态集合
 - $\Sigma = \{register, activate, deactivate, maintain, retire\}$ 是事件集合
 - $\delta: S \times \Sigma \rightarrow S$ 是状态转换函数
@@ -115,11 +117,11 @@ async fn distributed_service_discovery(
     let mut discovered_devices = Vec::new();
     let mut visited = HashSet::new();
     let mut queue = VecDeque::new();
-    
+
     // 从本地节点开始
     queue.push_back(network.local_node_id.clone());
     visited.insert(network.local_node_id.clone());
-    
+
     while let Some(current_node) = queue.pop_front() {
         // 检查当前节点是否匹配查询
         if let Some(device) = network.get_device(&current_node) {
@@ -127,19 +129,19 @@ async fn distributed_service_discovery(
                 discovered_devices.push(device.info.clone());
             }
         }
-        
+
         // 向邻居节点传播查询
         for neighbor in network.get_neighbors(&current_node) {
             if !visited.contains(neighbor) {
                 visited.insert(neighbor.clone());
                 queue.push_back(neighbor.clone());
-                
+
                 // 发送发现查询到邻居
                 network.send_discovery_query(neighbor, &query).await;
             }
         }
     }
-    
+
     discovered_devices
 }
 ```
@@ -203,7 +205,7 @@ async fn real_time_monitoring(
     thresholds: &[Threshold],
 ) -> Vec<Alert> {
     let mut alerts = Vec::new();
-    
+
     for metric in metrics {
         for threshold in thresholds {
             if threshold.metric_name == metric.name {
@@ -222,7 +224,7 @@ async fn real_time_monitoring(
             }
         }
     }
-    
+
     alerts
 }
 
@@ -283,36 +285,36 @@ async fn ota_update(
     if !verification_result.is_valid {
         return Err(UpdateError::InvalidPackage);
     }
-    
+
     // 2. 检查设备兼容性
     if !device.is_compatible_with_update(update_package) {
         return Err(UpdateError::IncompatibleDevice);
     }
-    
+
     // 3. 创建备份
     let backup = device.create_backup().await?;
-    
+
     // 4. 下载更新包
     let downloaded_package = download_update_package(update_package).await?;
-    
+
     // 5. 验证下载完整性
     if !verify_download_integrity(&downloaded_package, update_package.checksum) {
         return Err(UpdateError::DownloadCorrupted);
     }
-    
+
     // 6. 安装更新
     let install_result = install_update(device, &downloaded_package).await?;
-    
+
     // 7. 验证安装
     if !verify_installation(device, update_package).await? {
         // 回滚更新
         device.rollback_update(&backup).await?;
         return Err(UpdateError::InstallationFailed);
     }
-    
+
     // 8. 更新设备状态
     device.update_version(update_package.version.clone());
-    
+
     Ok(UpdateResult::Success)
 }
 
@@ -323,17 +325,17 @@ async fn verify_update_package(package: &UpdatePackage) -> Result<VerificationRe
         &package.signature,
         &package.public_key,
     ).await?;
-    
+
     if !signature_valid {
         return Ok(VerificationResult { is_valid: false });
     }
-    
+
     // 验证版本兼容性
     let version_compatible = check_version_compatibility(&package.version).await?;
-    
+
     // 验证依赖关系
     let dependencies_satisfied = check_dependencies(&package.dependencies).await?;
-    
+
     Ok(VerificationResult {
         is_valid: signature_valid && version_compatible && dependencies_satisfied,
     })
@@ -387,7 +389,7 @@ async fn configuration_management(
             errors: validation_result.errors,
         });
     }
-    
+
     // 2. 检查配置冲突
     let conflicts = check_configuration_conflicts(new_config, &device.current_config).await?;
     if !conflicts.is_empty() {
@@ -395,10 +397,10 @@ async fn configuration_management(
             conflicts,
         });
     }
-    
+
     // 3. 备份当前配置
     let backup_config = device.current_config.clone();
-    
+
     // 4. 应用新配置
     let apply_result = apply_configuration(device, new_config).await?;
     if !apply_result.success {
@@ -408,7 +410,7 @@ async fn configuration_management(
             reason: apply_result.error,
         });
     }
-    
+
     // 5. 验证配置生效
     let verification_result = verify_configuration_effect(device, new_config).await?;
     if !verification_result.is_valid {
@@ -418,10 +420,10 @@ async fn configuration_management(
             reason: verification_result.error,
         });
     }
-    
+
     // 6. 保存配置
     device.save_configuration(new_config).await?;
-    
+
     Ok(ConfigurationResult::Success)
 }
 
@@ -430,7 +432,7 @@ async fn validate_configuration(
     schema: &ConfigurationSchema,
 ) -> Result<ValidationResult, ValidationError> {
     let mut errors = Vec::new();
-    
+
     // 检查必需参数
     for required_param in &schema.required_parameters {
         if !config.parameters.contains_key(required_param) {
@@ -439,7 +441,7 @@ async fn validate_configuration(
             });
         }
     }
-    
+
     // 检查参数类型
     for (param_name, param_value) in &config.parameters {
         if let Some(param_schema) = schema.parameters.get(param_name) {
@@ -450,7 +452,7 @@ async fn validate_configuration(
                     actual_value: param_value.clone(),
                 });
             }
-            
+
             // 检查参数约束
             if let Some(constraint) = &param_schema.constraint {
                 if !constraint.validate(param_value) {
@@ -467,7 +469,7 @@ async fn validate_configuration(
             });
         }
     }
-    
+
     Ok(ValidationResult {
         is_valid: errors.is_empty(),
         errors,
@@ -513,7 +515,7 @@ async fn device_authentication(
     if !certificate_valid {
         return Err(AuthenticationError::InvalidCertificate);
     }
-    
+
     // 2. 验证设备签名
     let signature_valid = verify_device_signature(
         &credentials.challenge,
@@ -523,18 +525,18 @@ async fn device_authentication(
     if !signature_valid {
         return Err(AuthenticationError::InvalidSignature);
     }
-    
+
     // 3. 检查设备状态
     if device.status != DeviceStatus::Active {
         return Err(AuthenticationError::DeviceNotActive);
     }
-    
+
     // 4. 生成会话令牌
     let session_token = generate_session_token(device.id.clone()).await?;
-    
+
     // 5. 记录认证日志
     log_authentication_event(device.id.clone(), AuthenticationEvent::Success).await?;
-    
+
     Ok(AuthenticationResult {
         success: true,
         session_token,
@@ -548,19 +550,19 @@ async fn verify_device_certificate(certificate: &DeviceCertificate) -> Result<bo
     if !chain_valid {
         return Ok(false);
     }
-    
+
     // 检查证书有效期
     let now = chrono::Utc::now();
     if now < certificate.not_before || now > certificate.not_after {
         return Ok(false);
     }
-    
+
     // 检查证书撤销状态
     let revoked = check_certificate_revocation(certificate).await?;
     if revoked {
         return Ok(false);
     }
-    
+
     Ok(true)
 }
 ```
@@ -578,7 +580,7 @@ use uuid::Uuid;
 use chrono::{DateTime, Utc};
 
 /// 设备状态
-#[derive(Debug, Clone, Serialize, Deserialize)]
+# [derive(Debug, Clone, Serialize, Deserialize)]
 pub enum DeviceStatus {
     Manufactured,
     Registered,
@@ -589,7 +591,7 @@ pub enum DeviceStatus {
 }
 
 /// 设备信息
-#[derive(Debug, Clone, Serialize, Deserialize)]
+# [derive(Debug, Clone, Serialize, Deserialize)]
 pub struct DeviceInfo {
     pub id: String,
     pub name: String,
@@ -607,7 +609,7 @@ pub struct DeviceInfo {
 }
 
 /// 位置信息
-#[derive(Debug, Clone, Serialize, Deserialize)]
+# [derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Location {
     pub latitude: f64,
     pub longitude: f64,
@@ -616,7 +618,7 @@ pub struct Location {
 }
 
 /// 监控指标
-#[derive(Debug, Clone, Serialize, Deserialize)]
+# [derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Metric {
     pub name: String,
     pub value: f64,
@@ -626,7 +628,7 @@ pub struct Metric {
 }
 
 /// 告警
-#[derive(Debug, Clone, Serialize, Deserialize)]
+# [derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Alert {
     pub id: String,
     pub device_id: String,
@@ -641,7 +643,7 @@ pub struct Alert {
 }
 
 /// 告警严重程度
-#[derive(Debug, Clone, Serialize, Deserialize)]
+# [derive(Debug, Clone, Serialize, Deserialize)]
 pub enum AlertSeverity {
     Low,
     Medium,
@@ -650,7 +652,7 @@ pub enum AlertSeverity {
 }
 
 /// 设备配置
-#[derive(Debug, Clone, Serialize, Deserialize)]
+# [derive(Debug, Clone, Serialize, Deserialize)]
 pub struct DeviceConfiguration {
     pub device_id: String,
     pub parameters: HashMap<String, serde_json::Value>,
@@ -660,7 +662,7 @@ pub struct DeviceConfiguration {
 }
 
 /// 更新包
-#[derive(Debug, Clone, Serialize, Deserialize)]
+# [derive(Debug, Clone, Serialize, Deserialize)]
 pub struct UpdatePackage {
     pub id: String,
     pub version: String,
@@ -675,7 +677,7 @@ pub struct UpdatePackage {
 }
 
 /// 设备管理器
-#[derive(Debug)]
+# [derive(Debug)]
 pub struct DeviceManager {
     pub devices: Arc<RwLock<HashMap<String, DeviceInfo>>>,
     pub metrics: Arc<RwLock<HashMap<String, Vec<Metric>>>>,
@@ -690,7 +692,7 @@ impl DeviceManager {
     pub fn new() -> Self {
         let (update_queue, _) = mpsc::channel(100);
         let (alert_sender, _) = mpsc::channel(100);
-        
+
         Self {
             devices: Arc::new(RwLock::new(HashMap::new())),
             metrics: Arc::new(RwLock::new(HashMap::new())),
@@ -704,11 +706,11 @@ impl DeviceManager {
     /// 注册设备
     pub async fn register_device(&self, device_info: DeviceInfo) -> Result<(), String> {
         let mut devices = self.devices.write().await;
-        
+
         if devices.contains_key(&device_info.id) {
             return Err("Device already registered".to_string());
         }
-        
+
         devices.insert(device_info.id.clone(), device_info);
         Ok(())
     }
@@ -716,7 +718,7 @@ impl DeviceManager {
     /// 更新设备状态
     pub async fn update_device_status(&self, device_id: &str, status: DeviceStatus) -> Result<(), String> {
         let mut devices = self.devices.write().await;
-        
+
         if let Some(device) = devices.get_mut(device_id) {
             device.status = status;
             device.last_seen = Utc::now();
@@ -729,12 +731,12 @@ impl DeviceManager {
     /// 添加监控指标
     pub async fn add_metric(&self, metric: Metric) -> Result<(), String> {
         let mut metrics = self.metrics.write().await;
-        
+
         metrics
             .entry(metric.device_id.clone())
             .or_insert_with(Vec::new)
             .push(metric);
-        
+
         Ok(())
     }
 
@@ -742,9 +744,9 @@ impl DeviceManager {
     pub async fn check_alerts(&self, device_id: &str) -> Result<Vec<Alert>, String> {
         let metrics = self.metrics.read().await;
         let device_metrics = metrics.get(device_id).cloned().unwrap_or_default();
-        
+
         let mut alerts = Vec::new();
-        
+
         for metric in device_metrics {
             // 检查阈值（简化版本）
             if metric.value > 100.0 {
@@ -763,20 +765,20 @@ impl DeviceManager {
                 alerts.push(alert);
             }
         }
-        
+
         Ok(alerts)
     }
 
     /// 应用设备配置
     pub async fn apply_configuration(&self, config: DeviceConfiguration) -> Result<(), String> {
         let mut configurations = self.configurations.write().await;
-        
+
         // 验证设备存在
         let devices = self.devices.read().await;
         if !devices.contains_key(&config.device_id) {
             return Err("Device not found".to_string());
         }
-        
+
         configurations.insert(config.device_id.clone(), config);
         Ok(())
     }
@@ -788,12 +790,12 @@ impl DeviceManager {
             update_package,
             timestamp: Utc::now(),
         };
-        
+
         self.update_queue
             .send(update_request)
             .await
             .map_err(|e| format!("Failed to send update request: {}", e))?;
-        
+
         Ok(())
     }
 
@@ -812,7 +814,7 @@ impl DeviceManager {
     /// 搜索设备
     pub async fn search_devices(&self, query: DeviceSearchQuery) -> Vec<DeviceInfo> {
         let devices = self.devices.read().await;
-        
+
         devices
             .values()
             .filter(|device| {
@@ -822,14 +824,14 @@ impl DeviceManager {
                         return false;
                     }
                 }
-                
+
                 // 按状态过滤
                 if let Some(status) = &query.status {
                     if device.status != *status {
                         return false;
                     }
                 }
-                
+
                 // 按位置过滤
                 if let Some(location) = &query.location {
                     let distance = calculate_distance(&device.location, location);
@@ -837,7 +839,7 @@ impl DeviceManager {
                         return false;
                     }
                 }
-                
+
                 true
             })
             .cloned()
@@ -846,7 +848,7 @@ impl DeviceManager {
 }
 
 /// 设备搜索查询
-#[derive(Debug, Clone)]
+# [derive(Debug, Clone)]
 pub struct DeviceSearchQuery {
     pub device_type: Option<String>,
     pub status: Option<DeviceStatus>,
@@ -855,7 +857,7 @@ pub struct DeviceSearchQuery {
 }
 
 /// 更新请求
-#[derive(Debug, Clone)]
+# [derive(Debug, Clone)]
 pub struct UpdateRequest {
     pub device_id: String,
     pub update_package: UpdatePackage,
@@ -868,26 +870,26 @@ fn calculate_distance(loc1: &Location, loc2: &Location) -> f64 {
     let lon1 = loc1.longitude.to_radians();
     let lat2 = loc2.latitude.to_radians();
     let lon2 = loc2.longitude.to_radians();
-    
+
     let dlat = lat2 - lat1;
     let dlon = lon2 - lon1;
-    
+
     let a = (dlat / 2.0).sin().powi(2) + lat1.cos() * lat2.cos() * (dlon / 2.0).sin().powi(2);
     let c = 2.0 * a.sqrt().asin();
-    
+
     // 地球半径（米）
     const EARTH_RADIUS: f64 = 6_371_000.0;
     EARTH_RADIUS * c
 }
 
-#[cfg(test)]
+# [cfg(test)]
 mod tests {
     use super::*;
 
     #[test]
     fn test_device_registration() {
         let device_manager = DeviceManager::new();
-        
+
         let device_info = DeviceInfo {
             id: "test_device_001".to_string(),
             name: "Test Sensor".to_string(),
@@ -908,13 +910,13 @@ mod tests {
             created_at: Utc::now(),
             last_seen: Utc::now(),
         };
-        
+
         // 测试注册
         let result = tokio::runtime::Runtime::new()
             .unwrap()
             .block_on(device_manager.register_device(device_info.clone()));
         assert!(result.is_ok());
-        
+
         // 测试重复注册
         let result = tokio::runtime::Runtime::new()
             .unwrap()
@@ -925,7 +927,7 @@ mod tests {
     #[test]
     fn test_metric_collection() {
         let device_manager = DeviceManager::new();
-        
+
         let metric = Metric {
             name: "temperature".to_string(),
             value: 25.5,
@@ -933,7 +935,7 @@ mod tests {
             timestamp: Utc::now(),
             device_id: "test_device_001".to_string(),
         };
-        
+
         let result = tokio::runtime::Runtime::new()
             .unwrap()
             .block_on(device_manager.add_metric(metric));
@@ -948,14 +950,14 @@ mod tests {
             altitude: None,
             description: None,
         };
-        
+
         let loc2 = Location {
             latitude: 34.0522,
             longitude: -118.2437,
             altitude: None,
             description: None,
         };
-        
+
         let distance = calculate_distance(&loc1, &loc2);
         // 纽约到洛杉矶的距离大约是4000公里
         assert!(distance > 3_000_000.0 && distance < 5_000_000.0);
@@ -981,4 +983,4 @@ mod tests {
 
 *最后更新: 2024-12-19*
 *文档状态: 完成*
-*下一步: [IoT数据处理理论](./04_IoT_Data_Processing.md)* 
+*下一步: [IoT数据处理理论](./04_IoT_Data_Processing.md)*

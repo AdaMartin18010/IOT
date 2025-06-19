@@ -36,8 +36,9 @@ impl WorkflowEngine {
 ```
 
 ## 8.4 参考与扩展阅读
+
 - [IoT工作流系统综述](https://ieeexplore.ieee.org/document/9120192)
-- [同伦论与分布式工作流](https://ncatlab.org/nlab/show/homotopy+type+theory) 
+- [同伦论与分布式工作流](https://ncatlab.org/nlab/show/homotopy+type+theory)
 
 ## 8.5 形式化定理与推论
 
@@ -59,5 +60,6 @@ graph TD
 ```
 
 ## 8.7 跨主题引用
+
 - 业务建模与行业应用详见[7. IoT业务建模与行业应用](07_Business_Modeling.md)
-- 安全与隐私详见[4. IoT安全与隐私](04_Security_Privacy.md) 
+- 安全与隐私详见[4. IoT安全与隐私](04_Security_Privacy.md)

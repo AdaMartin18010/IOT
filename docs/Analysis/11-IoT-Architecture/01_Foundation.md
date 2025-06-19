@@ -3,6 +3,7 @@
 ## 1.1 行业标准与核心定义
 
 ### 1.1.1 主要国际标准
+
 - **IEEE 1451**：智能传感器接口标准
 - **OGC SWE**：传感器Web使能（SensorML、SOS等）
 - **oneM2M**：统一服务层架构，设备资源模型、RESTful API
@@ -11,6 +12,7 @@
 - **OPC UA**：工业自动化与物联网数据交换
 
 ### 1.1.2 主要协议与数据格式
+
 - **物理/链路层**：IEEE 802.15.4、蓝牙LE、ZigBee、LoRaWAN、NB-IoT
 - **网络/传输层**：IPv6、6LoWPAN、UDP/TCP
 - **应用层**：MQTT、CoAP、AMQP、HTTP
@@ -60,6 +62,7 @@ pub struct Telemetry {
 ```
 
 ## 1.5 参考与扩展阅读
+
 - [oneM2M](https://www.onem2m.org/)
 - [OCF](https://openconnectivity.org/)
 - [IEEE 1451](https://standards.ieee.org/1451/)
@@ -87,5 +90,6 @@ pub struct Telemetry {
 | OPC UA    | 工业/云   | 语义建模、安全 | 工业物联网 |
 
 ## 1.8 跨主题引用
+
 - 设备管理与生命周期详见[2. IoT设备管理与生命周期](02_Device_Management.md)
-- 数据采集与处理详见[3. IoT数据采集与处理](03_Data_Processing.md) 
+- 数据采集与处理详见[3. IoT数据采集与处理](03_Data_Processing.md)

@@ -3,9 +3,11 @@
 ## 14.1 测试策略概述
 
 ### 14.1.1 测试金字塔
+
 **定义14.1（测试金字塔）**：\( TestPyramid = UnitTests + IntegrationTests + E2ETests \)
 
 ### 14.1.2 测试层次
+
 - **单元测试**：70% - 组件级别测试
 - **集成测试**：20% - 服务间交互测试
 - **端到端测试**：10% - 完整业务流程测试
@@ -678,13 +680,15 @@ graph LR
 ```
 
 ## 14.9 跨主题引用
+
 - 基础理论与行业标准详见[1. IoT基础理论与行业标准](01_Foundation.md)
 - 性能与可靠性详见[5. IoT性能与可靠性](05_Performance_Reliability.md)
 - 安全与隐私详见[4. IoT安全与隐私](04_Security_Privacy.md)
 - 实现指南与最佳实践详见[11. IoT实现指南与最佳实践](11_Implementation_Guide.md)
 
 ## 14.10 参考与扩展阅读
+
 - [Rust测试指南](https://doc.rust-lang.org/book/ch11-00-testing.html)
 - [Golang测试](https://golang.org/pkg/testing/)
 - [测试驱动开发](https://en.wikipedia.org/wiki/Test-driven_development)
-- [持续集成最佳实践](https://martinfowler.com/articles/continuousIntegration.html) 
+- [持续集成最佳实践](https://martinfowler.com/articles/continuousIntegration.html)

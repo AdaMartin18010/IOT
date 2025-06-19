@@ -3,9 +3,11 @@
 ## 10.1 AIoT（人工智能物联网）
 
 ### 10.1.1 概念定义
+
 **定义10.1（AIoT）**：\( AIoT = IoT \cup AI \)，即物联网与人工智能的深度融合。
 
 ### 10.1.2 核心特性
+
 - **边缘AI**：本地机器学习推理
 - **联邦学习**：分布式模型训练
 - **智能决策**：基于AI的自动化控制
@@ -51,9 +53,11 @@ graph TD
 ## 10.2 量子安全IoT
 
 ### 10.2.1 概念定义
+
 **定义10.2（量子安全IoT）**：采用后量子密码学技术保护IoT通信安全。
 
 ### 10.2.2 核心特性
+
 - **后量子密码学**：抗量子攻击的加密算法
 - **量子密钥分发**：基于量子力学原理的密钥交换
 - **量子随机数生成**：真随机数生成
@@ -80,9 +84,11 @@ impl QuantumSecureIoT {
 ## 10.3 跨链IoT集成
 
 ### 10.3.1 概念定义
+
 **定义10.3（跨链IoT）**：\( CrossChainIoT = IoT \cup Blockchain \cup Interoperability \)
 
 ### 10.3.2 核心特性
+
 - **区块链集成**：设备身份、数据溯源、智能合约
 - **跨链互操作**：多链数据交换、资产转移
 - **去中心化治理**：DAO、代币经济学
@@ -116,9 +122,11 @@ impl CrossChainIoT {
 ## 10.4 5G/6G IoT
 
 ### 10.4.1 概念定义
+
 **定义10.4（5G/6G IoT）**：基于5G/6G网络的超低延迟、大带宽IoT应用。
 
 ### 10.4.2 核心特性
+
 - **网络切片**：专用IoT网络
 - **边缘计算**：5G边缘节点
 - **超低延迟**：毫秒级响应
@@ -145,9 +153,11 @@ impl NextGenIoT {
 ## 10.5 数字孪生
 
 ### 10.5.1 概念定义
+
 **定义10.5（数字孪生）**：\( DigitalTwin = PhysicalSystem \mapsto DigitalModel \)
 
 ### 10.5.2 核心特性
+
 - **实时同步**：物理与数字世界实时映射
 - **预测分析**：基于孪生模型的预测
 - **虚拟测试**：在数字世界中进行测试
@@ -180,12 +190,14 @@ impl DigitalTwin {
 ```
 
 ## 10.6 跨主题引用
+
 - 基础理论与行业标准详见[1. IoT基础理论与行业标准](01_Foundation.md)
 - 边缘计算与WebAssembly详见[6. IoT边缘计算与WebAssembly](06_Edge_Computing_WASM.md)
 - 行业案例与应用场景详见[9. IoT行业案例与应用场景](09_Industry_Cases.md)
 
 ## 10.7 参考与扩展阅读
+
 - [AIoT技术白皮书](https://www.iotworldtoday.com/aiot)
 - [量子安全标准](https://www.nist.gov/quantum-internet)
 - [5G IoT应用指南](https://www.3gpp.org/5g-iot)
-- [数字孪生技术](https://www.digitaltwinconsortium.org/) 
+- [数字孪生技术](https://www.digitaltwinconsortium.org/)

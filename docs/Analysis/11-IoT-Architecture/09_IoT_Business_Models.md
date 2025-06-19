@@ -10,6 +10,7 @@ This document presents a formal mathematical framework for IoT business models, 
 
 **Definition 1.1 (Business Model)**
 A business model $\mathcal{B} = (V, C, R, P)$ consists of:
+
 - $V$: Value proposition
 - $C$: Customer segments
 - $R$: Revenue streams
@@ -20,6 +21,7 @@ The business model canvas $C$ is:
 $$C = (KP, VP, CR, CH, KR, KA, KC, CS, RS)$$
 
 where:
+
 - $KP$: Key partnerships
 - $VP$: Value propositions
 - $CR$: Customer relationships
@@ -53,6 +55,7 @@ A value proposition $VP$ is defined as:
 $$VP = (B, P, U, C)$$
 
 where:
+
 - $B$: Benefits offered
 - $P$: Problems solved
 - $U$: Unique features
@@ -65,6 +68,7 @@ $$S_{VP} = \alpha \cdot B + \beta \cdot P + \gamma \cdot U + \delta \cdot C$$
 where $\alpha, \beta, \gamma, \delta$ are weight factors.
 
 **Algorithm 2.1: Value Proposition Analyzer**
+
 ```rust
 use std::collections::HashMap;
 
@@ -226,6 +230,7 @@ Customer value $CV$ is:
 $$CV = \frac{B - C}{P}$$
 
 where:
+
 - $B$: Benefits received
 - $C$: Costs incurred
 - $P$: Price paid
@@ -243,6 +248,7 @@ A revenue stream $R$ is:
 $$R = (T, P, V, F)$$
 
 where:
+
 - $T$: Revenue type
 - $P$: Pricing model
 - $V$: Value delivered
@@ -250,6 +256,7 @@ where:
 
 **Definition 3.2 (Revenue Model Types)**
 IoT revenue models include:
+
 - $R_1$: Hardware sales
 - $R_2$: Software licensing
 - $R_3$: Subscription services
@@ -258,6 +265,7 @@ IoT revenue models include:
 - $R_6$: Consulting services
 
 **Algorithm 3.1: Revenue Model Analyzer**
+
 ```rust
 use std::collections::HashMap;
 
@@ -402,6 +410,7 @@ A pricing strategy $PS$ is:
 $$PS = (B, C, M, D)$$
 
 where:
+
 - $B$: Base price
 - $C$: Cost structure
 - $M$: Market positioning
@@ -422,6 +431,7 @@ Market size $MS$ is:
 $$MS = \sum_{i=1}^{n} S_i \times P_i \times A_i$$
 
 where:
+
 - $S_i$: Segment size
 - $P_i$: Penetration rate
 - $A_i$: Average revenue per user
@@ -431,6 +441,7 @@ Market growth rate $g$ is:
 $$g = \frac{MS_{t+1} - MS_t}{MS_t} \times 100\%$$
 
 **Algorithm 4.1: Market Analysis Engine**
+
 ```rust
 use std::collections::HashMap;
 
@@ -583,12 +594,14 @@ Business model innovation $I$ is:
 $$I = (N, E, T, R)$$
 
 where:
+
 - $N$: Novelty
 - $E$: Efficiency
 - $T$: Technology leverage
 - $R$: Risk mitigation
 
 **Algorithm 5.1: Business Model Innovation Engine**
+
 ```rust
 use std::collections::HashMap;
 
@@ -734,6 +747,7 @@ A business ecosystem $E$ is:
 $$E = (P, R, V, I)$$
 
 where:
+
 - $P$: Participants
 - $R$: Relationships
 - $V$: Value flows
@@ -754,12 +768,14 @@ A financial model $F$ is:
 $$F = (R, C, P, CF)$$
 
 where:
+
 - $R$: Revenue projections
 - $C$: Cost structure
 - $P$: Profit margins
 - $CF$: Cash flows
 
 **Algorithm 6.1: Financial Model Engine**
+
 ```rust
 use std::collections::HashMap;
 
@@ -891,6 +907,7 @@ impl FinancialModel {
 
 **Definition 6.2 (Investment Metrics)**
 Key investment metrics include:
+
 - $ROI$: Return on Investment
 - $NPV$: Net Present Value
 - $IRR$: Internal Rate of Return
@@ -919,5 +936,5 @@ The Rust implementations demonstrate practical applications of the theoretical c
 1. Osterwalder, A., & Pigneur, Y. (2010). Business model generation. John Wiley & Sons.
 2. Chesbrough, H. (2010). Business model innovation: Opportunities and barriers. Long Range Planning.
 3. Teece, D. J. (2010). Business models, business strategy and innovation. Long Range Planning.
-4. Rust Programming Language. (2023). The Rust Programming Language. https://www.rust-lang.org/
-5. Porter, M. E. (1985). Competitive advantage. Free Press. 
+4. Rust Programming Language. (2023). The Rust Programming Language. <https://www.rust-lang.org/>
+5. Porter, M. E. (1985). Competitive advantage. Free Press.

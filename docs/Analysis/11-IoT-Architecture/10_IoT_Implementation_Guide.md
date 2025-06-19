@@ -13,6 +13,7 @@ The implementation architecture $\mathcal{A}$ is:
 $$\mathcal{A} = (L, C, I, D)$$
 
 where:
+
 - $L$: Layered architecture
 - $C$: Component interfaces
 - $I$: Integration patterns
@@ -746,8 +747,8 @@ The code examples demonstrate production-ready patterns for building scalable, s
 
 ## References
 
-1. Rust Programming Language. (2023). The Rust Programming Language. https://www.rust-lang.org/
-2. Tokio. (2023). Asynchronous runtime for Rust. https://tokio.rs/
-3. Serde. (2023). Serialization framework for Rust. https://serde.rs/
-4. Docker. (2023). Container platform. https://www.docker.com/
-5. JSON Web Tokens. (2023). RFC 7519. https://tools.ietf.org/html/rfc7519 
+1. Rust Programming Language. (2023). The Rust Programming Language. <https://www.rust-lang.org/>
+2. Tokio. (2023). Asynchronous runtime for Rust. <https://tokio.rs/>
+3. Serde. (2023). Serialization framework for Rust. <https://serde.rs/>
+4. Docker. (2023). Container platform. <https://www.docker.com/>
+5. JSON Web Tokens. (2023). RFC 7519. <https://tools.ietf.org/html/rfc7519>

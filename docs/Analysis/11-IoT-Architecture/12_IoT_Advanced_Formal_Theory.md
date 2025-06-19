@@ -24,6 +24,7 @@
 $$\mathcal{I} = (D, N, P, S, C, A, E, T, \mathcal{R})$$
 
 其中：
+
 - $D = \{d_1, d_2, ..., d_n\}$ 是设备集合
 - $N$ 是网络拓扑
 - $P$ 是处理能力分布
@@ -43,6 +44,7 @@ $$\mathcal{I} = (D, N, P, S, C, A, E, T, \mathcal{R})$$
 $$d_i = (id_i, type_i, cap_i, loc_i, status_i, config_i, t_i)$$
 
 其中：
+
 - $id_i$ 是设备唯一标识符
 - $type_i$ 是设备类型
 - $cap_i$ 是设备能力集合
@@ -58,6 +60,7 @@ $$d_i = (id_i, type_i, cap_i, loc_i, status_i, config_i, t_i)$$
 $$N = (V, E, w)$$
 
 其中：
+
 - $V = D$ 是顶点集合（设备）
 - $E \subseteq V \times V$ 是边集合（连接）
 - $w: E \rightarrow \mathbb{R}^+$ 是权重函数（延迟/带宽）
@@ -87,6 +90,7 @@ $$\alpha: D \rightarrow \mathcal{A}$$
 $$cap = (sensors, actuators, processors)$$
 
 其中：
+
 - $sensors$ 是传感器集合
 - $actuators$ 是执行器集合
 - $processors$ 是处理器能力
@@ -109,6 +113,7 @@ $$cap_{combined} = cap_1 \cup cap_2$$
 $$\mathcal{P} = (M, T, E, D, V)$$
 
 其中：
+
 - $M$ 是消息格式
 - $T$ 是传输机制
 - $E$ 是错误处理
@@ -165,6 +170,7 @@ $$\mathcal{P} = f_n \circ f_{n-1} \circ ... \circ f_1$$
 $$\mathcal{S} = (T, A, P, R)$$
 
 其中：
+
 - $T$ 是威胁模型
 - $A$ 是攻击向量
 - $P$ 是保护机制
@@ -700,4 +706,4 @@ impl PrivacyService {
 3. **优化理论**：提供了性能优化和安全保护的理论基础
 4. **工程实现**：提供了完整的Rust实现框架
 
-这个框架为IoT系统的设计、实现和优化提供了坚实的理论基础和实用的工程指导。 
+这个框架为IoT系统的设计、实现和优化提供了坚实的理论基础和实用的工程指导。

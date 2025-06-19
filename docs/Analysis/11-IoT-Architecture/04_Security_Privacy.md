@@ -38,8 +38,9 @@ impl SecurityManager {
 ```
 
 ## 4.4 参考与扩展阅读
+
 - [OCF安全规范](https://openconnectivity.org/developer/specifications/security/)
-- [IoT安全最佳实践](https://www.owasp.org/index.php/OWASP_Internet_of_Things_Project) 
+- [IoT安全最佳实践](https://www.owasp.org/index.php/OWASP_Internet_of_Things_Project)
 
 ## 4.5 形式化定理与推论
 
@@ -64,5 +65,6 @@ graph TD
 ```
 
 ## 4.7 跨主题引用
+
 - 性能与可靠性详见[5. IoT性能与可靠性](05_Performance_Reliability.md)
-- 工作流与自动化详见[8. IoT工作流与自动化](08_Workflow_Automation.md) 
+- 工作流与自动化详见[8. IoT工作流与自动化](08_Workflow_Automation.md)

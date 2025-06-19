@@ -3,9 +3,11 @@
 ## 13.1 系统集成概述
 
 ### 13.1.1 集成定义
+
 **定义13.1（IoT系统集成）**：\( Integration = \bigcup_{i=1}^{n} System_i \)，即多个IoT子系统的统一集成。
 
 ### 13.1.2 集成层次
+
 - **设备层集成**：传感器、执行器、网关设备
 - **网络层集成**：通信协议、路由、负载均衡
 - **应用层集成**：业务逻辑、数据处理、用户界面
@@ -521,13 +523,15 @@ graph LR
 ```
 
 ## 13.8 跨主题引用
+
 - 基础理论与行业标准详见[1. IoT基础理论与行业标准](01_Foundation.md)
 - 数据采集与处理详见[3. IoT数据采集与处理](03_Data_Collection_Processing.md)
 - 工作流与自动化详见[8. IoT工作流与自动化](08_Workflow_Automation.md)
 - 实现指南与最佳实践详见[11. IoT实现指南与最佳实践](11_Implementation_Guide.md)
 
 ## 13.9 参考与扩展阅读
+
 - [微服务架构设计](https://microservices.io/)
 - [事件驱动架构](https://martinfowler.com/articles/201701-event-driven.html)
 - [API设计最佳实践](https://restfulapi.net/)
-- [数据集成模式](https://www.enterpriseintegrationpatterns.com/) 
+- [数据集成模式](https://www.enterpriseintegrationpatterns.com/)

@@ -23,6 +23,7 @@ IoT网络通信是连接分布式设备的核心技术，需要处理异构网�
 $$\mathcal{N} = (V, E, P, B, L, S)$$
 
 其中：
+
 - $V = \{v_1, v_2, ..., v_n\}$ 是节点集合（设备）
 - $E = \{e_1, e_2, ..., e_m\}$ 是边集合（通信链路）
 - $P = \{p_1, p_2, ..., p_k\}$ 是协议集合
@@ -39,6 +40,7 @@ $$\mathcal{N} = (V, E, P, B, L, S)$$
 $$p = (name, format, reliability, latency, bandwidth, security, energy)$$
 
 其中：
+
 - $name$: 协议名称
 - $format$: 消息格式规范
 - $reliability \in [0,1]$: 可靠性指标
@@ -54,6 +56,7 @@ IoT协议栈是一个分层结构：
 $$\mathcal{P} = \{P_1, P_2, P_3, P_4, P_5\}$$
 
 其中：
+
 - $P_1$: 物理层 (Physical Layer)
 - $P_2$: 数据链路层 (Data Link Layer)
 - $P_3$: 网络层 (Network Layer)
@@ -67,6 +70,7 @@ $$\mathcal{P} = \{P_1, P_2, P_3, P_4, P_5\}$$
 $$\exists layer \in \mathcal{P}: p_1.layer = p_2.layer \land format(p_1) \cap format(p_2) \neq \emptyset$$
 
 **证明**：
+
 - 协议必须在同一层才能直接交互
 - 消息格式必须有交集才能进行数据交换
 
@@ -81,6 +85,7 @@ MQTT协议是一个轻量级发布/订阅消息传输协议：
 $$MQTT = (broker, topics, qos, retain, will)$$
 
 其中：
+
 - $broker$: 消息代理
 - $topics$: 主题集合
 - $qos \in \{0,1,2\}$: 服务质量等级
@@ -231,10 +236,10 @@ $$B: V \times M \rightarrow \{B_v: v \in V\}$$
 fn flood_broadcast(source: NodeId, message: Message, network: &Network) {
     let mut visited = HashSet::new();
     let mut queue = VecDeque::new();
-    
+
     queue.push_back(source);
     visited.insert(source);
-    
+
     while let Some(current) = queue.pop_front() {
         // 发送消息给所有邻居
         for neighbor in network.get_neighbors(current) {
@@ -335,18 +340,18 @@ async fn challenge_response_auth(
     // 1. 客户端发起认证
     let auth_request = client.init_auth();
     server.receive_auth_request(auth_request).await?;
-    
+
     // 2. 服务器生成挑战
     let challenge = server.generate_challenge();
     client.receive_challenge(challenge).await?;
-    
+
     // 3. 客户端生成响应
     let response = client.generate_response(&challenge);
     server.receive_response(response).await?;
-    
+
     // 4. 服务器验证
     let is_valid = server.verify_response(&response).await?;
-    
+
     Ok(is_valid)
 }
 ```
@@ -363,7 +368,7 @@ use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
 /// 网络节点
-#[derive(Debug, Clone, Serialize, Deserialize)]
+# [derive(Debug, Clone, Serialize, Deserialize)]
 pub struct NetworkNode {
     pub id: String,
     pub address: String,
@@ -374,7 +379,7 @@ pub struct NetworkNode {
 }
 
 /// 节点类型
-#[derive(Debug, Clone, Serialize, Deserialize)]
+# [derive(Debug, Clone, Serialize, Deserialize)]
 pub enum NodeType {
     Sensor,
     Actuator,
@@ -384,7 +389,7 @@ pub enum NodeType {
 }
 
 /// 节点资源
-#[derive(Debug, Clone, Serialize, Deserialize)]
+# [derive(Debug, Clone, Serialize, Deserialize)]
 pub struct NodeResources {
     pub cpu: f64,
     pub memory: u64,
@@ -393,7 +398,7 @@ pub struct NodeResources {
 }
 
 /// 网络消息
-#[derive(Debug, Clone, Serialize, Deserialize)]
+# [derive(Debug, Clone, Serialize, Deserialize)]
 pub struct NetworkMessage {
     pub id: String,
     pub source: String,
@@ -405,7 +410,7 @@ pub struct NetworkMessage {
 }
 
 /// 消息类型
-#[derive(Debug, Clone, Serialize, Deserialize)]
+# [derive(Debug, Clone, Serialize, Deserialize)]
 pub enum MessageType {
     Data,
     Control,
@@ -415,7 +420,7 @@ pub enum MessageType {
 }
 
 /// 网络拓扑
-#[derive(Debug)]
+# [derive(Debug)]
 pub struct NetworkTopology {
     pub nodes: HashMap<String, NetworkNode>,
     pub edges: HashMap<String, Vec<String>>,
@@ -423,7 +428,7 @@ pub struct NetworkTopology {
 }
 
 /// 拓扑度量
-#[derive(Debug)]
+# [derive(Debug)]
 pub struct TopologyMetrics {
     pub connectivity: f64,
     pub diameter: u32,
@@ -483,7 +488,7 @@ impl NetworkTopology {
     /// 计算网络直径
     fn calculate_diameter(&self) -> u32 {
         let mut max_distance = 0;
-        
+
         for start in self.nodes.keys() {
             for end in self.nodes.keys() {
                 if start != end {
@@ -493,7 +498,7 @@ impl NetworkTopology {
                 }
             }
         }
-        
+
         max_distance
     }
 
@@ -567,13 +572,13 @@ impl NetworkTopology {
 }
 
 /// 路由表
-#[derive(Debug)]
+# [derive(Debug)]
 pub struct RoutingTable {
     pub routes: HashMap<String, HashMap<String, Route>>,
 }
 
 /// 路由条目
-#[derive(Debug, Clone)]
+# [derive(Debug, Clone)]
 pub struct Route {
     pub destination: String,
     pub next_hop: String,
@@ -612,14 +617,14 @@ impl RoutingTable {
                     if let Some(path) = self.dijkstra_shortest_path(topology, source, destination) {
                         let cost = path.len() as u32 - 1;
                         let next_hop = path.get(1).cloned().unwrap_or_default();
-                        
+
                         let route = Route {
                             destination: destination.clone(),
                             next_hop,
                             cost,
                             path,
                         };
-                        
+
                         self.add_route(source.clone(), route);
                     }
                 }
@@ -675,7 +680,7 @@ impl RoutingTable {
         // 重建路径
         let mut path = Vec::new();
         let mut current = end.to_string();
-        
+
         while current != start {
             path.push(current.clone());
             current = previous.get(&current)?.clone();
@@ -688,7 +693,7 @@ impl RoutingTable {
 }
 
 /// 网络通信管理器
-#[derive(Debug)]
+# [derive(Debug)]
 pub struct NetworkManager {
     pub topology: Arc<RwLock<NetworkTopology>>,
     pub routing_table: Arc<RwLock<RoutingTable>>,
@@ -700,7 +705,7 @@ impl NetworkManager {
     /// 创建新网络管理器
     pub fn new() -> Self {
         let (message_queue, message_receiver) = mpsc::channel(1000);
-        
+
         Self {
             topology: Arc::new(RwLock::new(NetworkTopology::new())),
             routing_table: Arc::new(RwLock::new(RoutingTable::new())),
@@ -729,7 +734,7 @@ impl NetworkManager {
     /// 广播消息
     pub async fn broadcast_message(&self, source: &str, message_type: MessageType, payload: serde_json::Value) {
         let topology = self.topology.read().await;
-        
+
         for node_id in topology.nodes.keys() {
             if node_id != source {
                 let message = NetworkMessage {
@@ -771,7 +776,7 @@ impl NetworkManager {
     }
 }
 
-#[cfg(test)]
+# [cfg(test)]
 mod tests {
     use super::*;
 
@@ -940,4 +945,4 @@ mod tests {
 
 *最后更新: 2024-12-19*
 *文档状态: 完成*
-*下一步: [IoT设备管理理论](./03_IoT_Device_Management.md)* 
+*下一步: [IoT设备管理理论](./03_IoT_Device_Management.md)*
