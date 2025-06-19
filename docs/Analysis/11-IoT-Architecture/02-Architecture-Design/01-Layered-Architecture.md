@@ -7,6 +7,7 @@ IoT分层架构是物联网系统的基础架构模式，通过明确的分层�
 ## 分层架构模型
 
 ### 定义 1.1 (IoT分层架构)
+
 IoT分层架构是一个五元组 $LA = (L, I, F, C, R)$，其中：
 
 - $L$ 是层次集合 (Layers)
@@ -21,6 +22,7 @@ $$LA = \{(l_i, i_i, f_i, c_i, r_i) | i \in \{1,2,3,4\}\}$$
 其中每个层次 $l_i$ 包含接口 $i_i$、功能 $f_i$、约束 $c_i$ 和关系 $r_i$。
 
 ### 定理 1.1 (分层独立性)
+
 如果分层架构 $LA$ 满足以下条件：
 
 1. **功能独立性**: $\forall i \neq j, f_i \cap f_j = \emptyset$
@@ -33,6 +35,7 @@ $$LA = \{(l_i, i_i, f_i, c_i, r_i) | i \in \{1,2,3,4\}\}$$
 设 $D(l_i, l_j)$ 表示层次 $l_i$ 对层次 $l_j$ 的依赖关系。
 
 根据分层独立性条件：
+
 1. 功能独立性确保每层功能不重叠
 2. 接口一致性确保层间接口唯一
 3. 依赖单向性确保依赖关系无环
@@ -40,6 +43,7 @@ $$LA = \{(l_i, i_i, f_i, c_i, r_i) | i \in \{1,2,3,4\}\}$$
 因此，分层架构 $LA$ 满足独立性要求。
 
 ### 定义 1.2 (层间接口)
+
 层间接口是一个三元组 $II = (P, D, S)$，其中：
 
 - $P$ 是协议定义 (Protocol)
@@ -52,6 +56,7 @@ $$II = \{(p, d, s) | p \in P, d \in D, s \in S\}$$
 ## 应用层架构
 
 ### 定义 2.1 (应用层)
+
 应用层是IoT系统的最高层，负责业务逻辑和用户交互：
 
 $$\text{Application Layer} = \{\text{Business Logic}, \text{User Interface}, \text{Service Orchestration}\}$$
@@ -255,6 +260,7 @@ impl RuleEngine {
 ## 服务层架构
 
 ### 定义 3.1 (服务层)
+
 服务层提供核心业务服务，支持应用层的功能实现：
 
 $$\text{Service Layer} = \{\text{Communication Service}, \text{Storage Service}, \text{Security Service}\}$$
@@ -449,6 +455,7 @@ impl SecurityManager {
 ## 协议层架构
 
 ### 定义 4.1 (协议层)
+
 协议层负责网络通信协议的实现和管理：
 
 $$\text{Protocol Layer} = \{\text{MQTT Protocol}, \text{CoAP Protocol}, \text{HTTP Protocol}\}$$
@@ -616,6 +623,7 @@ impl HttpClient {
 ## 硬件层架构
 
 ### 定义 5.1 (硬件层)
+
 硬件层负责与物理设备的交互和硬件抽象：
 
 $$\text{Hardware Layer} = \{\text{Sensor Abstraction}, \text{Actuator Abstraction}, \text{Communication Module}\}$$
@@ -767,6 +775,7 @@ impl CommunicationModule for WiFiModule {
 ## 跨层优化
 
 ### 定义 6.1 (跨层优化)
+
 跨层优化是指在IoT分层架构中，通过跨层协作实现系统性能优化：
 
 $$\text{Cross-Layer Optimization} = \{\text{Performance Optimization}, \text{Energy Optimization}, \text{QoS Optimization}\}$$
@@ -1060,4 +1069,4 @@ IoT分层架构通过明确的分层设计实现了关注点分离、模块化�
 5. **硬件层架构**：提供了传感器、执行器和通信模块的抽象
 6. **跨层优化**：实现了性能和能耗的跨层优化策略
 
-通过这种分层架构设计，IoT系统能够实现高内聚、低耦合的模块化开发，提高系统的可维护性、可扩展性和可重用性。 
+通过这种分层架构设计，IoT系统能够实现高内聚、低耦合的模块化开发，提高系统的可维护性、可扩展性和可重用性。
