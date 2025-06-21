@@ -20,7 +20,7 @@
 
 保留以下清晰的分层结构：
 
-```
+```text
 docs/Analysis/
 ├── context_management.md         # 主上下文管理文件
 ├── 项目知识图谱.md               # 项目知识图谱
