@@ -2,17 +2,21 @@
 
 ## 概述
 
-本目录包含微服务架构的形式化模型实现，包括Rust代码实现和TLA+规范。这些模型基于IoT架构递归迭代开发项目中的微服务架构形式化定义。
+本目录包含微服务架构的形式化模型实现，包括Rust代码实现和TLA+规范。
+这些模型基于IoT架构递归迭代开发项目中的微服务架构形式化定义，实现了双重验证方法（TLA+和Rust）来确保架构的正确性和可靠性。
 
 ## 文件说明
 
 - `microservice_model.rs` - 微服务架构形式化模型的Rust实现
+- `service_discovery.rs` - 服务发现机制的Rust实现，包含不变量验证
 - `MicroserviceArchitecture.tla` - 微服务架构的TLA+规范
-- `MicroserviceArchitecture.cfg` - TLA+模型检查配置文件
+- `ServiceDiscovery.tla` - 服务发现机制的TLA+规范，专注于服务注册、发现和负载均衡
+- `MicroserviceArchitecture.cfg` - 微服务架构TLA+模型检查配置文件
+- `ServiceDiscovery.cfg` - 服务发现TLA+模型检查配置文件
 
 ## Rust模型
 
-### 概述
+### 概述1
 
 Rust模型实现了微服务架构的六元组形式化定义：
 
@@ -33,67 +37,76 @@ M = (S, C, D, G, P, T)
 
 1. **编译和测试**：
 
-```bash
-# 编译
-rustc microservice_model.rs
+    ```bash
+    # 编译
+    rustc microservice_model.rs
 
-# 运行测试
-rustc --test microservice_model.rs -o microservice_test
-./microservice_test
-```
+    # 运行测试
+    rustc --test microservice_model.rs -o microservice_test
+    ./microservice_test
+    ```
 
 2. **集成到项目**：
 
-```rust
-mod microservice_model;
+    ```rust
+    mod microservice_model;
 
-fn main() {
-    // 创建服务
-    let service = microservice_model::Service::new(
-        "my-service".to_string(),
-        vec![/* input interfaces */],
-        vec![/* output interfaces */],
-        /* functions */,
-        /* state */,
-        /* database */
-    );
-    
-    // 创建通信机制
-    let comm = microservice_model::CommunicationMechanism::new_synchronous(
-        microservice_model::Protocol::Rest,
-        microservice_model::MessageFormat::Json,
-        microservice_model::QualityOfService {
-            reliability: 0.99,
-            max_latency: std::time::Duration::from_millis(100),
-            min_throughput: 1000,
-            preserve_order: true,
-        }
-    );
-    
-    // 创建完整架构
-    let architecture = microservice_model::MicroserviceArchitecture::new(
-        vec![service],
-        vec![comm],
-        /* service discovery */,
-        /* governance */,
-        vec![/* policies */],
-        /* state transitions */
-    );
-}
-```
+    fn main() {
+        // 创建服务
+        let service = microservice_model::Service::new(
+            "my-service".to_string(),
+            vec![/* input interfaces */],
+            vec![/* output interfaces */],
+            /* functions */,
+            /* state */,
+            /* database */
+        );
+        
+        // 创建通信机制
+        let comm = microservice_model::CommunicationMechanism::new_synchronous(
+            microservice_model::Protocol::Rest,
+            microservice_model::MessageFormat::Json,
+            microservice_model::QualityOfService {
+                reliability: 0.99,
+                max_latency: std::time::Duration::from_millis(100),
+                min_throughput: 1000,
+                preserve_order: true,
+            }
+        );
+        
+        // 创建完整架构
+        let architecture = microservice_model::MicroserviceArchitecture::new(
+            vec![service],
+            vec![comm],
+            /* service discovery */,
+            /* governance */,
+            vec![/* policies */],
+            /* state transitions */
+        );
+    }
+    ```
 
 ## TLA+规范
 
-### 概述
+### 概述2
 
 TLA+规范形式化描述了微服务架构的行为，特别关注服务发现和通信机制。规范验证了以下关键属性：
+
+#### 微服务架构规范（MicroserviceArchitecture.tla）
 
 - 类型不变量
 - 无重复实例
 - 服务发现有效性
 - 请求响应完整性
 
-### 使用方法
+#### 服务发现规范（ServiceDiscovery.tla）
+
+- 服务发现一致性：所有发现的实例都是健康的
+- 服务发现可用性：如存在健康实例则必须能被发现
+- 负载均衡公平性：请求在实例间均匀分布
+- 健康检查有效性：健康状态变更被正确检测
+
+### 使用方法1
 
 1. **安装TLA+ Toolbox**：
    从 <https://lamport.azurewebsites.net/tla/toolbox.html> 下载并安装
@@ -118,6 +131,9 @@ TLA+规范形式化描述了微服务架构的行为，特别关注服务发现�
 
 - `/微服务架构形式化定义.md` - 提供了完整的数学模型定义
 - `/docs/verification/formal_verification.md` - 详细的验证指南
+- `/docs/verification/formal_verification_implementation.md` - 形式化验证实施框架
+- `/docs/verification/formal_verification_knowledge_integration.md` - 验证与知识图谱集成框架
+- `/docs/verification/formal_verification_context.md` - 形式化验证上下文管理文件
 
 ## 扩展指南
 
@@ -125,61 +141,61 @@ TLA+规范形式化描述了微服务架构的行为，特别关注服务发现�
 
 1. 添加新的组件类型：
 
-```rust
-/// 新的组件类型
-pub struct NewComponent {
-    // 字段
-}
+    ```rust
+    /// 新的组件类型
+    pub struct NewComponent {
+        // 字段
+    }
 
-impl NewComponent {
-    // 方法
-}
-```
+    impl NewComponent {
+        // 方法
+    }
+    ```
 
 2. 扩展现有类型：
 
-```rust
-impl MicroserviceArchitecture<S, C, D, G, P, T> {
-    /// 新的分析方法
-    pub fn analyze_new_property(&self) -> AnalysisResult {
-        // 实现
+    ```rust
+    impl MicroserviceArchitecture<S, C, D, G, P, T> {
+        /// 新的分析方法
+        pub fn analyze_new_property(&self) -> AnalysisResult {
+            // 实现
+        }
     }
-}
-```
+    ```
 
 ### 扩展TLA+规范
 
 1. 添加新的状态变量：
 
-```
-VARIABLES 
-    existing_vars,
-    new_variable
-    
-vars == <<existing_vars, new_variable>>
-```
+    ```text
+    VARIABLES 
+        existing_vars,
+        new_variable
+        
+    vars == <<existing_vars, new_variable>>
+    ```
 
 2. 添加新的操作：
 
-```
-NewOperation ==
-    /\ Condition1
-    /\ Condition2
-    /\ new_variable' = ...
-    /\ UNCHANGED <<other_vars>>
-    
-Next ==
-    \/ ExistingOperation1
-    \/ ExistingOperation2
-    \/ NewOperation
-```
+    ```text
+    NewOperation ==
+        /\ Condition1
+        /\ Condition2
+        /\ new_variable' = ...
+        /\ UNCHANGED <<other_vars>>
+        
+    Next ==
+        \/ ExistingOperation1
+        \/ ExistingOperation2
+        \/ NewOperation
+    ```
 
 3. 添加新的属性：
 
-```
-NewProperty ==
-    [](\A x \in Set : P(x))
-```
+    ```text
+    NewProperty ==
+        [](\A x \in Set : P(x))
+    ```
 
 ## 贡献者
 
@@ -187,6 +203,36 @@ NewProperty ==
 - knowledge_engineer1
 - developer1
 
+## 验证驱动开发方法
+
+为确保架构设计的正确性和可靠性，本项目采用验证驱动开发方法：
+
+1. **先验证后实现**：先构建形式化模型验证关键属性，再进行代码实现
+2. **多级验证**：从抽象系统模型到具体组件实现都进行验证
+3. **双重验证**：结合TLA+和Rust的优势进行验证
+   - TLA+：验证高级系统属性和并发行为
+   - Rust：验证实现层面的类型安全和资源管理
+
+### 验证流程
+
+```mermaid
+graph TD
+    A[需求分析] --> B[形式化建模]
+    B --> C[属性定义]
+    C --> D[TLA+验证]
+    D --> E{验证通过?}
+    E -->|否| F[调整设计]
+    F --> B
+    E -->|是| G[Rust实现]
+    G --> H[实现验证]
+    H --> I{验证通过?}
+    I -->|否| J[调整实现]
+    J --> G
+    I -->|是| K[集成测试]
+    K --> L[部署]
+    L --> M[运行时监控]
+```
+
 ## 最后更新
 
-2025年6月28日
+2025年7月2日
