@@ -95,9 +95,9 @@
 
 ### 3.3 主题上下文文件
 
-每个主题目录下应包含一个上下文文件：
+每个主题目录下应包含一个上下文文件：text
 
-```
+```text
 docs/Analysis/01-Core-Architecture/context.md
 docs/Analysis/02-Systems/context.md
 docs/Analysis/03-Algorithms/context.md
