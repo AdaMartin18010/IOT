@@ -1,0 +1,37 @@
+{
+  "name": "iot-semantic-gateway-wasm-as",
+  "version": "0.1.0",
+  "description": "IoT Semantic Gateway WebAssembly Module (AssemblyScript)",
+  "main": "build/release.js",
+  "types": "build/release.d.ts",
+  "scripts": {
+    "build": "asc src/index.ts --target release",
+    "build:debug": "asc src/index.ts --target debug",
+    "test": "asp --verbose",
+    "test:watch": "asp --verbose --watch",
+    "clean": "rimraf build",
+    "prebuild": "npm run clean"
+  },
+  "dependencies": {
+    "@assemblyscript/runtime": "^0.27.0"
+  },
+  "devDependencies": {
+    "@assemblyscript/cli": "^0.27.0",
+    "@assemblyscript/loader": "^0.27.0",
+    "@as-pect/cli": "^8.0.0",
+    "rimraf": "^5.0.0"
+  },
+  "keywords": [
+    "iot",
+    "semantic",
+    "gateway",
+    "webassembly",
+    "assemblyscript"
+  ],
+  "author": "IoT Team <iot-team@your-org.com>",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-org/iot-semantic-gateway.git"
+  }
+} 
