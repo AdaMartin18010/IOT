@@ -42,7 +42,7 @@
 
 ### 1.1 信息模型的范畴论构造
 
-**第一步：对象识别与分类**
+**第一步：对象识别与分类**:
 
 从OPC-UA规范中识别的基本实体：
 
@@ -52,7 +52,7 @@
 - DataTypes (数据类型)
 - References (引用)
 
-**第二步：范畴结构的逐步构造**
+**第二步：范畴结构的逐步构造**:
 
 **对象集合的构造**:
 \\[
@@ -64,7 +64,7 @@
 \text{Mor}(\mathcal{C}_{\text{OPC-UA}}) = \{f : A \to B \mid A, B \in \text{Ob}, f \in \text{References}\}
 \\]
 
-**第三步：范畴公理验证**
+**第三步：范畴公理验证**:
 
 **恒等态射的构造**:
 \\[
@@ -89,7 +89,7 @@
 3. 定义组合 $(g \circ f)$ 为这个复合路径
 4. 验证结合律：$(h \circ g) \circ f = h \circ (g \circ f)$
 
-**第四步：函子构造与性质验证**
+**第四步：函子构造与性质验证**:
 
 **地址空间函子**:
 \\[
@@ -106,7 +106,7 @@
 
 ### 1.2 类型系统的格论构造
 
-**第一步：偏序关系的定义与验证**
+**第一步：偏序关系的定义与验证**:
 
 **子类型关系的定义**:
 \\[
@@ -127,7 +127,7 @@ T_1 \preceq T_2 \iff T_1 \text{ 继承自 } T_2 \text{ 或 } T_1 = T_2
 
 - 继承关系的传递性
 
-**第二步：上确界与下确界的构造**
+**第二步：上确界与下确界的构造**:
 
 **最小上界（最小公共超类型）**:
 \\[
@@ -145,7 +145,7 @@ T_1 \vee T_2 = \inf\{T \mid T_1 \preceq T \wedge T_2 \preceq T\}
 T_1 \wedge T_2 = \sup\{T \mid T \preceq T_1 \wedge T \preceq T_2\}
 \\]
 
-**第三步：完全格性质的证明**
+**第三步：完全格性质的证明**:
 
 需要证明任意子集都有上确界和下确界：
 
@@ -159,7 +159,7 @@ T_1 \wedge T_2 = \sup\{T \mid T \preceq T_1 \wedge T \preceq T_2\}
 
 ### 1.3 服务代数的半群推演
 
-**第一步：服务的代数抽象**
+**第一步：服务的代数抽象**:
 
 **服务的数学定义**:
 \\[
@@ -171,7 +171,7 @@ T_1 \wedge T_2 = \sup\{T \mid T \preceq T_1 \wedge T \preceq T_2\}
 - $\text{Input} = \text{Request} \times \text{Context}$  
 - $\text{Output} = \text{Response} \cup \text{Error}$
 
-**第二步：组合运算的定义与验证**
+**第二步：组合运算的定义与验证**:
 
 **服务组合的定义**:
 \\[
@@ -184,7 +184,7 @@ T_1 \wedge T_2 = \sup\{T \mid T \preceq T_1 \wedge T \preceq T_2\}
 2. 类型兼容性检查：$\text{Output}(s_1) \subseteq \text{Input}(s_2)$
 3. 如果类型不兼容，组合未定义
 
-**第三步：半群公理验证**
+**第三步：半群公理验证**:
 
 **结合律验证**:
 \\[
@@ -214,14 +214,14 @@ T_1 \wedge T_2 = \sup\{T \mid T \preceq T_1 \wedge T \preceq T_2\}
 
 ### 2.1 资源拓扑空间的构造
 
-**第一步：底层集合的定义**
+**第一步：底层集合的定义**:
 
 **资源集合**:
 \\[
 \mathcal{R} = \text{AE} \cup \text{Container} \cup \text{ContentInstance} \cup \text{Subscription} \cup \text{AccessControlPolicy}
 \\]
 
-**第二步：距离度量的构造**
+**第二步：距离度量的构造**:
 
 **语义距离**:
 \\[
@@ -240,7 +240,7 @@ d(r_1, r_2) = \alpha \cdot d_{\text{semantic}}(r_1, r_2) + \beta \cdot d_{\text{
 
 其中 $\alpha + \beta = 1, \alpha, \beta \geq 0$
 
-**第三步：拓扑的构造**
+**第三步：拓扑的构造**:
 
 **开球的定义**:
 \\[
@@ -252,7 +252,7 @@ B(r, \epsilon) = \{r' \in \mathcal{R} \mid d(r, r') < \epsilon\}
 U \in \tau \iff \forall r \in U : \exists \epsilon > 0 \text{ s.t. } B(r, \epsilon) \subseteq U
 \\]
 
-**第四步：拓扑公理验证**
+**第四步：拓扑公理验证**:
 
 **公理1**: $\emptyset, \mathcal{R} \in \tau$
 
@@ -270,7 +270,7 @@ U \in \tau \iff \forall r \in U : \exists \epsilon > 0 \text{ s.t. } B(r, \epsil
 
 ### 2.2 CSE层次结构的图论建模
 
-**第一步：层次图的构造**
+**第一步：层次图的构造**:
 
 **节点集合**:
 \\[
@@ -282,7 +282,7 @@ V = \text{IN-CSE} \cup \text{MN-CSE} \cup \text{ASN-CSE}
 E = \{(cse_1, cse_2) \mid cse_1 \text{ registers to } cse_2\}
 \\]
 
-**第二步：树结构性质的验证**
+**第二步：树结构性质的验证**:
 
 **连通性**: 需证明图是连通的
 
@@ -294,7 +294,7 @@ E = \{(cse_1, cse_2) \mid cse_1 \text{ registers to } cse_2\}
 - oneM2M规范禁止循环注册
 - 层次结构本质上是树形的
 
-**第三步：路径唯一性的推演**
+**第三步：路径唯一性的推演**:
 
 **定理**: 从任意ASN-CSE到IN-CSE的路径唯一
 
@@ -312,7 +312,7 @@ E = \{(cse_1, cse_2) \mid cse_1 \text{ registers to } cse_2\}
 
 ### 3.1 Thing Description的类型理论构造
 
-**第一步：依赖类型的逐步构造**
+**第一步：依赖类型的逐步构造**:
 
 **基础类型**:
 
@@ -338,7 +338,7 @@ record Property (dt : DataType) : Set where
     constraint : writable ≡ true → ValidSchema dt
 ```
 
-**第二步：Thing Description的归纳定义**
+**第二步：Thing Description的归纳定义**:
 
 ```agda
 record ThingDescription : Set₁ where
@@ -350,7 +350,7 @@ record ThingDescription : Set₁ where
     completeness : NonEmpty properties ∨ NonEmpty actions ∨ NonEmpty events
 ```
 
-**第三步：同伦等价性的构造**
+**第三步：同伦等价性的构造**:
 
 **路径的定义**:
 
@@ -379,7 +379,7 @@ record _≃_ (A B : ThingDescription) : Set where
 
 ### 3.2 协议绑定函子的构造
 
-**第一步：抽象交互范畴的定义**
+**第一步：抽象交互范畴的定义**:
 
 **对象**:
 \\[
@@ -391,7 +391,7 @@ record _≃_ (A B : ThingDescription) : Set where
 \text{Mor}(\mathcal{C}_{\text{Abstract}}) = \{\text{Composition}, \text{Conditional}, \text{Sequential}\}
 \\]
 
-**第二步：具体协议范畴的定义**
+**第二步：具体协议范畴的定义**:
 
 **HTTP协议范畴**:
 \\[
@@ -403,7 +403,7 @@ record _≃_ (A B : ThingDescription) : Set where
 \text{Ob}(\mathcal{C}_{\text{CoAP}}) = \{\text{GET}, \text{PUT}, \text{POST}, \text{DELETE}, \text{OBSERVE}\}
 \\]
 
-**第三步：绑定函子的构造**
+**第三步：绑定函子的构造**:
 
 **HTTP绑定函子**:
 \\[
@@ -432,7 +432,7 @@ F_{\text{HTTP}}(\text{InvokeAction}) = \text{POST}
 
 ### 4.1 集群格的代数构造
 
-**第一步：集群的偏序关系定义**
+**第一步：集群的偏序关系定义**:
 
 **功能包含关系**:
 \\[
@@ -445,7 +445,7 @@ C_1 \preceq C_2 \iff \text{Functionality}(C_1) \subseteq \text{Functionality}(C_
 2. 如果集群A的所有功能都包含在集群B中，则A ≤ B
 3. 这建立了集群间的层次关系
 
-**第二步：格运算的构造**
+**第二步：格运算的构造**:
 
 **上确界（并运算）**:
 \\[
@@ -463,7 +463,7 @@ C_1 \vee C_2 = \text{MinimalCluster}\{\text{Functionality}(C_1) \cup \text{Funct
 C_1 \wedge C_2 = \text{MaximalCluster}\{\text{Functionality}(C_1) \cap \text{Functionality}(C_2)\}
 \\]
 
-**第三步：完全格性质的验证**
+**第三步：完全格性质的验证**:
 
 **任意上确界存在性**:
 对于任意集群集合 $\mathcal{S} = \{C_1, C_2, \ldots\}$：
@@ -479,7 +479,7 @@ C_1 \wedge C_2 = \text{MaximalCluster}\{\text{Functionality}(C_1) \cap \text{Fun
 
 ### 4.2 Thread网络的图论分析
 
-**第一步：网络图的构造**
+**第一步：网络图的构造**:
 
 **节点类型**:
 \\[
@@ -494,7 +494,7 @@ w(u,v) = \begin{cases}
 \end{cases}
 \\]
 
-**第二步：连通性分析**
+**第二步：连通性分析**:
 
 **连通度定义**:
 \\[
@@ -507,7 +507,7 @@ w(u,v) = \begin{cases}
 - Leader提供全网络的连通性中心
 - REED作为连通性的备份
 
-**第三步：自愈性的数学模型**
+**第三步：自愈性的数学模型**:
 
 **故障模型**:
 \\[
@@ -530,7 +530,7 @@ T_{\text{recovery}}(F) = \max_{(u,v)} \text{route\_discovery\_time}(u,v) \text{ 
 
 ### 5.1 余极限构造的详细推演
 
-**第一步：四标准图表的建立**
+**第一步：四标准图表的建立**:
 
 **标准函子图**:
 \\[
@@ -555,7 +555,7 @@ F_{24} : \text{oneM2M概念} \mapsto \text{Matter集群}
 F_{34} : \text{WoT概念} \mapsto \text{Matter设备}
 \\]
 
-**第二步：余极限的构造**
+**第二步：余极限的构造**:
 
 **对象的等价关系**:
 \\[
@@ -567,7 +567,7 @@ x \sim y \iff \exists \text{图表中的路径} : x \rightsquigarrow y
 \mathcal{C}_{\text{Unified}} = \frac{\coprod_{i} \mathcal{C}_i}{\sim}
 \\]
 
-**第三步：普遍性质的验证**
+**第三步：普遍性质的验证**:
 
 **普遍映射的存在性**:
 对于任意范畴 $\mathcal{D}$ 和兼容的函子族 $\{G_i : \mathcal{C}_i \to \mathcal{D}\}$，
@@ -575,7 +575,7 @@ x \sim y \iff \exists \text{图表中的路径} : x \rightsquigarrow y
 
 ### 5.2 语义一致性的逻辑推演
 
-**第一步：公共语义语言的构造**
+**第一步：公共语义语言的构造**:
 
 **语法定义**:
 \\[
@@ -587,7 +587,7 @@ x \sim y \iff \exists \text{图表中的路径} : x \rightsquigarrow y
 \llbracket \phi \rrbracket_{S_i} : \text{Formula} \to \{\text{true}, \text{false}\}
 \\]
 
-**第二步：映射的语义保持性**
+**第二步：映射的语义保持性**:
 
 **映射函数的定义**:
 \\[
@@ -599,7 +599,7 @@ M_{ij} : \mathcal{L}_{\text{common}} \to \mathcal{L}_{\text{common}}
 \forall \phi \in \mathcal{L}_{\text{common}} : \llbracket \phi \rrbracket_{S_i} = \llbracket M_{ij}(\phi) \rrbracket_{S_j}
 \\]
 
-**第三步：一致性的传递性推演**
+**第三步：一致性的传递性推演**:
 
 设有三个标准 $S_1, S_2, S_3$ 和映射 $M_{12}, M_{23}$
 
@@ -629,7 +629,7 @@ M_{ij} : \mathcal{L}_{\text{common}} \to \mathcal{L}_{\text{common}}
 
 ### 自动化工具链
 
-```
+```text
 数学模型 → 形式化规范 → 自动验证 → 反馈优化
 ```
 
