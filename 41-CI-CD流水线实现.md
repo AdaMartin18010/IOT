@@ -3,6 +3,7 @@
 ## 1. 流水线架构
 
 ### 1.1 整体流程
+
 ```
 代码提交 → 构建阶段 → 测试阶段 → 部署阶段 → 监控验证
 • Git Push   • 编译构建   • 单元测试   • 环境部署   • 健康检查
@@ -11,6 +12,7 @@
 ```
 
 ### 1.2 技术栈
+
 - **版本控制**: Git + GitLab/GitHub
 - **CI/CD**: GitLab CI / GitHub Actions / Jenkins
 - **容器化**: Docker + Kubernetes
@@ -20,6 +22,7 @@
 ## 2. GitLab CI配置
 
 ### 2.1 主要流水线配置
+
 ```yaml
 # .gitlab-ci.yml
 stages:
@@ -214,6 +217,7 @@ verify-deployment:
 ```
 
 ### 2.2 多环境部署配置
+
 ```yaml
 # .gitlab-ci-environments.yml
 # 扩展主流水线，支持多环境部署
@@ -310,6 +314,7 @@ deploy-blue-green:
 ## 3. GitHub Actions配置
 
 ### 3.1 主要工作流
+
 ```yaml
 # .github/workflows/ci-cd.yml
 name: IoT System CI/CD
@@ -532,6 +537,7 @@ jobs:
 ## 4. 部署脚本
 
 ### 4.1 自动化部署脚本
+
 ```bash
 #!/bin/bash
 # scripts/deploy.sh
@@ -602,6 +608,7 @@ echo "部署完成！"
 ```
 
 ### 4.2 回滚脚本
+
 ```bash
 #!/bin/bash
 # scripts/rollback.sh
@@ -639,6 +646,7 @@ echo "回滚完成！"
 ## 5. 质量门禁
 
 ### 5.1 代码质量检查
+
 ```yaml
 # .github/workflows/quality-gate.yml
 name: Quality Gate
@@ -695,6 +703,7 @@ jobs:
 ## 6. 通知和报告
 
 ### 6.1 Slack通知
+
 ```yaml
 # 在GitLab CI中添加Slack通知
 notify-slack:
@@ -731,4 +740,4 @@ notify-slack:
     - develop
 ```
 
-这个CI/CD流水线实现提供了完整的自动化构建、测试、部署流程，支持多环境部署、蓝绿部署、质量门禁和通知机制，确保IoT系统的持续集成和持续部署。 
+这个CI/CD流水线实现提供了完整的自动化构建、测试、部署流程，支持多环境部署、蓝绿部署、质量门禁和通知机制，确保IoT系统的持续集成和持续部署。
