@@ -106,7 +106,7 @@ pub struct DeviceManager {
 
 使用 [Conventional Commits](https://www.conventionalcommits.org/) 规范：
 
-```
+```text
 <type>[optional scope]: <description>
 
 [optional body]
@@ -126,7 +126,7 @@ pub struct DeviceManager {
 
 #### 示例
 
-```
+```text
 feat(gateway): add MQTT protocol support
 
 Add support for MQTT v5.0 protocol in the gateway service.
@@ -383,4 +383,4 @@ Closes #(issue number)
 
 ---
 
-*最后更新: 2024年12月*
+-*最后更新: 2024年12月*
