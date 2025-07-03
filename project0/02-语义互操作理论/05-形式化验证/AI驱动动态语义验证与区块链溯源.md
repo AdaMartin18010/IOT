@@ -27,7 +27,7 @@ def dynamic_semantic_validation(entity, model, blockchain):
 
 - 多节点协同验证语义一致性
 - 验证结果上链，历史可追溯
-- 支持动态、增量、实时验证 
+- 支持动态、增量、实时验证
 
 ## 4. 验证反馈闭环机制
 
@@ -45,4 +45,38 @@ def dynamic_semantic_validation(entity, model, blockchain):
 
 - 医疗数据：设备数据、诊断结果的语义验证与溯源
 - 工业生产：生产过程、设备状态的语义一致性验证与历史追溯
-- 智能交通：交通事件、车辆状态的分布式语义验证与上链 
+- 智能交通：交通事件、车辆状态的分布式语义验证与上链
+
+## 7. 分布式验证与区块链上链时序图
+
+```mermaid
+sequenceDiagram
+  participant Node1
+  participant Node2
+  participant Node3
+  participant Blockchain
+
+  Node1->>Node2: 验证请求
+  Node2->>Node3: 验证协同
+  Node3->>Node1: 验证结果
+  Node1->>Blockchain: 上链请求
+  Blockchain-->>Node1: 上链确认
+```
+
+## 8. 验证反馈闭环伪代码
+
+```python
+def semantic_validation_feedback(entity):
+    result = ai_validate(entity)
+    if not result['pass']:
+        suggestion = ai_generate_fix(result)
+        if human_review(suggestion):
+            update_model_or_kg(suggestion)
+            log_fix(entity, suggestion)
+```
+
+## 9. 医疗设备数据上链应用案例
+
+- 医疗设备上传数据后，AI自动验证数据语义一致性。
+- 多节点协同验证，达成共识后将验证结果与数据摘要上链。
+- 任何后续查询均可溯源，确保数据可信与合规。
