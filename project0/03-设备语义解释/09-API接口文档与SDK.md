@@ -1435,4 +1435,94 @@ class IntegrationTests:
         await device_manager.unregister_device("integration_test_device")
 ```
 
+## 设备语义API接口文档与SDK
+
+## 1. API接口扩展（新增）
+
+### 1.1 寿命信息API
+
+- **接口**：GET /api/device/lifecycle
+- **参数**：device_id、字段筛选（如设计寿命、实际寿命、剩余寿命等）
+- **返回值**：
+
+```json
+{
+  "device_id": "string",
+  "design_lifetime": "float",
+  "runtime": "float",
+  "predicted_remaining_life": "float",
+  "maintenance_plan": [ ... ],
+  "maintenance_history": [ ... ]
+}
+```
+
+### 1.2 维护信息API
+
+- **接口**：GET /api/device/maintenance
+- **参数**：device_id、时间范围、维护类型等
+- **返回值**：
+
+```json
+{
+  "device_id": "string",
+  "maintenance_plan": [ ... ],
+  "maintenance_history": [ ... ],
+  "maintenance_priority": "string",
+  "responsible_person": "string"
+}
+```
+
+### 1.3 监管信息API
+
+- **接口**：GET /api/device/regulation
+- **参数**：device_id、合规状态、监管机构等
+- **返回值**：
+
+```json
+{
+  "device_id": "string",
+  "compliance_status": "string",
+  "regulation_requirements": [ ... ],
+  "audit_records": [ ... ],
+  "regulatory_agency": "string"
+}
+```
+
+## 2. SDK接口与数据结构（新增）
+
+### 2.1 Python SDK示例
+
+```python
+class DeviceAPIClient:
+    def get_lifecycle(self, device_id: str) -> dict:
+        """获取设备寿命信息"""
+        # ... 调用API ...
+        return lifecycle_info
+
+    def get_maintenance(self, device_id: str) -> dict:
+        """获取设备维护信息"""
+        # ... 调用API ...
+        return maintenance_info
+
+    def get_regulation(self, device_id: str) -> dict:
+        """获取设备监管信息"""
+        # ... 调用API ...
+        return regulation_info
+```
+
+### 2.2 数据结构定义
+
+- 参考《设备语义建模与表示》中的DeviceLifecycleInfo、DeviceRegulationInfo等结构。
+
+## 3. 典型用例（新增）
+
+- 查询某设备的剩余寿命与维护计划。
+- 批量查询所有设备的合规状态与最近一次审计记录。
+- 按时间区间筛选维护历史，分析维护频率与效果。
+
+## 4. 总结（补充）
+
+- API与SDK应全面支持寿命、维护、监管等信息的高效访问与集成，便于全生命周期管理、智能维护与合规监管。
+- 推荐持续完善接口设计与SDK功能，提升开发者体验与系统集成能力。
+
 本API文档和SDK提供了完整的IoT设备语义解释系统接口实现，支持多种编程语言，包含详细的使用示例和最佳实践指南，可以直接用于生产环境开发。
