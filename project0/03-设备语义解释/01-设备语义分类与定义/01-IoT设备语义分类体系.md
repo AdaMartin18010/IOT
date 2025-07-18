@@ -7,6 +7,7 @@
 - **语义层次理论**：基于设备功能、协议、应用场景的多层次语义分类
 - **本体论分类**：基于设备本体关系的分类体系
 - **动态分类理论**：支持设备运行时状态变化的动态分类机制
+- **生命周期分类理论**：基于设备寿命、维护、监管等信息的全生命周期分类体系
 
 ### 1.2 分类体系架构
 
@@ -27,11 +28,26 @@
 │   ├── 医疗设备
 │   ├── 智能家居设备
 │   └── 车联网设备
-└── 状态分类层
-    ├── 在线设备
-    ├── 离线设备
-    ├── 故障设备
-    └── 维护设备
+├── 状态分类层
+│   ├── 在线设备
+│   ├── 离线设备
+│   ├── 故障设备
+│   └── 维护设备
+├── 寿命分类层
+│   ├── 新设备 (0-20%寿命)
+│   ├── 成熟设备 (20-80%寿命)
+│   ├── 老化设备 (80-100%寿命)
+│   └── 超期设备 (>100%寿命)
+├── 维护分类层
+│   ├── 预防性维护设备
+│   ├── 预测性维护设备
+│   ├── 状态监测设备
+│   └── 紧急维护设备
+└── 监管分类层
+    ├── 合规设备
+    ├── 待合规设备
+    ├── 不合规设备
+    └── 监管豁免设备
 ```
 
 ## 2. 算法实现
@@ -48,6 +64,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 import networkx as nx
 import json
 import logging
+from datetime import datetime, timedelta
 
 class DeviceCategory(Enum):
     SENSOR = "sensor"
@@ -73,6 +90,60 @@ class ApplicationDomain(Enum):
     AGRICULTURE = "agriculture"
     ENERGY = "energy"
 
+class LifecycleStage(Enum):
+    NEW = "new"                    # 0-20%寿命
+    MATURE = "mature"              # 20-80%寿命
+    AGING = "aging"                # 80-100%寿命
+    OVERDUE = "overdue"            # >100%寿命
+
+class MaintenanceType(Enum):
+    PREVENTIVE = "preventive"       # 预防性维护
+    PREDICTIVE = "predictive"       # 预测性维护
+    CONDITION_BASED = "condition_based"  # 状态监测
+    EMERGENCY = "emergency"         # 紧急维护
+
+class ComplianceStatus(Enum):
+    COMPLIANT = "compliant"         # 合规
+    PENDING = "pending"             # 待合规
+    NON_COMPLIANT = "non_compliant" # 不合规
+    EXEMPT = "exempt"               # 监管豁免
+
+@dataclass
+class DeviceLifecycleInfo:
+    """设备生命周期信息"""
+    design_lifetime: int  # 设计寿命(小时)
+    actual_lifetime: int  # 实际运行时间(小时)
+    remaining_lifetime: int  # 剩余寿命(小时)
+    lifecycle_stage: LifecycleStage  # 生命周期阶段
+    reliability_score: float  # 可靠性评分(0-1)
+    health_index: float  # 健康指数(0-1)
+    last_maintenance: datetime  # 上次维护时间
+    next_maintenance: datetime  # 下次维护时间
+    maintenance_history: List[Dict]  # 维护历史
+
+@dataclass
+class DeviceMaintenanceInfo:
+    """设备维护信息"""
+    maintenance_type: MaintenanceType  # 维护类型
+    maintenance_priority: int  # 维护优先级(1-5)
+    maintenance_cost: float  # 维护成本
+    maintenance_duration: int  # 维护时长(小时)
+    spare_parts_required: List[str]  # 所需备件
+    maintenance_team: str  # 维护团队
+    maintenance_procedures: List[str]  # 维护程序
+    risk_assessment: Dict[str, float]  # 风险评估
+
+@dataclass
+class DeviceComplianceInfo:
+    """设备合规信息"""
+    compliance_status: ComplianceStatus  # 合规状态
+    regulatory_requirements: List[str]  # 监管要求
+    compliance_score: float  # 合规评分(0-1)
+    audit_records: List[Dict]  # 审计记录
+    certification_expiry: datetime  # 认证到期时间
+    regulatory_body: str  # 监管机构
+    compliance_history: List[Dict]  # 合规历史
+
 @dataclass
 class DeviceSemanticModel:
     device_id: str
@@ -84,15 +155,22 @@ class DeviceSemanticModel:
     properties: Dict[str, Any]
     relationships: List[Tuple[str, str, str]]  # (source, relation, target)
     semantic_annotations: Dict[str, str]
+    lifecycle_info: DeviceLifecycleInfo
+    maintenance_info: DeviceMaintenanceInfo
+    compliance_info: DeviceComplianceInfo
 
 @dataclass
 class ClassificationResult:
     device_id: str
     primary_category: DeviceCategory
     secondary_categories: List[DeviceCategory]
+    lifecycle_stage: LifecycleStage
+    maintenance_type: MaintenanceType
+    compliance_status: ComplianceStatus
     confidence_scores: Dict[str, float]
     semantic_similarity: Dict[str, float]
     classification_reasoning: List[str]
+    risk_assessment: Dict[str, float]
 
 class DeviceSemanticClassifier:
     def __init__(self):
@@ -100,6 +178,9 @@ class DeviceSemanticClassifier:
         self.ml_classifier = MLClassifier()
         self.rule_engine = RuleEngine()
         self.similarity_engine = SimilarityEngine()
+        self.lifecycle_analyzer = LifecycleAnalyzer()
+        self.maintenance_analyzer = MaintenanceAnalyzer()
+        self.compliance_analyzer = ComplianceAnalyzer()
         self.classification_cache = {}
     
     def classify_device(self, device_data: Dict[str, Any]) -> ClassificationResult:
@@ -119,31 +200,52 @@ class DeviceSemanticClassifier:
         # 3. 基于本体论的分类
         ontology_based_result = self.ontology_based_classification(device_data)
         
-        # 4. 融合分类结果
+        # 4. 生命周期分析
+        lifecycle_analysis = self.lifecycle_analyzer.analyze(device_data)
+        
+        # 5. 维护分析
+        maintenance_analysis = self.maintenance_analyzer.analyze(device_data)
+        
+        # 6. 合规性分析
+        compliance_analysis = self.compliance_analyzer.analyze(device_data)
+        
+        # 7. 融合分类结果
         final_result = self.fuse_classification_results(
-            rule_based_result, ml_based_result, ontology_based_result
+            rule_based_result, ml_based_result, ontology_based_result,
+            lifecycle_analysis, maintenance_analysis, compliance_analysis
         )
         
-        # 5. 计算置信度
+        # 8. 计算置信度
         confidence_scores = self.calculate_confidence_scores(
-            rule_based_result, ml_based_result, ontology_based_result
+            rule_based_result, ml_based_result, ontology_based_result,
+            lifecycle_analysis, maintenance_analysis, compliance_analysis
         )
         
-        # 6. 计算语义相似性
+        # 9. 计算语义相似性
         semantic_similarity = self.calculate_semantic_similarity(device_data)
         
-        # 7. 生成分类推理
+        # 10. 生成分类推理
         classification_reasoning = self.generate_classification_reasoning(
-            rule_based_result, ml_based_result, ontology_based_result
+            rule_based_result, ml_based_result, ontology_based_result,
+            lifecycle_analysis, maintenance_analysis, compliance_analysis
+        )
+        
+        # 11. 风险评估
+        risk_assessment = self.assess_device_risk(
+            lifecycle_analysis, maintenance_analysis, compliance_analysis
         )
         
         result = ClassificationResult(
             device_id=device_id,
             primary_category=final_result['primary_category'],
             secondary_categories=final_result['secondary_categories'],
+            lifecycle_stage=lifecycle_analysis['stage'],
+            maintenance_type=maintenance_analysis['type'],
+            compliance_status=compliance_analysis['status'],
             confidence_scores=confidence_scores,
             semantic_similarity=semantic_similarity,
-            classification_reasoning=classification_reasoning
+            classification_reasoning=classification_reasoning,
+            risk_assessment=risk_assessment
         )
         
         # 缓存结果
@@ -233,7 +335,10 @@ class DeviceSemanticClassifier:
     
     def fuse_classification_results(self, rule_result: Dict[str, Any], 
                                   ml_result: Dict[str, Any], 
-                                  ontology_result: Dict[str, Any]) -> Dict[str, Any]:
+                                  ontology_result: Dict[str, Any],
+                                  lifecycle_analysis: Dict[str, Any],
+                                  maintenance_analysis: Dict[str, Any],
+                                  compliance_analysis: Dict[str, Any]) -> Dict[str, Any]:
         """融合分类结果"""
         # 收集所有分类结果
         all_categories = []
@@ -257,7 +362,10 @@ class DeviceSemanticClassifier:
     
     def calculate_confidence_scores(self, rule_result: Dict[str, Any], 
                                    ml_result: Dict[str, Any], 
-                                   ontology_result: Dict[str, Any]) -> Dict[str, float]:
+                                   ontology_result: Dict[str, Any],
+                                   lifecycle_analysis: Dict[str, Any],
+                                   maintenance_analysis: Dict[str, Any],
+                                   compliance_analysis: Dict[str, Any]) -> Dict[str, float]:
         """计算置信度分数"""
         confidence_scores = {}
         
@@ -270,11 +378,23 @@ class DeviceSemanticClassifier:
         # 本体论分类置信度
         confidence_scores['ontology_based'] = ontology_result['confidence']
         
+        # 生命周期分析置信度
+        confidence_scores['lifecycle_analysis'] = lifecycle_analysis.get('confidence', 0.8)
+        
+        # 维护分析置信度
+        confidence_scores['maintenance_analysis'] = maintenance_analysis.get('confidence', 0.8)
+        
+        # 合规性分析置信度
+        confidence_scores['compliance_analysis'] = compliance_analysis.get('confidence', 0.8)
+        
         # 综合置信度
         confidence_scores['overall'] = np.mean([
             rule_result['confidence'],
             ml_result['confidence'],
-            ontology_result['confidence']
+            ontology_result['confidence'],
+            lifecycle_analysis.get('confidence', 0.8),
+            maintenance_analysis.get('confidence', 0.8),
+            compliance_analysis.get('confidence', 0.8)
         ])
         
         return confidence_scores
@@ -301,185 +421,117 @@ class DeviceSemanticClassifier:
         return similarities
     
     def generate_classification_reasoning(self, rule_result: Dict[str, Any], 
-                                        ml_result: Dict[str, Any], 
-                                        ontology_result: Dict[str, Any]) -> List[str]:
+                                         ml_result: Dict[str, Any], 
+                                         ontology_result: Dict[str, Any],
+                                         lifecycle_analysis: Dict[str, Any],
+                                         maintenance_analysis: Dict[str, Any],
+                                         compliance_analysis: Dict[str, Any]) -> List[str]:
         """生成分类推理"""
         reasoning = []
         
-        # 规则推理
+        # 规则分类推理
         if rule_result['categories']:
             reasoning.append(f"Rule-based classification: {', '.join([c.value for c in rule_result['categories']])}")
         
-        # 机器学习推理
+        # 机器学习分类推理
         if ml_result['categories']:
             reasoning.append(f"ML-based classification: {', '.join([c.value for c in ml_result['categories']])}")
         
-        # 本体论推理
+        # 本体论分类推理
         if ontology_result['categories']:
             reasoning.append(f"Ontology-based classification: {', '.join([c.value for c in ontology_result['categories']])}")
         
+        # 生命周期分析推理
+        if lifecycle_analysis.get('stage'):
+            reasoning.append(f"Lifecycle stage: {lifecycle_analysis['stage'].value}")
+        
+        # 维护分析推理
+        if maintenance_analysis.get('type'):
+            reasoning.append(f"Maintenance type: {maintenance_analysis['type'].value}")
+        
+        # 合规性分析推理
+        if compliance_analysis.get('status'):
+            reasoning.append(f"Compliance status: {compliance_analysis['status'].value}")
+        
         return reasoning
     
-    def extract_features(self, device_data: Dict[str, Any]) -> np.ndarray:
-        """提取特征"""
-        features = []
+    def assess_device_risk(self, lifecycle_analysis: Dict[str, Any],
+                           maintenance_analysis: Dict[str, Any],
+                           compliance_analysis: Dict[str, Any]) -> Dict[str, float]:
+        """评估设备风险"""
+        risk_assessment = {}
         
-        # 设备类型特征
-        device_type = device_data.get('device_type', '')
-        features.extend(self.encode_device_type(device_type))
+        # 生命周期风险
+        lifecycle_risk = self.calculate_lifecycle_risk(lifecycle_analysis)
+        risk_assessment['lifecycle_risk'] = lifecycle_risk
         
-        # 协议特征
-        protocol = device_data.get('protocol', '')
-        features.extend(self.encode_protocol(protocol))
+        # 维护风险
+        maintenance_risk = self.calculate_maintenance_risk(maintenance_analysis)
+        risk_assessment['maintenance_risk'] = maintenance_risk
         
-        # 能力特征
-        capabilities = device_data.get('capabilities', [])
-        features.extend(self.encode_capabilities(capabilities))
+        # 合规性风险
+        compliance_risk = self.calculate_compliance_risk(compliance_analysis)
+        risk_assessment['compliance_risk'] = compliance_risk
         
-        # 属性特征
-        properties = device_data.get('properties', {})
-        features.extend(self.encode_properties(properties))
+        # 综合风险
+        overall_risk = (lifecycle_risk + maintenance_risk + compliance_risk) / 3
+        risk_assessment['overall_risk'] = overall_risk
         
-        return np.array(features)
+        return risk_assessment
     
-    def encode_device_type(self, device_type: str) -> List[float]:
-        """编码设备类型"""
-        # 简化的设备类型编码
-        # 实际实现应该使用更复杂的编码方法
+    def calculate_lifecycle_risk(self, lifecycle_analysis: Dict[str, Any]) -> float:
+        """计算生命周期风险"""
+        stage = lifecycle_analysis.get('stage', LifecycleStage.MATURE)
+        health_index = lifecycle_analysis.get('health_index', 0.8)
         
-        device_types = ['sensor', 'actuator', 'gateway', 'controller', 'computing']
-        encoding = [0.0] * len(device_types)
+        # 基于生命周期阶段和健康指数的风险计算
+        stage_risk_factors = {
+            LifecycleStage.NEW: 0.1,
+            LifecycleStage.MATURE: 0.3,
+            LifecycleStage.AGING: 0.7,
+            LifecycleStage.OVERDUE: 0.9
+        }
         
-        for i, dt in enumerate(device_types):
-            if dt in device_type.lower():
-                encoding[i] = 1.0
+        stage_risk = stage_risk_factors.get(stage, 0.5)
+        health_risk = 1.0 - health_index
         
-        return encoding
+        return (stage_risk + health_risk) / 2
     
-    def encode_protocol(self, protocol: str) -> List[float]:
-        """编码协议"""
-        # 简化的协议编码
-        protocols = ['opc_ua', 'mqtt', 'coap', 'http', 'modbus']
-        encoding = [0.0] * len(protocols)
+    def calculate_maintenance_risk(self, maintenance_analysis: Dict[str, Any]) -> float:
+        """计算维护风险"""
+        maintenance_type = maintenance_analysis.get('type', MaintenanceType.PREVENTIVE)
+        priority = maintenance_analysis.get('priority', 3)
         
-        for i, p in enumerate(protocols):
-            if p in protocol.lower():
-                encoding[i] = 1.0
+        # 基于维护类型和优先级的风险计算
+        type_risk_factors = {
+            MaintenanceType.PREVENTIVE: 0.2,
+            MaintenanceType.PREDICTIVE: 0.4,
+            MaintenanceType.CONDITION_BASED: 0.6,
+            MaintenanceType.EMERGENCY: 0.9
+        }
         
-        return encoding
+        type_risk = type_risk_factors.get(maintenance_type, 0.5)
+        priority_risk = priority / 5.0
+        
+        return (type_risk + priority_risk) / 2
     
-    def encode_capabilities(self, capabilities: List[str]) -> List[float]:
-        """编码能力"""
-        # 简化的能力编码
-        all_capabilities = ['measure', 'control', 'communicate', 'compute', 'store']
-        encoding = [0.0] * len(all_capabilities)
+    def calculate_compliance_risk(self, compliance_analysis: Dict[str, Any]) -> float:
+        """计算合规性风险"""
+        status = compliance_analysis.get('status', ComplianceStatus.COMPLIANT)
+        score = compliance_analysis.get('score', 0.8)
         
-        for i, cap in enumerate(all_capabilities):
-            if cap in [c.lower() for c in capabilities]:
-                encoding[i] = 1.0
+        # 基于合规状态和评分的风险计算
+        status_risk_factors = {
+            ComplianceStatus.COMPLIANT: 0.1,
+            ComplianceStatus.PENDING: 0.4,
+            ComplianceStatus.NON_COMPLIANT: 0.8,
+            ComplianceStatus.EXEMPT: 0.2
+        }
         
-        return encoding
-    
-    def encode_properties(self, properties: Dict[str, Any]) -> List[float]:
-        """编码属性"""
-        # 简化的属性编码
-        # 实际实现应该使用更复杂的编码方法
+        status_risk = status_risk_factors.get(status, 0.5)
+        score_risk = 1.0 - score
         
-        # 数值属性
-        numeric_features = []
-        for key, value in properties.items():
-            if isinstance(value, (int, float)):
-                numeric_features.append(float(value))
-        
-        # 标准化数值特征
-        if numeric_features:
-            normalized_features = self.normalize_features(numeric_features)
-        else:
-            normalized_features = [0.0] * 10  # 默认特征
-        
-        return normalized_features
-    
-    def normalize_features(self, features: List[float]) -> List[float]:
-        """标准化特征"""
-        if not features:
-            return [0.0] * 10
-        
-        # 简化的标准化
-        # 实际实现应该使用更复杂的标准化方法
-        
-        min_val = min(features)
-        max_val = max(features)
-        
-        if max_val == min_val:
-            return [0.5] * len(features)
-        
-        normalized = [(f - min_val) / (max_val - min_val) for f in features]
-        
-        # 填充到固定长度
-        while len(normalized) < 10:
-            normalized.append(0.0)
-        
-        return normalized[:10]
-    
-    def build_semantic_description(self, device_data: Dict[str, Any]) -> str:
-        """构建语义描述"""
-        device_type = device_data.get('device_type', '')
-        capabilities = device_data.get('capabilities', [])
-        properties = device_data.get('properties', {})
-        
-        description_parts = []
-        
-        if device_type:
-            description_parts.append(f"Device type: {device_type}")
-        
-        if capabilities:
-            description_parts.append(f"Capabilities: {', '.join(capabilities)}")
-        
-        if properties:
-            prop_desc = []
-            for key, value in properties.items():
-                prop_desc.append(f"{key}: {value}")
-            description_parts.append(f"Properties: {', '.join(prop_desc)}")
-        
-        return ". ".join(description_parts)
-    
-    def calculate_category_weights(self, categories: List[DeviceCategory]) -> Dict[DeviceCategory, float]:
-        """计算类别权重"""
-        weights = {}
-        
-        for category in categories:
-            if category in weights:
-                weights[category] += 1.0
-            else:
-                weights[category] = 1.0
-        
-        # 归一化权重
-        total_weight = sum(weights.values())
-        if total_weight > 0:
-            weights = {k: v / total_weight for k, v in weights.items()}
-        
-        return weights
-    
-    def select_primary_category(self, category_weights: Dict[DeviceCategory, float]) -> DeviceCategory:
-        """选择主要类别"""
-        if not category_weights:
-            return DeviceCategory.SENSOR  # 默认类别
-        
-        return max(category_weights.items(), key=lambda x: x[1])[0]
-    
-    def select_secondary_categories(self, category_weights: Dict[DeviceCategory, float], 
-                                   primary_category: DeviceCategory) -> List[DeviceCategory]:
-        """选择次要类别"""
-        # 移除主要类别
-        remaining_weights = {k: v for k, v in category_weights.items() if k != primary_category}
-        
-        # 选择权重最高的类别作为次要类别
-        secondary_categories = []
-        if remaining_weights:
-            sorted_categories = sorted(remaining_weights.items(), key=lambda x: x[1], reverse=True)
-            secondary_categories = [cat for cat, weight in sorted_categories[:2]]  # 最多2个次要类别
-        
-        return secondary_categories
+        return (status_risk + score_risk) / 2
 
 class OntologyEngine:
     def __init__(self):
@@ -673,6 +725,748 @@ class SimilarityEngine:
             return float(similarity)
         except:
             return 0.0
+
+class LifecycleAnalyzer:
+    def __init__(self):
+        self.vectorizer = TfidfVectorizer()
+    
+    def analyze(self, device_data: Dict[str, Any]) -> Dict[str, Any]:
+        """分析设备生命周期信息"""
+        device_type = device_data.get('device_type', '')
+        capabilities = device_data.get('capabilities', [])
+        properties = device_data.get('properties', {})
+        
+        # 特征提取
+        features = self.extract_features(device_data)
+        
+        # 使用预训练模型进行预测
+        model = KMeans(n_clusters=4) # 4个生命周期阶段
+        prediction = model.fit_predict([features])[0]
+        
+        # 映射到生命周期阶段
+        stage_mapping = {
+            0: LifecycleStage.NEW,
+            1: LifecycleStage.MATURE,
+            2: LifecycleStage.AGING,
+            3: LifecycleStage.OVERDUE
+        }
+        lifecycle_stage = stage_mapping.get(prediction, LifecycleStage.MATURE)
+        
+        # 计算健康指数 (示例)
+        health_index = self.calculate_health_index(device_data)
+        
+        # 计算可靠性评分 (示例)
+        reliability_score = self.calculate_reliability_score(device_data)
+        
+        # 计算剩余寿命 (示例)
+        remaining_lifetime = self.calculate_remaining_lifetime(device_data)
+        
+        # 计算上次维护时间 (示例)
+        last_maintenance = self.calculate_last_maintenance(device_data)
+        
+        # 计算下次维护时间 (示例)
+        next_maintenance = self.calculate_next_maintenance(device_data)
+        
+        # 计算维护历史 (示例)
+        maintenance_history = self.generate_maintenance_history(device_data)
+        
+        return {
+            'stage': lifecycle_stage,
+            'health_index': health_index,
+            'reliability_score': reliability_score,
+            'remaining_lifetime': remaining_lifetime,
+            'last_maintenance': last_maintenance,
+            'next_maintenance': next_maintenance,
+            'maintenance_history': maintenance_history,
+            'confidence': 0.9 # 示例置信度
+        }
+    
+    def extract_features(self, device_data: Dict[str, Any]) -> np.ndarray:
+        """提取特征"""
+        features = []
+        
+        # 设备类型特征
+        device_type = device_data.get('device_type', '')
+        features.extend(self.encode_device_type(device_type))
+        
+        # 协议特征
+        protocol = device_data.get('protocol', '')
+        features.extend(self.encode_protocol(protocol))
+        
+        # 能力特征
+        capabilities = device_data.get('capabilities', [])
+        features.extend(self.encode_capabilities(capabilities))
+        
+        # 属性特征
+        properties = device_data.get('properties', {})
+        features.extend(self.encode_properties(properties))
+        
+        return np.array(features)
+    
+    def encode_device_type(self, device_type: str) -> List[float]:
+        """编码设备类型"""
+        # 简化的设备类型编码
+        # 实际实现应该使用更复杂的编码方法
+        
+        device_types = ['sensor', 'actuator', 'gateway', 'controller', 'computing']
+        encoding = [0.0] * len(device_types)
+        
+        for i, dt in enumerate(device_types):
+            if dt in device_type.lower():
+                encoding[i] = 1.0
+        
+        return encoding
+    
+    def encode_protocol(self, protocol: str) -> List[float]:
+        """编码协议"""
+        # 简化的协议编码
+        protocols = ['opc_ua', 'mqtt', 'coap', 'http', 'modbus']
+        encoding = [0.0] * len(protocols)
+        
+        for i, p in enumerate(protocols):
+            if p in protocol.lower():
+                encoding[i] = 1.0
+        
+        return encoding
+    
+    def encode_capabilities(self, capabilities: List[str]) -> List[float]:
+        """编码能力"""
+        # 简化的能力编码
+        all_capabilities = ['measure', 'control', 'communicate', 'compute', 'store']
+        encoding = [0.0] * len(all_capabilities)
+        
+        for i, cap in enumerate(all_capabilities):
+            if cap in [c.lower() for c in capabilities]:
+                encoding[i] = 1.0
+        
+        return encoding
+    
+    def encode_properties(self, properties: Dict[str, Any]) -> List[float]:
+        """编码属性"""
+        # 简化的属性编码
+        # 实际实现应该使用更复杂的编码方法
+        
+        # 数值属性
+        numeric_features = []
+        for key, value in properties.items():
+            if isinstance(value, (int, float)):
+                numeric_features.append(float(value))
+        
+        # 标准化数值特征
+        if numeric_features:
+            normalized_features = self.normalize_features(numeric_features)
+        else:
+            normalized_features = [0.0] * 10  # 默认特征
+        
+        return normalized_features
+    
+    def normalize_features(self, features: List[float]) -> List[float]:
+        """标准化特征"""
+        if not features:
+            return [0.0] * 10
+        
+        # 简化的标准化
+        # 实际实现应该使用更复杂的标准化方法
+        
+        min_val = min(features)
+        max_val = max(features)
+        
+        if max_val == min_val:
+            return [0.5] * len(features)
+        
+        normalized = [(f - min_val) / (max_val - min_val) for f in features]
+        
+        # 填充到固定长度
+        while len(normalized) < 10:
+            normalized.append(0.0)
+        
+        return normalized[:10]
+    
+    def calculate_health_index(self, device_data: Dict[str, Any]) -> float:
+        """计算设备健康指数"""
+        # 示例：基于实际运行时间和设计寿命
+        actual_lifetime = device_data.get('lifecycle_info', {}).get('actual_lifetime', 0)
+        design_lifetime = device_data.get('lifecycle_info', {}).get('design_lifetime', 10000) # 假设设计寿命10000小时
+        
+        if design_lifetime == 0:
+            return 0.0 # 避免除以零
+            
+        health_index = 1.0 - (actual_lifetime / design_lifetime)
+        return max(0.0, min(1.0, health_index)) # 确保在[0, 1]范围内
+    
+    def calculate_reliability_score(self, device_data: Dict[str, Any]) -> float:
+        """计算设备可靠性评分"""
+        # 示例：基于实际运行时间和设计寿命
+        actual_lifetime = device_data.get('lifecycle_info', {}).get('actual_lifetime', 0)
+        design_lifetime = device_data.get('lifecycle_info', {}).get('design_lifetime', 10000) # 假设设计寿命10000小时
+        
+        if design_lifetime == 0:
+            return 0.0 # 避免除以零
+            
+        reliability_score = 1.0 - (actual_lifetime / design_lifetime)
+        return max(0.0, min(1.0, reliability_score)) # 确保在[0, 1]范围内
+    
+    def calculate_remaining_lifetime(self, device_data: Dict[str, Any]) -> int:
+        """计算设备剩余寿命"""
+        # 示例：基于实际运行时间和设计寿命
+        actual_lifetime = device_data.get('lifecycle_info', {}).get('actual_lifetime', 0)
+        design_lifetime = device_data.get('lifecycle_info', {}).get('design_lifetime', 10000) # 假设设计寿命10000小时
+        
+        if design_lifetime == 0:
+            return 0 # 避免除以零
+            
+        remaining_lifetime = design_lifetime - actual_lifetime
+        return max(0, remaining_lifetime)
+    
+    def calculate_last_maintenance(self, device_data: Dict[str, Any]) -> datetime:
+        """计算设备上次维护时间"""
+        # 示例：从设备属性中获取上次维护时间
+        last_maintenance_str = device_data.get('properties', {}).get('last_maintenance_time')
+        if last_maintenance_str:
+            try:
+                last_maintenance = datetime.strptime(last_maintenance_str, '%Y-%m-%d %H:%M:%S')
+            except ValueError:
+                last_maintenance = datetime.now() - timedelta(days=30) # 默认30天前
+        else:
+            last_maintenance = datetime.now() - timedelta(days=30) # 默认30天前
+        return last_maintenance
+    
+    def calculate_next_maintenance(self, device_data: Dict[str, Any]) -> datetime:
+        """计算设备下次维护时间"""
+        # 示例：基于上次维护时间和维护间隔
+        last_maintenance = self.calculate_last_maintenance(device_data)
+        maintenance_interval = device_data.get('maintenance_info', {}).get('maintenance_interval', 1000) # 假设维护间隔1000小时
+        
+        next_maintenance = last_maintenance + timedelta(hours=maintenance_interval)
+        return next_maintenance
+    
+    def generate_maintenance_history(self, device_data: Dict[str, Any]) -> List[Dict]:
+        """生成维护历史"""
+        # 示例：从设备属性中获取维护历史
+        maintenance_history_str = device_data.get('properties', {}).get('maintenance_history')
+        if maintenance_history_str:
+            try:
+                maintenance_history = json.loads(maintenance_history_str)
+            except json.JSONDecodeError:
+                maintenance_history = []
+        else:
+            maintenance_history = []
+            
+        # 添加当前维护记录
+        current_maintenance = {
+            'timestamp': datetime.now().isoformat(),
+            'type': device_data.get('maintenance_info', {}).get('maintenance_type', MaintenanceType.PREVENTIVE.value),
+            'duration': device_data.get('maintenance_info', {}).get('maintenance_duration', 0),
+            'cost': device_data.get('maintenance_info', {}).get('maintenance_cost', 0.0),
+            'spare_parts_used': device_data.get('maintenance_info', {}).get('spare_parts_required', []),
+            'team': device_data.get('maintenance_info', {}).get('maintenance_team', 'N/A'),
+            'notes': device_data.get('maintenance_info', {}).get('maintenance_procedures', [])
+        }
+        maintenance_history.append(current_maintenance)
+        
+        return maintenance_history
+
+class MaintenanceAnalyzer:
+    def __init__(self):
+        self.vectorizer = TfidfVectorizer()
+    
+    def analyze(self, device_data: Dict[str, Any]) -> Dict[str, Any]:
+        """分析设备维护信息"""
+        device_type = device_data.get('device_type', '')
+        capabilities = device_data.get('capabilities', [])
+        properties = device_data.get('properties', {})
+        
+        # 特征提取
+        features = self.extract_features(device_data)
+        
+        # 使用预训练模型进行预测
+        model = KMeans(n_clusters=4) # 4种维护类型
+        prediction = model.fit_predict([features])[0]
+        
+        # 映射到维护类型
+        type_mapping = {
+            0: MaintenanceType.PREVENTIVE,
+            1: MaintenanceType.PREDICTIVE,
+            2: MaintenanceType.CONDITION_BASED,
+            3: MaintenanceType.EMERGENCY
+        }
+        maintenance_type = type_mapping.get(prediction, MaintenanceType.PREVENTIVE)
+        
+        # 计算维护优先级 (示例)
+        priority = self.calculate_maintenance_priority(device_data)
+        
+        # 计算维护成本 (示例)
+        cost = self.calculate_maintenance_cost(device_data)
+        
+        # 计算维护时长 (示例)
+        duration = self.calculate_maintenance_duration(device_data)
+        
+        # 计算所需备件 (示例)
+        spare_parts = self.calculate_spare_parts(device_data)
+        
+        # 计算维护团队 (示例)
+        team = self.calculate_maintenance_team(device_data)
+        
+        # 计算维护程序 (示例)
+        procedures = self.calculate_maintenance_procedures(device_data)
+        
+        # 计算风险评估 (示例)
+        risk_assessment = self.calculate_maintenance_risk_assessment(device_data)
+        
+        return {
+            'type': maintenance_type,
+            'priority': priority,
+            'cost': cost,
+            'duration': duration,
+            'spare_parts_required': spare_parts,
+            'maintenance_team': team,
+            'maintenance_procedures': procedures,
+            'risk_assessment': risk_assessment,
+            'confidence': 0.9 # 示例置信度
+        }
+    
+    def extract_features(self, device_data: Dict[str, Any]) -> np.ndarray:
+        """提取特征"""
+        features = []
+        
+        # 设备类型特征
+        device_type = device_data.get('device_type', '')
+        features.extend(self.encode_device_type(device_type))
+        
+        # 协议特征
+        protocol = device_data.get('protocol', '')
+        features.extend(self.encode_protocol(protocol))
+        
+        # 能力特征
+        capabilities = device_data.get('capabilities', [])
+        features.extend(self.encode_capabilities(capabilities))
+        
+        # 属性特征
+        properties = device_data.get('properties', {})
+        features.extend(self.encode_properties(properties))
+        
+        return np.array(features)
+    
+    def encode_device_type(self, device_type: str) -> List[float]:
+        """编码设备类型"""
+        # 简化的设备类型编码
+        # 实际实现应该使用更复杂的编码方法
+        
+        device_types = ['sensor', 'actuator', 'gateway', 'controller', 'computing']
+        encoding = [0.0] * len(device_types)
+        
+        for i, dt in enumerate(device_types):
+            if dt in device_type.lower():
+                encoding[i] = 1.0
+        
+        return encoding
+    
+    def encode_protocol(self, protocol: str) -> List[float]:
+        """编码协议"""
+        # 简化的协议编码
+        protocols = ['opc_ua', 'mqtt', 'coap', 'http', 'modbus']
+        encoding = [0.0] * len(protocols)
+        
+        for i, p in enumerate(protocols):
+            if p in protocol.lower():
+                encoding[i] = 1.0
+        
+        return encoding
+    
+    def encode_capabilities(self, capabilities: List[str]) -> List[float]:
+        """编码能力"""
+        # 简化的能力编码
+        all_capabilities = ['measure', 'control', 'communicate', 'compute', 'store']
+        encoding = [0.0] * len(all_capabilities)
+        
+        for i, cap in enumerate(all_capabilities):
+            if cap in [c.lower() for c in capabilities]:
+                encoding[i] = 1.0
+        
+        return encoding
+    
+    def encode_properties(self, properties: Dict[str, Any]) -> List[float]:
+        """编码属性"""
+        # 简化的属性编码
+        # 实际实现应该使用更复杂的编码方法
+        
+        # 数值属性
+        numeric_features = []
+        for key, value in properties.items():
+            if isinstance(value, (int, float)):
+                numeric_features.append(float(value))
+        
+        # 标准化数值特征
+        if numeric_features:
+            normalized_features = self.normalize_features(numeric_features)
+        else:
+            normalized_features = [0.0] * 10  # 默认特征
+        
+        return normalized_features
+    
+    def normalize_features(self, features: List[float]) -> List[float]:
+        """标准化特征"""
+        if not features:
+            return [0.0] * 10
+        
+        # 简化的标准化
+        # 实际实现应该使用更复杂的标准化方法
+        
+        min_val = min(features)
+        max_val = max(features)
+        
+        if max_val == min_val:
+            return [0.5] * len(features)
+        
+        normalized = [(f - min_val) / (max_val - min_val) for f in features]
+        
+        # 填充到固定长度
+        while len(normalized) < 10:
+            normalized.append(0.0)
+        
+        return normalized[:10]
+    
+    def calculate_maintenance_priority(self, device_data: Dict[str, Any]) -> int:
+        """计算设备维护优先级"""
+        # 示例：基于设备类型和能力
+        device_type = device_data.get('device_type', '').lower()
+        capabilities = device_data.get('capabilities', [])
+        
+        if 'critical' in device_type or 'safety' in device_type or 'emergency' in device_type:
+            return 5 # 最高优先级
+        elif 'high' in device_type or 'urgent' in device_type or 'fast' in device_type:
+            return 4
+        elif 'medium' in device_type or 'important' in device_type:
+            return 3
+        elif 'low' in device_type or 'optional' in device_type:
+            return 1
+        else:
+            return 3 # 默认优先级
+    
+    def calculate_maintenance_cost(self, device_data: Dict[str, Any]) -> float:
+        """计算设备维护成本"""
+        # 示例：基于设备类型和能力
+        device_type = device_data.get('device_type', '').lower()
+        capabilities = device_data.get('capabilities', [])
+        
+        if 'expensive' in device_type or 'high_cost' in device_type or 'labor_intensive' in device_type:
+            return 1000.0 # 高成本
+        elif 'medium_cost' in device_type or 'costly' in device_type:
+            return 500.0
+        elif 'low_cost' in device_type or 'cheap' in device_type:
+            return 100.0
+        else:
+            return 200.0 # 默认成本
+    
+    def calculate_maintenance_duration(self, device_data: Dict[str, Any]) -> int:
+        """计算设备维护时长"""
+        # 示例：基于设备类型和能力
+        device_type = device_data.get('device_type', '').lower()
+        capabilities = device_data.get('capabilities', [])
+        
+        if 'long_duration' in device_type or 'labor_intensive' in device_type or 'complex' in device_type:
+            return 8 # 长时间
+        elif 'short_duration' in device_type or 'quick' in device_type:
+            return 2
+        else:
+            return 4 # 默认时长
+    
+    def calculate_spare_parts(self, device_data: Dict[str, Any]) -> List[str]:
+        """计算设备所需备件"""
+        # 示例：基于设备类型和能力
+        device_type = device_data.get('device_type', '').lower()
+        capabilities = device_data.get('capabilities', [])
+        
+        if 'high_spare_parts' in device_type or 'many_parts' in device_type:
+            return ['PartA', 'PartB', 'PartC']
+        elif 'few_spare_parts' in device_type or 'less_parts' in device_type:
+            return ['PartX']
+        else:
+            return [] # 默认备件
+    
+    def calculate_maintenance_team(self, device_data: Dict[str, Any]) -> str:
+        """计算设备维护团队"""
+        # 示例：基于设备类型和能力
+        device_type = device_data.get('device_type', '').lower()
+        capabilities = device_data.get('capabilities', [])
+        
+        if 'professional_team' in device_type or 'expert_team' in device_type:
+            return 'TechOps'
+        elif 'inhouse_team' in device_type or 'internal_team' in device_type:
+            return 'In-house'
+        else:
+            return 'Generic' # 默认团队
+    
+    def calculate_maintenance_procedures(self, device_data: Dict[str, Any]) -> List[str]:
+        """计算设备维护程序"""
+        # 示例：基于设备类型和能力
+        device_type = device_data.get('device_type', '').lower()
+        capabilities = device_data.get('capabilities', [])
+        
+        if 'complex_procedures' in device_type or 'many_steps' in device_type:
+            return ['Step1', 'Step2', 'Step3', 'Step4']
+        elif 'simple_procedures' in device_type or 'few_steps' in device_type:
+            return ['Step1']
+        else:
+            return [] # 默认程序
+    
+    def calculate_maintenance_risk_assessment(self, device_data: Dict[str, Any]) -> Dict[str, float]:
+        """计算设备维护风险评估"""
+        # 示例：基于维护类型和优先级
+        maintenance_type = device_data.get('maintenance_info', {}).get('maintenance_type', MaintenanceType.PREVENTIVE)
+        priority = device_data.get('maintenance_info', {}).get('maintenance_priority', 3)
+        
+        risk_factors = {
+            MaintenanceType.PREVENTIVE: 0.2,
+            MaintenanceType.PREDICTIVE: 0.4,
+            MaintenanceType.CONDITION_BASED: 0.6,
+            MaintenanceType.EMERGENCY: 0.9
+        }
+        
+        type_risk = risk_factors.get(maintenance_type, 0.5)
+        priority_risk = priority / 5.0
+        
+        return {
+            'overall_risk': (type_risk + priority_risk) / 2,
+            'type_risk': type_risk,
+            'priority_risk': priority_risk
+        }
+
+class ComplianceAnalyzer:
+    def __init__(self):
+        self.vectorizer = TfidfVectorizer()
+    
+    def analyze(self, device_data: Dict[str, Any]) -> Dict[str, Any]:
+        """分析设备合规信息"""
+        device_type = device_data.get('device_type', '')
+        capabilities = device_data.get('capabilities', [])
+        properties = device_data.get('properties', {})
+        
+        # 特征提取
+        features = self.extract_features(device_data)
+        
+        # 使用预训练模型进行预测
+        model = KMeans(n_clusters=4) # 4种合规状态
+        prediction = model.fit_predict([features])[0]
+        
+        # 映射到合规状态
+        status_mapping = {
+            0: ComplianceStatus.COMPLIANT,
+            1: ComplianceStatus.PENDING,
+            2: ComplianceStatus.NON_COMPLIANT,
+            3: ComplianceStatus.EXEMPT
+        }
+        compliance_status = status_mapping.get(prediction, ComplianceStatus.COMPLIANT)
+        
+        # 计算合规评分 (示例)
+        score = self.calculate_compliance_score(device_data)
+        
+        # 计算审计记录 (示例)
+        audit_records = self.generate_audit_records(device_data)
+        
+        # 计算认证到期时间 (示例)
+        certification_expiry = self.calculate_certification_expiry(device_data)
+        
+        # 计算监管机构 (示例)
+        regulatory_body = self.calculate_regulatory_body(device_data)
+        
+        # 计算合规历史 (示例)
+        compliance_history = self.generate_compliance_history(device_data)
+        
+        return {
+            'status': compliance_status,
+            'score': score,
+            'audit_records': audit_records,
+            'certification_expiry': certification_expiry,
+            'regulatory_body': regulatory_body,
+            'compliance_history': compliance_history,
+            'confidence': 0.9 # 示例置信度
+        }
+    
+    def extract_features(self, device_data: Dict[str, Any]) -> np.ndarray:
+        """提取特征"""
+        features = []
+        
+        # 设备类型特征
+        device_type = device_data.get('device_type', '')
+        features.extend(self.encode_device_type(device_type))
+        
+        # 协议特征
+        protocol = device_data.get('protocol', '')
+        features.extend(self.encode_protocol(protocol))
+        
+        # 能力特征
+        capabilities = device_data.get('capabilities', [])
+        features.extend(self.encode_capabilities(capabilities))
+        
+        # 属性特征
+        properties = device_data.get('properties', {})
+        features.extend(self.encode_properties(properties))
+        
+        return np.array(features)
+    
+    def encode_device_type(self, device_type: str) -> List[float]:
+        """编码设备类型"""
+        # 简化的设备类型编码
+        # 实际实现应该使用更复杂的编码方法
+        
+        device_types = ['sensor', 'actuator', 'gateway', 'controller', 'computing']
+        encoding = [0.0] * len(device_types)
+        
+        for i, dt in enumerate(device_types):
+            if dt in device_type.lower():
+                encoding[i] = 1.0
+        
+        return encoding
+    
+    def encode_protocol(self, protocol: str) -> List[float]:
+        """编码协议"""
+        # 简化的协议编码
+        protocols = ['opc_ua', 'mqtt', 'coap', 'http', 'modbus']
+        encoding = [0.0] * len(protocols)
+        
+        for i, p in enumerate(protocols):
+            if p in protocol.lower():
+                encoding[i] = 1.0
+        
+        return encoding
+    
+    def encode_capabilities(self, capabilities: List[str]) -> List[float]:
+        """编码能力"""
+        # 简化的能力编码
+        all_capabilities = ['measure', 'control', 'communicate', 'compute', 'store']
+        encoding = [0.0] * len(all_capabilities)
+        
+        for i, cap in enumerate(all_capabilities):
+            if cap in [c.lower() for c in capabilities]:
+                encoding[i] = 1.0
+        
+        return encoding
+    
+    def encode_properties(self, properties: Dict[str, Any]) -> List[float]:
+        """编码属性"""
+        # 简化的属性编码
+        # 实际实现应该使用更复杂的编码方法
+        
+        # 数值属性
+        numeric_features = []
+        for key, value in properties.items():
+            if isinstance(value, (int, float)):
+                numeric_features.append(float(value))
+        
+        # 标准化数值特征
+        if numeric_features:
+            normalized_features = self.normalize_features(numeric_features)
+        else:
+            normalized_features = [0.0] * 10  # 默认特征
+        
+        return normalized_features
+    
+    def normalize_features(self, features: List[float]) -> List[float]:
+        """标准化特征"""
+        if not features:
+            return [0.0] * 10
+        
+        # 简化的标准化
+        # 实际实现应该使用更复杂的标准化方法
+        
+        min_val = min(features)
+        max_val = max(features)
+        
+        if max_val == min_val:
+            return [0.5] * len(features)
+        
+        normalized = [(f - min_val) / (max_val - min_val) for f in features]
+        
+        # 填充到固定长度
+        while len(normalized) < 10:
+            normalized.append(0.0)
+        
+        return normalized[:10]
+    
+    def calculate_compliance_score(self, device_data: Dict[str, Any]) -> float:
+        """计算设备合规评分"""
+        # 示例：基于设备类型和能力
+        device_type = device_data.get('device_type', '').lower()
+        capabilities = device_data.get('capabilities', [])
+        
+        if 'high_compliance_score' in device_type or 'excellent' in device_type or 'perfect' in device_type:
+            return 0.95 # 高合规评分
+        elif 'medium_compliance_score' in device_type or 'good' in device_type:
+            return 0.85
+        elif 'low_compliance_score' in device_type or 'poor' in device_type:
+            return 0.75
+        else:
+            return 0.8 # 默认合规评分
+    
+    def generate_audit_records(self, device_data: Dict[str, Any]) -> List[Dict]:
+        """生成审计记录"""
+        # 示例：从设备属性中获取审计记录
+        audit_records_str = device_data.get('properties', {}).get('audit_records')
+        if audit_records_str:
+            try:
+                audit_records = json.loads(audit_records_str)
+            except json.JSONDecodeError:
+                audit_records = []
+        else:
+            audit_records = []
+            
+        # 添加当前审计记录
+        current_record = {
+            'timestamp': datetime.now().isoformat(),
+            'type': 'routine',
+            'status': 'passed',
+            'details': 'No issues found',
+            'performed_by': 'System',
+            'next_audit_due': (datetime.now() + timedelta(days=30)).isoformat()
+        }
+        audit_records.append(current_record)
+        
+        return audit_records
+    
+    def calculate_certification_expiry(self, device_data: Dict[str, Any]) -> datetime:
+        """计算设备认证到期时间"""
+        # 示例：从设备属性中获取认证到期时间
+        expiry_str = device_data.get('properties', {}).get('certification_expiry')
+        if expiry_str:
+            try:
+                certification_expiry = datetime.strptime(expiry_str, '%Y-%m-%d')
+            except ValueError:
+                certification_expiry = datetime.now() + timedelta(days=365) # 默认1年
+        else:
+            certification_expiry = datetime.now() + timedelta(days=365) # 默认1年
+        return certification_expiry
+    
+    def calculate_regulatory_body(self, device_data: Dict[str, Any]) -> str:
+        """计算设备监管机构"""
+        # 示例：从设备属性中获取监管机构
+        regulatory_body = device_data.get('properties', {}).get('regulatory_body')
+        if not regulatory_body:
+            regulatory_body = 'N/A'
+        return regulatory_body
+    
+    def generate_compliance_history(self, device_data: Dict[str, Any]) -> List[Dict]:
+        """生成合规历史"""
+        # 示例：从设备属性中获取合规历史
+        compliance_history_str = device_data.get('properties', {}).get('compliance_history')
+        if compliance_history_str:
+            try:
+                compliance_history = json.loads(compliance_history_str)
+            except json.JSONDecodeError:
+                compliance_history = []
+        else:
+            compliance_history = []
+            
+        # 添加当前合规记录
+        current_record = {
+            'timestamp': datetime.now().isoformat(),
+            'status': device_data.get('compliance_info', {}).get('status', ComplianceStatus.COMPLIANT.value),
+            'score': device_data.get('compliance_info', {}).get('score', 0.8),
+            'notes': 'No specific notes'
+        }
+        compliance_history.append(current_record)
+        
+        return compliance_history
 
 # 7. 跨域集成设备语义分类
 
