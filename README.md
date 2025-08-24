@@ -259,11 +259,3 @@ graph TB
 [![Star History Chart](https://api.star-history.com/svg?repos=iot-semantic-platform/iot-system&type=Date)](https://star-history.com/#iot-semantic-platform/iot-system&Date)
 
 ---
-
-<p align="center">
-  <strong>构建智能互联的未来 🚀</strong>
-</p>
-
-<p align="center">
-  如果这个项目对您有帮助，请给我们一个 ⭐️
-</p>
