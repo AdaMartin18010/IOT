@@ -1,8 +1,42 @@
 # 高级线性类型理论综合深化 (Advanced Linear Type Theory Comprehensive)
 
+## 目录
+
+- [高级线性类型理论综合深化 (Advanced Linear Type Theory Comprehensive)](#高级线性类型理论综合深化-advanced-linear-type-theory-comprehensive)
+  - [目录](#目录)
+  - [概述](#概述)
+  - [1. 线性逻辑基础理论深化 (Linear Logic Foundation Theory)](#1-线性逻辑基础理论深化-linear-logic-foundation-theory)
+    - [1.1 线性逻辑公理系统](#11-线性逻辑公理系统)
+    - [1.2 线性逻辑语义](#12-线性逻辑语义)
+  - [2. 线性类型系统 (Linear Type System)](#2-线性类型系统-linear-type-system)
+    - [2.1 线性类型语法](#21-线性类型语法)
+    - [2.2 线性类型语义](#22-线性类型语义)
+  - [3. 资源类型系统 (Resource Type System)](#3-资源类型系统-resource-type-system)
+    - [3.1 资源类型定义](#31-资源类型定义)
+    - [3.2 内存管理](#32-内存管理)
+    - [3.3 并发资源管理](#33-并发资源管理)
+  - [4. 高级线性类型构造 (Advanced Linear Type Constructions)](#4-高级线性类型构造-advanced-linear-type-constructions)
+    - [4.1 线性单子](#41-线性单子)
+    - [4.2 线性函子](#42-线性函子)
+    - [4.3 线性代数数据类型](#43-线性代数数据类型)
+  - [5. 线性类型系统扩展 (Linear Type System Extensions)](#5-线性类型系统扩展-linear-type-system-extensions)
+    - [5.1 仿射类型](#51-仿射类型)
+    - [5.2 相关类型](#52-相关类型)
+    - [5.3 混合类型系统](#53-混合类型系统)
+  - [6. 实际应用 (Practical Applications)](#6-实际应用-practical-applications)
+    - [6.1 Rust所有权系统](#61-rust所有权系统)
+    - [6.2 函数式编程中的线性类型](#62-函数式编程中的线性类型)
+    - [6.3 并发编程中的线性类型](#63-并发编程中的线性类型)
+  - [7. 工具与实现 (Tools and Implementation)](#7-工具与实现-tools-and-implementation)
+    - [7.1 线性类型检查器](#71-线性类型检查器)
+    - [7.2 线性类型推断](#72-线性类型推断)
+  - [8. 结论与展望](#8-结论与展望)
+  - [参考文献](#参考文献)
+
 ## 概述
 
-线性类型理论是形式科学的重要分支，为资源管理、内存安全、并发编程提供了强大的形式化基础。本文档构建了一个完整的高级线性类型理论体系，包括线性逻辑、资源类型、内存管理、并发安全等核心内容。
+线性类型理论是形式科学的重要分支，为资源管理、内存安全、并发编程提供了强大的形式化基础。
+本文档构建了一个完整的高级线性类型理论体系，包括线性逻辑、资源类型、内存管理、并发安全等核心内容。
 
 ## 1. 线性逻辑基础理论深化 (Linear Logic Foundation Theory)
 

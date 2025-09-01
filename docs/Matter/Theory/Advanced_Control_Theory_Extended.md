@@ -1,8 +1,39 @@
 # 高级控制理论深化扩展 (Advanced Control Theory Extended)
 
+## 目录
+
+- [高级控制理论深化扩展 (Advanced Control Theory Extended)](#高级控制理论深化扩展-advanced-control-theory-extended)
+  - [目录](#目录)
+  - [概述](#概述)
+  - [1. 高级非线性控制理论 (Advanced Nonlinear Control Theory)](#1-高级非线性控制理论-advanced-nonlinear-control-theory)
+    - [1.1 非线性系统基础](#11-非线性系统基础)
+    - [1.2 李雅普诺夫稳定性理论](#12-李雅普诺夫稳定性理论)
+    - [1.3 反馈线性化](#13-反馈线性化)
+  - [2. 高级鲁棒控制理论 (Advanced Robust Control Theory)](#2-高级鲁棒控制理论-advanced-robust-control-theory)
+    - [2.1 不确定性建模](#21-不确定性建模)
+    - [2.2 H∞控制](#22-h控制)
+    - [2.3 μ-综合](#23-μ-综合)
+  - [3. 高级自适应控制理论 (Advanced Adaptive Control Theory)](#3-高级自适应控制理论-advanced-adaptive-control-theory)
+    - [3.1 自适应控制基础](#31-自适应控制基础)
+    - [3.2 模型参考自适应控制](#32-模型参考自适应控制)
+    - [3.3 自校正调节器](#33-自校正调节器)
+  - [4. 高级最优控制理论 (Advanced Optimal Control Theory)](#4-高级最优控制理论-advanced-optimal-control-theory)
+    - [4.1 变分法](#41-变分法)
+    - [4.2 动态规划](#42-动态规划)
+    - [4.3 线性二次型调节器](#43-线性二次型调节器)
+  - [5. 量子控制理论 (Quantum Control Theory)](#5-量子控制理论-quantum-control-theory)
+    - [5.1 量子系统建模](#51-量子系统建模)
+    - [5.2 量子最优控制](#52-量子最优控制)
+  - [6. 批判性分析与展望 (Critical Analysis and Outlook)](#6-批判性分析与展望-critical-analysis-and-outlook)
+    - [6.1 理论局限性](#61-理论局限性)
+    - [6.2 未来发展方向](#62-未来发展方向)
+  - [7. 结论](#7-结论)
+  - [参考文献](#参考文献)
+
 ## 概述
 
-控制理论是形式科学的核心分支，研究动态系统的行为分析和控制设计。本文档在现有理论基础上进行深化扩展，构建一个完整的高级控制理论体系，包括非线性控制、鲁棒控制、自适应控制、最优控制、量子控制等前沿内容。
+控制理论是形式科学的核心分支，研究动态系统的行为分析和控制设计。
+本文档在现有理论基础上进行深化扩展，构建一个完整的高级控制理论体系，包括非线性控制、鲁棒控制、自适应控制、最优控制、量子控制等前沿内容。
 
 ## 1. 高级非线性控制理论 (Advanced Nonlinear Control Theory)
 

@@ -1,8 +1,44 @@
 # 高级形式理论综合体系 (Advanced Formal Theory Synthesis)
 
+## 目录
+
+- [高级形式理论综合体系 (Advanced Formal Theory Synthesis)](#高级形式理论综合体系-advanced-formal-theory-synthesis)
+  - [目录](#目录)
+  - [概述](#概述)
+  - [1. 统一类型理论框架 (Unified Type Theory Framework)](#1-统一类型理论框架-unified-type-theory-framework)
+    - [1.1 多模态类型系统](#11-多模态类型系统)
+    - [1.2 资源感知类型系统](#12-资源感知类型系统)
+    - [1.3 时态类型系统](#13-时态类型系统)
+  - [2. 高级Petri网理论 (Advanced Petri Net Theory)](#2-高级petri网理论-advanced-petri-net-theory)
+    - [2.1 类型化Petri网](#21-类型化petri网)
+    - [2.2 时态Petri网](#22-时态petri网)
+    - [2.3 分布式Petri网](#23-分布式petri网)
+  - [3. 高级控制理论 (Advanced Control Theory)](#3-高级控制理论-advanced-control-theory)
+    - [3.1 类型化控制系统](#31-类型化控制系统)
+    - [3.2 时态控制系统](#32-时态控制系统)
+    - [3.3 分布式控制系统](#33-分布式控制系统)
+  - [4. 时态逻辑控制理论 (Temporal Logic Control Theory)](#4-时态逻辑控制理论-temporal-logic-control-theory)
+    - [4.1 高级时态逻辑](#41-高级时态逻辑)
+    - [4.2 时态控制综合](#42-时态控制综合)
+    - [4.3 实时时态控制](#43-实时时态控制)
+  - [5. 分布式系统理论 (Distributed Systems Theory)](#5-分布式系统理论-distributed-systems-theory)
+    - [5.1 高级一致性理论](#51-高级一致性理论)
+    - [5.2 高级容错理论](#52-高级容错理论)
+    - [5.3 分布式算法理论](#53-分布式算法理论)
+  - [6. 理论融合与创新 (Theory Integration and Innovation)](#6-理论融合与创新-theory-integration-and-innovation)
+    - [6.1 统一语义框架](#61-统一语义框架)
+    - [6.2 跨理论推理](#62-跨理论推理)
+    - [6.3 前沿理论扩展](#63-前沿理论扩展)
+  - [7. 批判性分析与展望 (Critical Analysis and Outlook)](#7-批判性分析与展望-critical-analysis-and-outlook)
+    - [7.1 理论局限性](#71-理论局限性)
+    - [7.2 未来发展方向](#72-未来发展方向)
+  - [8. 结论](#8-结论)
+  - [参考文献](#参考文献)
+
 ## 概述
 
-本文档构建了一个统一的形式理论框架，将类型理论、线性类型、仿射类型、时态类型、Petri网理论、控制论、时态逻辑控制、分布式系统等核心理论进行深度融合和批判性扩展。我们摒弃辩证法的正反合技巧，采用严格的形式化论证和批判性思维，构建一个自洽、完备、前沿的理论体系。
+本文档构建了一个统一的形式理论框架，将类型理论、线性类型、仿射类型、时态类型、Petri网理论、控制论、时态逻辑控制、分布式系统等核心理论进行深度融合和批判性扩展。
+我们摒弃辩证法的正反合技巧，采用严格的形式化论证和批判性思维，构建一个自洽、完备、前沿的理论体系。
 
 ## 1. 统一类型理论框架 (Unified Type Theory Framework)
 

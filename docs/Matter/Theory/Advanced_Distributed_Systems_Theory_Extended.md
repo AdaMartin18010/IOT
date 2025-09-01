@@ -1,5 +1,34 @@
 # 高级分布式系统理论扩展 (Advanced Distributed Systems Theory Extended)
 
+## 目录
+
+- [高级分布式系统理论扩展 (Advanced Distributed Systems Theory Extended)](#高级分布式系统理论扩展-advanced-distributed-systems-theory-extended)
+  - [目录](#目录)
+  - [1. 分布式系统基础理论深度分析](#1-分布式系统基础理论深度分析)
+    - [1.1 系统模型形式化](#11-系统模型形式化)
+    - [1.2 故障模型](#12-故障模型)
+  - [2. 一致性协议理论](#2-一致性协议理论)
+    - [2.1 共识问题](#21-共识问题)
+    - [2.2 Paxos算法](#22-paxos算法)
+    - [2.3 Raft算法](#23-raft算法)
+  - [3. 分布式存储理论](#3-分布式存储理论)
+    - [3.1 复制状态机](#31-复制状态机)
+    - [3.2 一致性哈希](#32-一致性哈希)
+  - [4. 容错机制理论](#4-容错机制理论)
+    - [4.1 故障检测](#41-故障检测)
+    - [4.2 故障恢复](#42-故障恢复)
+  - [5. 分布式算法理论](#5-分布式算法理论)
+    - [5.1 分布式快照](#51-分布式快照)
+    - [5.2 分布式死锁检测](#52-分布式死锁检测)
+  - [6. 分布式事务理论](#6-分布式事务理论)
+    - [6.1 ACID性质](#61-acid性质)
+    - [6.2 两阶段提交](#62-两阶段提交)
+  - [7. 分布式系统验证](#7-分布式系统验证)
+    - [7.1 模型检查](#71-模型检查)
+    - [7.2 定理证明](#72-定理证明)
+  - [8. 结论](#8-结论)
+  - [参考文献](#参考文献)
+
 ## 1. 分布式系统基础理论深度分析
 
 ### 1.1 系统模型形式化
@@ -148,7 +177,7 @@ Paxos状态包含：
 - **已接受值**：$v \in V$
 - **已接受编号**：$n_a \in \mathbb{N}$
 
-**算法 2.1 (Paxos算法)**
+**算法 2.1 (Paxos算法)**:
 
 ```haskell
 data PaxosState = PaxosState
@@ -208,7 +237,7 @@ Raft节点状态：
 **定义 2.7 (Raft任期)**
 Raft任期是单调递增的整数，每个任期最多一个领导者。
 
-**算法 2.2 (Raft领导者选举)**
+**算法 2.2 (Raft领导者选举)**:
 
 ```haskell
 raftElection :: Node -> IO ()
@@ -280,7 +309,7 @@ $$\text{Log}_i = [\text{entry}_1, \text{entry}_2, \ldots, \text{entry}_n]$$
 2. 领导者创建日志条目
 3. 日志条目不会改变
 
-**算法 3.1 (日志复制)**
+**算法 3.1 (日志复制)**:
 
 ```haskell
 logReplication :: Leader -> Command -> IO ()
@@ -313,7 +342,7 @@ replicateToFollowers leader entry =
 **定义 3.5 (虚拟节点)**
 虚拟节点技术通过为每个物理节点创建多个虚拟节点提高负载均衡。
 
-**算法 3.2 (一致性哈希)**
+**算法 3.2 (一致性哈希)**:
 
 ```haskell
 data ConsistentHash = ConsistentHash
@@ -357,16 +386,18 @@ removeNode ch node =
 
 **定义 4.1 (心跳机制)**
 心跳机制通过定期消息检测故障：
-$$\text{Heartbeat}_i(t) = \begin{cases}
+$$
+\text{Heartbeat}_i(t) = \begin{cases}
 1 & \text{if } p_i \text{ sends heartbeat at } t \\
 0 & \text{otherwise}
-\end{cases}$$
+\end{cases}
+$$
 
 **定义 4.2 (超时检测)**
 节点 $p_i$ 在时间 $t$ 怀疑节点 $p_j$，如果：
 $$t - \text{LastHeartbeat}_{i,j} > \text{Timeout}_i$$
 
-**算法 4.1 (故障检测)**
+**算法 4.1 (故障检测)**:
 
 ```haskell
 faultDetection :: Node -> IO ()
@@ -398,6 +429,7 @@ checkTimeouts node =
 在同步系统中，故障检测器可以达到完美准确性。
 
 **证明：** 通过同步假设：
+
 1. 消息延迟有界
 2. 处理时间有界
 3. 因此可以准确检测故障
@@ -411,7 +443,7 @@ checkTimeouts node =
 状态转移确保新节点获得正确状态：
 $$\text{State}_\text{new} = \text{Transfer}(\text{State}_\text{old})$$
 
-**算法 4.2 (故障恢复)**
+**算法 4.2 (故障恢复)**:
 
 ```haskell
 faultRecovery :: Node -> IO ()
@@ -442,6 +474,7 @@ recoverState node =
 故障恢复机制确保系统一致性。
 
 **证明：** 通过状态转移：
+
 1. 状态转移保持一致性
 2. 负载重分配保持平衡
 3. 因此系统正确恢复
@@ -460,7 +493,7 @@ Chandy-Lamport快照算法：
 2. 发送标记消息给所有邻居
 3. 记录接收到的消息直到收到标记
 
-**算法 5.1 (分布式快照)**
+**算法 5.1 (分布式快照)**:
 
 ```haskell
 distributedSnapshot :: Node -> IO Snapshot
@@ -493,6 +526,7 @@ collectSnapshot node =
 Chandy-Lamport算法产生一致的全局状态。
 
 **证明：** 通过标记消息：
+
 1. 标记消息分割消息流
 2. 快照包含标记前的状态
 3. 因此状态一致
@@ -508,7 +542,7 @@ Chandy-Lamport算法产生一致的全局状态。
 **定义 5.4 (死锁)**
 死锁是资源分配图中的环。
 
-**算法 5.2 (分布式死锁检测)**
+**算法 5.2 (分布式死锁检测)**:
 
 ```haskell
 deadlockDetection :: Node -> IO Bool
@@ -540,6 +574,7 @@ detectCycle graph probes =
 分布式死锁检测算法正确识别死锁。
 
 **证明：** 通过环检测：
+
 1. 探测消息沿等待边传播
 2. 环表示死锁
 3. 因此检测正确
@@ -564,6 +599,7 @@ detectCycle graph probes =
 在异步分布式系统中，无法同时满足所有ACID性质。
 
 **证明：** 通过CAP定理：
+
 1. 一致性要求同步
 2. 可用性要求异步
 3. 因此无法同时满足
@@ -576,7 +612,7 @@ detectCycle graph probes =
 1. **准备阶段**：协调者询问参与者是否可以提交
 2. **提交阶段**：协调者根据参与者响应决定提交或中止
 
-**算法 6.1 (两阶段提交)**
+**算法 6.1 (两阶段提交)**:
 
 ```haskell
 twoPhaseCommit :: Coordinator -> [Participant] -> IO Bool
@@ -608,6 +644,7 @@ decidePhase coordinator responses =
 两阶段提交协议保证事务原子性。
 
 **证明：** 通过两阶段设计：
+
 1. 准备阶段确保所有参与者准备就绪
 2. 提交阶段确保所有参与者执行相同决定
 3. 因此保证原子性
@@ -628,7 +665,7 @@ decidePhase coordinator responses =
 线性时态逻辑（LTL）公式：
 $$\phi ::= p \mid \neg \phi \mid \phi_1 \land \phi_2 \mid \mathbf{X} \phi \mid \mathbf{F} \phi \mid \mathbf{G} \phi \mid \phi_1 \mathbf{U} \phi_2$$
 
-**算法 7.1 (模型检查)**
+**算法 7.1 (模型检查)**:
 
 ```haskell
 modelChecking :: Model -> Formula -> IO Bool
@@ -654,6 +691,7 @@ formulaToAutomaton formula =
 模型检查算法正确验证时态性质。
 
 **证明：** 通过自动机理论：
+
 1. 公式转换为自动机
 2. 模型与自动机乘积
 3. 检查接受运行
@@ -670,6 +708,7 @@ formulaToAutomaton formula =
 通过归纳法验证不变式。
 
 **证明：** 通过归纳法：
+
 1. 基础情况：初始状态满足不变式
 2. 归纳步骤：转移保持不变式
 3. 因此所有状态满足不变式

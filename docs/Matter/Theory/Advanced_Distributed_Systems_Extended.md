@@ -1,8 +1,38 @@
 # 高级分布式系统理论深化扩展 (Advanced Distributed Systems Theory Extended)
 
+## 目录
+
+- [高级分布式系统理论深化扩展 (Advanced Distributed Systems Theory Extended)](#高级分布式系统理论深化扩展-advanced-distributed-systems-theory-extended)
+  - [目录](#目录)
+  - [概述](#概述)
+  - [1. 高级一致性理论 (Advanced Consistency Theory)](#1-高级一致性理论-advanced-consistency-theory)
+    - [1.1 多级一致性模型](#11-多级一致性模型)
+    - [1.2 高级共识协议](#12-高级共识协议)
+    - [1.3 分布式事务](#13-分布式事务)
+  - [2. 高级容错机制 (Advanced Fault Tolerance)](#2-高级容错机制-advanced-fault-tolerance)
+    - [2.1 故障模型](#21-故障模型)
+    - [2.2 故障检测](#22-故障检测)
+    - [2.3 故障恢复](#23-故障恢复)
+  - [3. 分布式算法理论 (Distributed Algorithm Theory)](#3-分布式算法理论-distributed-algorithm-theory)
+    - [3.1 分布式算法复杂度](#31-分布式算法复杂度)
+    - [3.2 分布式算法设计](#32-分布式算法设计)
+    - [3.3 分布式互斥](#33-分布式互斥)
+  - [4. 量子分布式系统 (Quantum Distributed Systems)](#4-量子分布式系统-quantum-distributed-systems)
+    - [4.1 量子网络模型](#41-量子网络模型)
+    - [4.2 量子一致性协议](#42-量子一致性协议)
+  - [5. 分布式存储理论 (Distributed Storage Theory)](#5-分布式存储理论-distributed-storage-theory)
+    - [5.1 复制策略](#51-复制策略)
+    - [5.2 分布式事务存储](#52-分布式事务存储)
+  - [6. 批判性分析与展望 (Critical Analysis and Outlook)](#6-批判性分析与展望-critical-analysis-and-outlook)
+    - [6.1 理论局限性](#61-理论局限性)
+    - [6.2 未来发展方向](#62-未来发展方向)
+  - [7. 结论](#7-结论)
+  - [参考文献](#参考文献)
+
 ## 概述
 
-分布式系统理论是形式科学的核心分支，研究多个计算节点协同工作的系统。本文档在现有理论基础上进行深化扩展，构建一个完整的高级分布式系统理论体系，包括一致性理论、容错机制、分布式算法、量子分布式系统等前沿内容。
+分布式系统理论是形式科学的核心分支，研究多个计算节点协同工作的系统。
+本文档在现有理论基础上进行深化扩展，构建一个完整的高级分布式系统理论体系，包括一致性理论、容错机制、分布式算法、量子分布式系统等前沿内容。
 
 ## 1. 高级一致性理论 (Advanced Consistency Theory)
 
