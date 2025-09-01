@@ -39,59 +39,59 @@
 
 #### 系统理论文档 (3个)
 
-6. `02-Systems/IoT-Semantic-Web-Theory.md`
-7. `02-Systems/IoT-Ontology-Foundation.md`
-8. `02-Systems/IoT-Semantic-Reasoning-Engine.md`
+1. `02-Systems/IoT-Semantic-Web-Theory.md`
+2. `02-Systems/IoT-Ontology-Foundation.md`
+3. `02-Systems/IoT-Semantic-Reasoning-Engine.md`
 
 ### 2.2 第二阶段：技术实现深度扩展 (6个文档)
 
 #### 算法理论文档 (3个)
 
-9. `03-Algorithms/IoT-Advanced-Algorithm-Theory.md`
-10. `03-Algorithms/IoT-Performance-Analysis-Framework.md`
-11. `03-Algorithms/IoT-Optimization-Strategy-System.md`
+1. `03-Algorithms/IoT-Advanced-Algorithm-Theory.md`
+2. `03-Algorithms/IoT-Performance-Analysis-Framework.md`
+3. `03-Algorithms/IoT-Optimization-Strategy-System.md`
 
 #### 系统架构文档 (3个)
 
-12. `02-Systems/IoT-Distributed-System-Theory.md`
-13. `02-Systems/IoT-Microservice-Architecture-Patterns.md`
-14. `02-Systems/IoT-Event-Driven-Architecture-Deep-Analysis.md`
+1. `02-Systems/IoT-Distributed-System-Theory.md`
+2. `02-Systems/IoT-Microservice-Architecture-Patterns.md`
+3. `02-Systems/IoT-Event-Driven-Architecture-Deep-Analysis.md`
 
 ### 2.3 第三阶段：跨域关联分析 (6个文档)
 
 #### 技术栈分析文档 (3个)
 
-15. `04-Technology/IoT-Technology-Stack-Dependency-Graph.md`
-16. `04-Technology/IoT-Technology-Selection-Decision-Tree.md`
-17. `04-Technology/IoT-Technology-Evolution-Path.md`
+1. `04-Technology/IoT-Technology-Stack-Dependency-Graph.md`
+2. `04-Technology/IoT-Technology-Selection-Decision-Tree.md`
+3. `04-Technology/IoT-Technology-Evolution-Path.md`
 
 #### 应用场景分析文档 (3个)
 
-18. `05-Specialized-Research/IoT-Scenario-Classification-System.md`
-19. `05-Specialized-Research/IoT-Scenario-Relationship-Analysis.md`
-20. `05-Specialized-Research/IoT-Scenario-Evolution-Model.md`
+1. `05-Specialized-Research/IoT-Scenario-Classification-System.md`
+2. `05-Specialized-Research/IoT-Scenario-Relationship-Analysis.md`
+3. `05-Specialized-Research/IoT-Scenario-Evolution-Model.md`
 
 ### 2.4 第四阶段：安全与通信深度分析 (6个文档)
 
 #### 安全架构文档 (3个)
 
-21. `06-Security-Architecture/IoT-Zero-Trust-Architecture-Theory.md`
-22. `06-Security-Architecture/IoT-Threat-Modeling-Framework.md`
-23. `06-Security-Architecture/IoT-Security-Verification-System.md`
+1. `06-Security-Architecture/IoT-Zero-Trust-Architecture-Theory.md`
+2. `06-Security-Architecture/IoT-Threat-Modeling-Framework.md`
+3. `06-Security-Architecture/IoT-Security-Verification-System.md`
 
 #### 通信协议文档 (3个)
 
-24. `07-Advanced-Communication/IoT-Network-Protocol-Theory.md`
-25. `07-Advanced-Communication/IoT-Protocol-Stack-Analysis-Framework.md`
-26. `07-Advanced-Communication/IoT-Protocol-Optimization-Strategy.md`
+1. `07-Advanced-Communication/IoT-Network-Protocol-Theory.md`
+2. `07-Advanced-Communication/IoT-Protocol-Stack-Analysis-Framework.md`
+3. `07-Advanced-Communication/IoT-Protocol-Optimization-Strategy.md`
 
 ### 2.5 第五阶段：行业应用深度分析 (3个文档)
 
 #### 行业标准文档 (3个)
 
-27. `08-Industry-Applications/IoT-Industry-Standard-Mapping.md`
-28. `08-Industry-Applications/IoT-Standard-Relationship-Analysis.md`
-29. `08-Industry-Applications/IoT-Standard-Evolution-Path.md`
+1. `08-Industry-Applications/IoT-Industry-Standard-Mapping.md`
+2. `08-Industry-Applications/IoT-Standard-Relationship-Analysis.md`
+3. `08-Industry-Applications/IoT-Standard-Evolution-Path.md`
 
 ## 三、技术特色与创新
 
