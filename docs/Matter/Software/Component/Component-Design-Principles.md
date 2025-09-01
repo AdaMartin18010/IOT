@@ -1,568 +1,619 @@
-# 组件设计原则与最佳实践
-
-## 目录
-
-- [组件设计原则与最佳实践](#组件设计原则与最佳实践)
-  - [目录](#目录)
-  - [概述](#概述)
-  - [1. 核心设计原则](#1-核心设计原则)
-    - [1.1 高内聚低耦合 (High Cohesion, Low Coupling)](#11-高内聚低耦合-high-cohesion-low-coupling)
-    - [1.2 单一职责原则 (Single Responsibility Principle)](#12-单一职责原则-single-responsibility-principle)
-    - [1.3 开闭原则 (Open/Closed Principle)](#13-开闭原则-openclosed-principle)
-    - [1.4 依赖倒置原则 (Dependency Inversion Principle)](#14-依赖倒置原则-dependency-inversion-principle)
-  - [2. 组件设计模式](#2-组件设计模式)
-    - [2.1 工厂模式 (Factory Pattern)](#21-工厂模式-factory-pattern)
-    - [2.2 观察者模式 (Observer Pattern)](#22-观察者模式-observer-pattern)
-    - [2.3 策略模式 (Strategy Pattern)](#23-策略模式-strategy-pattern)
-  - [3. 接口设计原则](#3-接口设计原则)
-    - [3.1 接口隔离原则 (Interface Segregation Principle)](#31-接口隔离原则-interface-segregation-principle)
-    - [3.2 最小接口原则](#32-最小接口原则)
-  - [4. 错误处理原则](#4-错误处理原则)
-    - [4.1 明确的错误类型](#41-明确的错误类型)
-    - [4.2 错误恢复策略](#42-错误恢复策略)
-  - [5. 性能优化原则](#5-性能优化原则)
-    - [5.1 资源管理](#51-资源管理)
-    - [5.2 异步处理](#52-异步处理)
-  - [6. 测试友好设计](#6-测试友好设计)
-    - [6.1 依赖注入](#61-依赖注入)
-    - [6.2 可测试的接口](#62-可测试的接口)
-  - [7. 文档与注释规范](#7-文档与注释规范)
-    - [7.1 组件文档](#71-组件文档)
-    - [7.2 方法文档](#72-方法文档)
-  - [8. 总结](#8-总结)
+# 组件设计原则
 
 ## 概述
 
-本文档详细阐述IoT系统中组件设计的核心原则与最佳实践，为构建高质量、可维护、可扩展的组件提供指导。
+本文档定义了IoT系统中组件设计的基本原则，确保组件具有高内聚、低耦合的特性，支持系统的可维护性、可扩展性和可测试性。
 
-## 1. 核心设计原则
+## 核心设计原则
 
-### 1.1 高内聚低耦合 (High Cohesion, Low Coupling)
+### 1. 单一职责原则 (SRP)
 
-**高内聚**：组件内部元素紧密相关，共同完成单一职责
-**低耦合**：组件间依赖最小化，接口清晰简洁
-
-```rust
-// 高内聚示例：传感器数据处理组件
-pub struct SensorDataProcessor {
-    validator: DataValidator,
-    transformer: DataTransformer,
-    storage: DataStorage,
-}
-
-impl SensorDataProcessor {
-    pub fn process(&self, raw_data: &[u8]) -> Result<ProcessedData, ProcessingError> {
-        // 所有处理步骤紧密相关，共同完成数据处理职责
-        let validated = self.validator.validate(raw_data)?;
-        let transformed = self.transformer.transform(validated)?;
-        let stored = self.storage.store(transformed)?;
-        Ok(stored)
-    }
-}
-
-// 低耦合示例：通过接口依赖，而非具体实现
-pub trait DataStorage {
-    fn store(&self, data: ProcessedData) -> Result<ProcessedData, StorageError>;
-}
-
-pub struct DatabaseStorage;
-pub struct FileStorage;
-pub struct CloudStorage;
-
-impl DataStorage for DatabaseStorage { /* ... */ }
-impl DataStorage for FileStorage { /* ... */ }
-impl DataStorage for CloudStorage { /* ... */ }
-```
-
-### 1.2 单一职责原则 (Single Responsibility Principle)
-
-每个组件只负责一个功能领域，避免职责混乱。
+每个组件应该只有一个改变的理由。
 
 ```rust
-// 单一职责：只负责设备连接管理
-pub struct DeviceConnectionManager {
-    connections: HashMap<DeviceId, Connection>,
-    config: ConnectionConfig,
-}
-
-impl DeviceConnectionManager {
-    pub fn connect(&mut self, device_id: DeviceId) -> Result<(), ConnectionError> {
-        // 只处理连接逻辑
-    }
-    
-    pub fn disconnect(&mut self, device_id: DeviceId) -> Result<(), ConnectionError> {
-        // 只处理断开逻辑
-    }
-    
-    pub fn is_connected(&self, device_id: DeviceId) -> bool {
-        // 只处理连接状态查询
-    }
-}
-
-// 分离的数据处理职责
-pub struct DeviceDataProcessor {
-    // 只负责数据处理，不管理连接
-}
-```
-
-### 1.3 开闭原则 (Open/Closed Principle)
-
-对扩展开放，对修改封闭。
-
-```rust
-// 基础组件接口
-pub trait MessageHandler {
-    fn handle(&self, message: &Message) -> Result<(), HandlerError>;
-}
-
-// 可扩展的具体实现
-pub struct TemperatureHandler;
-pub struct HumidityHandler;
-pub struct PressureHandler;
-
-impl MessageHandler for TemperatureHandler {
-    fn handle(&self, message: &Message) -> Result<(), HandlerError> {
-        // 温度消息处理逻辑
-    }
-}
-
-// 新增处理器无需修改现有代码
-pub struct LightHandler;
-impl MessageHandler for LightHandler {
-    fn handle(&self, message: &Message) -> Result<(), HandlerError> {
-        // 光照消息处理逻辑
-    }
-}
-```
-
-### 1.4 依赖倒置原则 (Dependency Inversion Principle)
-
-依赖抽象而非具体实现。
-
-```rust
-// 抽象接口
-pub trait NotificationService {
-    fn send(&self, notification: &Notification) -> Result<(), NotificationError>;
-}
-
-// 高层模块依赖抽象
-pub struct AlertManager {
-    notification_service: Box<dyn NotificationService>,
-}
-
-impl AlertManager {
-    pub fn new(notification_service: Box<dyn NotificationService>) -> Self {
-        Self { notification_service }
-    }
-    
-    pub fn send_alert(&self, alert: &Alert) -> Result<(), AlertError> {
-        let notification = self.convert_to_notification(alert);
-        self.notification_service.send(&notification)?;
-        Ok(())
-    }
-}
-
-// 具体实现
-pub struct EmailNotificationService;
-pub struct SmsNotificationService;
-pub struct PushNotificationService;
-
-impl NotificationService for EmailNotificationService { /* ... */ }
-impl NotificationService for SmsNotificationService { /* ... */ }
-impl NotificationService for PushNotificationService { /* ... */ }
-```
-
-## 2. 组件设计模式
-
-### 2.1 工厂模式 (Factory Pattern)
-
-```rust
-pub trait ComponentFactory {
-    type Component;
-    fn create(&self, config: &ComponentConfig) -> Result<Self::Component, FactoryError>;
-}
-
-pub struct SensorFactory;
-impl ComponentFactory for SensorFactory {
-    type Component = Box<dyn Sensor>;
-    
-    fn create(&self, config: &ComponentConfig) -> Result<Self::Component, FactoryError> {
-        match config.sensor_type {
-            SensorType::Temperature => Ok(Box::new(TemperatureSensor::new(config)?)),
-            SensorType::Humidity => Ok(Box::new(HumiditySensor::new(config)?)),
-            SensorType::Pressure => Ok(Box::new(PressureSensor::new(config)?)),
-            _ => Err(FactoryError::UnsupportedType(config.sensor_type.clone())),
-        }
-    }
-}
-```
-
-### 2.2 观察者模式 (Observer Pattern)
-
-```rust
-pub trait EventObserver {
-    fn on_event(&self, event: &Event);
-}
-
-pub struct EventPublisher {
-    observers: Vec<Box<dyn EventObserver>>,
-}
-
-impl EventPublisher {
-    pub fn subscribe(&mut self, observer: Box<dyn EventObserver>) {
-        self.observers.push(observer);
-    }
-    
-    pub fn publish(&self, event: &Event) {
-        for observer in &self.observers {
-            observer.on_event(event);
-        }
-    }
-}
-```
-
-### 2.3 策略模式 (Strategy Pattern)
-
-```rust
-pub trait CompressionStrategy {
-    fn compress(&self, data: &[u8]) -> Result<Vec<u8>, CompressionError>;
-    fn decompress(&self, data: &[u8]) -> Result<Vec<u8>, CompressionError>;
-}
-
-pub struct GzipCompression;
-pub struct Lz4Compression;
-pub struct ZstdCompression;
-
-impl CompressionStrategy for GzipCompression { /* ... */ }
-impl CompressionStrategy for Lz4Compression { /* ... */ }
-impl CompressionStrategy for ZstdCompression { /* ... */ }
-
-pub struct DataCompressor {
-    strategy: Box<dyn CompressionStrategy>,
-}
-
-impl DataCompressor {
-    pub fn new(strategy: Box<dyn CompressionStrategy>) -> Self {
-        Self { strategy }
-    }
-    
-    pub fn compress(&self, data: &[u8]) -> Result<Vec<u8>, CompressionError> {
-        self.strategy.compress(data)
-    }
-}
-```
-
-## 3. 接口设计原则
-
-### 3.1 接口隔离原则 (Interface Segregation Principle)
-
-```rust
-// 分离的接口，避免强制实现不需要的方法
-pub trait Readable {
-    fn read(&self) -> Result<Data, ReadError>;
-}
-
-pub trait Writable {
-    fn write(&self, data: &Data) -> Result<(), WriteError>;
-}
-
-pub trait Configurable {
-    fn configure(&mut self, config: &Config) -> Result<(), ConfigError>;
-}
-
-// 组件可以选择性实现需要的接口
-pub struct ReadOnlySensor;
-impl Readable for ReadOnlySensor { /* ... */ }
-
-pub struct ConfigurableSensor;
-impl Readable for ConfigurableSensor { /* ... */ }
-impl Configurable for ConfigurableSensor { /* ... */ }
-```
-
-### 3.2 最小接口原则
-
-```rust
-// 最小化接口，只暴露必要的方法
+// 好的设计：职责单一
 pub struct DeviceManager {
-    devices: HashMap<DeviceId, Device>,
-    // 内部状态不暴露
+    devices: HashMap<String, Device>,
 }
 
 impl DeviceManager {
-    // 只暴露必要的公共方法
-    pub fn register_device(&mut self, device: Device) -> DeviceId {
-        let id = DeviceId::generate();
-        self.devices.insert(id, device);
-        id
+    pub fn add_device(&mut self, device: Device) -> Result<(), Error> {
+        // 只负责设备管理
     }
     
-    pub fn get_device(&self, id: &DeviceId) -> Option<&Device> {
-        self.devices.get(id)
+    pub fn remove_device(&mut self, device_id: &str) -> Result<(), Error> {
+        // 只负责设备管理
     }
-    
-    // 内部方法保持私有
-    fn validate_device(&self, device: &Device) -> bool {
-        // 验证逻辑
+}
+
+// 不好的设计：职责过多
+pub struct DeviceManager {
+    devices: HashMap<String, Device>,
+    config: Config,
+    logger: Logger,
+}
+
+impl DeviceManager {
+    pub fn add_device(&mut self, device: Device) -> Result<(), Error> {
+        // 设备管理
+        self.devices.insert(device.id.clone(), device);
+        
+        // 配置管理（违反SRP）
+        self.config.update_device_count(self.devices.len());
+        
+        // 日志记录（违反SRP）
+        self.logger.info("Device added");
+        
+        Ok(())
     }
 }
 ```
 
-## 4. 错误处理原则
+### 2. 开闭原则 (OCP)
 
-### 4.1 明确的错误类型
+组件应该对扩展开放，对修改关闭。
+
+```rust
+// 使用trait实现开闭原则
+pub trait DataProcessor {
+    fn process(&self, data: &[u8]) -> Result<Vec<u8>, Error>;
+}
+
+pub struct JsonProcessor;
+impl DataProcessor for JsonProcessor {
+    fn process(&self, data: &[u8]) -> Result<Vec<u8>, Error> {
+        // JSON处理逻辑
+        Ok(data.to_vec())
+    }
+}
+
+pub struct XmlProcessor;
+impl DataProcessor for XmlProcessor {
+    fn process(&self, data: &[u8]) -> Result<Vec<u8>, Error> {
+        // XML处理逻辑
+        Ok(data.to_vec())
+    }
+}
+
+pub struct DataProcessorManager {
+    processors: Vec<Box<dyn DataProcessor>>,
+}
+
+impl DataProcessorManager {
+    pub fn add_processor(&mut self, processor: Box<dyn DataProcessor>) {
+        self.processors.push(processor);
+    }
+    
+    pub fn process_data(&self, data: &[u8]) -> Result<Vec<u8>, Error> {
+        for processor in &self.processors {
+            match processor.process(data) {
+                Ok(result) => return Ok(result),
+                Err(_) => continue,
+            }
+        }
+        Err(Error::ProcessingFailed)
+    }
+}
+```
+
+### 3. 里氏替换原则 (LSP)
+
+子类型必须能够替换其基类型。
+
+```rust
+pub trait Device {
+    fn get_id(&self) -> &str;
+    fn get_status(&self) -> DeviceStatus;
+    fn send_command(&mut self, command: Command) -> Result<(), Error>;
+}
+
+pub struct SensorDevice {
+    id: String,
+    status: DeviceStatus,
+}
+
+impl Device for SensorDevice {
+    fn get_id(&self) -> &str {
+        &self.id
+    }
+    
+    fn get_status(&self) -> DeviceStatus {
+        self.status
+    }
+    
+    fn send_command(&mut self, command: Command) -> Result<(), Error> {
+        // 传感器特定的命令处理
+        match command {
+            Command::ReadData => Ok(()),
+            _ => Err(Error::UnsupportedCommand),
+        }
+    }
+}
+
+pub struct ActuatorDevice {
+    id: String,
+    status: DeviceStatus,
+}
+
+impl Device for ActuatorDevice {
+    fn get_id(&self) -> &str {
+        &self.id
+    }
+    
+    fn get_status(&self) -> DeviceStatus {
+        self.status
+    }
+    
+    fn send_command(&mut self, command: Command) -> Result<(), Error> {
+        // 执行器特定的命令处理
+        match command {
+            Command::SetValue(value) => {
+                // 设置值逻辑
+                Ok(())
+            },
+            _ => Err(Error::UnsupportedCommand),
+        }
+    }
+}
+```
+
+### 4. 接口隔离原则 (ISP)
+
+客户端不应该依赖它不需要的接口。
+
+```rust
+// 好的设计：接口隔离
+pub trait DataReader {
+    fn read_data(&self) -> Result<Vec<u8>, Error>;
+}
+
+pub trait DataWriter {
+    fn write_data(&mut self, data: &[u8]) -> Result<(), Error>;
+}
+
+pub trait DataProcessor {
+    fn process_data(&self, data: &[u8]) -> Result<Vec<u8>, Error>;
+}
+
+// 客户端只依赖需要的接口
+pub struct DataAnalyzer {
+    reader: Box<dyn DataReader>,
+    processor: Box<dyn DataProcessor>,
+}
+
+impl DataAnalyzer {
+    pub fn analyze(&self) -> Result<Vec<u8>, Error> {
+        let data = self.reader.read_data()?;
+        self.processor.process_data(&data)
+    }
+}
+
+// 不好的设计：接口过于庞大
+pub trait DataHandler {
+    fn read_data(&self) -> Result<Vec<u8>, Error>;
+    fn write_data(&mut self, data: &[u8]) -> Result<(), Error>;
+    fn process_data(&self, data: &[u8]) -> Result<Vec<u8>, Error>;
+    fn validate_data(&self, data: &[u8]) -> Result<bool, Error>;
+    fn compress_data(&self, data: &[u8]) -> Result<Vec<u8>, Error>;
+    fn encrypt_data(&self, data: &[u8]) -> Result<Vec<u8>, Error>;
+}
+```
+
+### 5. 依赖倒置原则 (DIP)
+
+高层模块不应该依赖低层模块，两者都应该依赖抽象。
+
+```rust
+// 抽象层
+pub trait Database {
+    fn save(&self, key: &str, value: &[u8]) -> Result<(), Error>;
+    fn load(&self, key: &str) -> Result<Vec<u8>, Error>;
+}
+
+pub trait Logger {
+    fn log(&self, level: LogLevel, message: &str);
+}
+
+// 具体实现
+pub struct SqliteDatabase {
+    connection: sqlite::Connection,
+}
+
+impl Database for SqliteDatabase {
+    fn save(&self, key: &str, value: &[u8]) -> Result<(), Error> {
+        // SQLite实现
+        Ok(())
+    }
+    
+    fn load(&self, key: &str) -> Result<Vec<u8>, Error> {
+        // SQLite实现
+        Ok(vec![])
+    }
+}
+
+pub struct FileLogger {
+    file: std::fs::File,
+}
+
+impl Logger for FileLogger {
+    fn log(&self, level: LogLevel, message: &str) {
+        // 文件日志实现
+    }
+}
+
+// 高层模块依赖抽象
+pub struct DataService {
+    database: Box<dyn Database>,
+    logger: Box<dyn Logger>,
+}
+
+impl DataService {
+    pub fn new(database: Box<dyn Database>, logger: Box<dyn Logger>) -> Self {
+        Self { database, logger }
+    }
+    
+    pub fn store_data(&self, key: &str, data: &[u8]) -> Result<(), Error> {
+        self.logger.log(LogLevel::Info, "Storing data");
+        self.database.save(key, data)?;
+        self.logger.log(LogLevel::Info, "Data stored successfully");
+        Ok(())
+    }
+}
+```
+
+## 组件设计模式
+
+### 1. 工厂模式
+
+```rust
+pub trait DeviceFactory {
+    fn create_device(&self, device_type: DeviceType, config: DeviceConfig) -> Result<Box<dyn Device>, Error>;
+}
+
+pub struct StandardDeviceFactory;
+
+impl DeviceFactory for StandardDeviceFactory {
+    fn create_device(&self, device_type: DeviceType, config: DeviceConfig) -> Result<Box<dyn Device>, Error> {
+        match device_type {
+            DeviceType::Sensor => Ok(Box::new(SensorDevice::new(config))),
+            DeviceType::Actuator => Ok(Box::new(ActuatorDevice::new(config))),
+            DeviceType::Gateway => Ok(Box::new(GatewayDevice::new(config))),
+        }
+    }
+}
+```
+
+### 2. 观察者模式
+
+```rust
+pub trait Observer {
+    fn update(&self, event: &Event);
+}
+
+pub trait Subject {
+    fn attach(&mut self, observer: Box<dyn Observer>);
+    fn detach(&mut self, observer_id: &str);
+    fn notify(&self, event: &Event);
+}
+
+pub struct DeviceManager {
+    observers: Vec<Box<dyn Observer>>,
+    devices: HashMap<String, Device>,
+}
+
+impl Subject for DeviceManager {
+    fn attach(&mut self, observer: Box<dyn Observer>) {
+        self.observers.push(observer);
+    }
+    
+    fn detach(&mut self, observer_id: &str) {
+        self.observers.retain(|obs| obs.id() != observer_id);
+    }
+    
+    fn notify(&self, event: &Event) {
+        for observer in &self.observers {
+            observer.update(event);
+        }
+    }
+}
+```
+
+### 3. 策略模式
+
+```rust
+pub trait RoutingStrategy {
+    fn route(&self, message: &Message, available_nodes: &[Node]) -> Result<Node, Error>;
+}
+
+pub struct ShortestPathStrategy;
+impl RoutingStrategy for ShortestPathStrategy {
+    fn route(&self, message: &Message, available_nodes: &[Node]) -> Result<Node, Error> {
+        // 最短路径算法
+        Ok(available_nodes[0].clone())
+    }
+}
+
+pub struct LoadBalancingStrategy;
+impl RoutingStrategy for LoadBalancingStrategy {
+    fn route(&self, message: &Message, available_nodes: &[Node]) -> Result<Node, Error> {
+        // 负载均衡算法
+        Ok(available_nodes[0].clone())
+    }
+}
+
+pub struct MessageRouter {
+    strategy: Box<dyn RoutingStrategy>,
+}
+
+impl MessageRouter {
+    pub fn new(strategy: Box<dyn RoutingStrategy>) -> Self {
+        Self { strategy }
+    }
+    
+    pub fn route_message(&self, message: &Message, nodes: &[Node]) -> Result<Node, Error> {
+        self.strategy.route(message, nodes)
+    }
+}
+```
+
+## 组件生命周期管理
+
+### 1. 组件初始化
+
+```rust
+pub trait Component {
+    fn initialize(&mut self) -> Result<(), Error>;
+    fn start(&mut self) -> Result<(), Error>;
+    fn stop(&mut self) -> Result<(), Error>;
+    fn cleanup(&mut self) -> Result<(), Error>;
+}
+
+pub struct DataProcessorComponent {
+    processor: Option<Box<dyn DataProcessor>>,
+    is_running: bool,
+}
+
+impl Component for DataProcessorComponent {
+    fn initialize(&mut self) -> Result<(), Error> {
+        self.processor = Some(Box::new(JsonProcessor::new()));
+        Ok(())
+    }
+    
+    fn start(&mut self) -> Result<(), Error> {
+        if self.processor.is_none() {
+            return Err(Error::NotInitialized);
+        }
+        self.is_running = true;
+        Ok(())
+    }
+    
+    fn stop(&mut self) -> Result<(), Error> {
+        self.is_running = false;
+        Ok(())
+    }
+    
+    fn cleanup(&mut self) -> Result<(), Error> {
+        self.processor = None;
+        Ok(())
+    }
+}
+```
+
+### 2. 组件配置管理
+
+```rust
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct ComponentConfig {
+    pub name: String,
+    pub version: String,
+    pub parameters: HashMap<String, Value>,
+    pub dependencies: Vec<String>,
+}
+
+pub trait Configurable {
+    fn configure(&mut self, config: &ComponentConfig) -> Result<(), Error>;
+    fn get_config(&self) -> &ComponentConfig;
+}
+
+pub struct ConfigurableComponent {
+    config: ComponentConfig,
+}
+
+impl Configurable for ConfigurableComponent {
+    fn configure(&mut self, config: &ComponentConfig) -> Result<(), Error> {
+        self.config = config.clone();
+        Ok(())
+    }
+    
+    fn get_config(&self) -> &ComponentConfig {
+        &self.config
+    }
+}
+```
+
+## 错误处理策略
+
+### 1. 错误类型定义
 
 ```rust
 #[derive(Debug, thiserror::Error)]
 pub enum ComponentError {
+    #[error("Component not initialized")]
+    NotInitialized,
+    
+    #[error("Component already running")]
+    AlreadyRunning,
+    
+    #[error("Component not running")]
+    NotRunning,
+    
     #[error("Configuration error: {0}")]
-    Configuration(String),
+    ConfigurationError(String),
     
-    #[error("Initialization error: {0}")]
-    Initialization(String),
+    #[error("Dependency error: {0}")]
+    DependencyError(String),
     
-    #[error("Runtime error: {0}")]
-    Runtime(String),
+    #[error("Processing error: {0}")]
+    ProcessingError(String),
     
-    #[error("Resource error: {0}")]
-    Resource(String),
-}
-
-// 错误转换
-impl From<ConfigError> for ComponentError {
-    fn from(err: ConfigError) -> Self {
-        ComponentError::Configuration(err.to_string())
-    }
+    #[error("IO error: {0}")]
+    IoError(#[from] std::io::Error),
+    
+    #[error("Serialization error: {0}")]
+    SerializationError(#[from] serde_json::Error),
 }
 ```
 
-### 4.2 错误恢复策略
+### 2. 错误恢复策略
 
 ```rust
-pub struct ResilientComponent {
+pub trait ErrorRecovery {
+    fn can_recover(&self, error: &Error) -> bool;
+    fn recover(&mut self, error: &Error) -> Result<(), Error>;
+}
+
+pub struct RetryRecovery {
     max_retries: u32,
     retry_delay: Duration,
 }
 
-impl ResilientComponent {
-    pub fn execute_with_retry<F, T>(&self, operation: F) -> Result<T, ComponentError>
-    where
-        F: Fn() -> Result<T, ComponentError>,
-    {
-        let mut last_error = None;
-        
-        for attempt in 0..=self.max_retries {
-            match operation() {
-                Ok(result) => return Ok(result),
-                Err(err) => {
-                    last_error = Some(err);
-                    if attempt < self.max_retries {
-                        thread::sleep(self.retry_delay);
-                    }
-                }
+impl ErrorRecovery for RetryRecovery {
+    fn can_recover(&self, error: &Error) -> bool {
+        matches!(error, Error::IoError(_) | Error::NetworkError(_))
+    }
+    
+    fn recover(&mut self, error: &Error) -> Result<(), Error> {
+        for attempt in 1..=self.max_retries {
+            std::thread::sleep(self.retry_delay);
+            // 尝试恢复逻辑
+            if attempt == self.max_retries {
+                return Err(error.clone());
             }
         }
-        
-        Err(last_error.unwrap())
+        Ok(())
     }
 }
 ```
 
-## 5. 性能优化原则
+## 性能优化原则
 
-### 5.1 资源管理
+### 1. 内存管理
 
 ```rust
-pub struct ResourceManager {
-    pool: Arc<Mutex<Vec<Resource>>>,
+pub struct MemoryPool {
+    pool: Vec<Vec<u8>>,
     max_size: usize,
 }
 
-impl ResourceManager {
-    pub fn acquire(&self) -> Result<ResourceGuard, ResourceError> {
-        let mut pool = self.pool.lock().unwrap();
-        
-        if let Some(resource) = pool.pop() {
-            Ok(ResourceGuard::new(resource, self.pool.clone()))
-        } else if pool.len() < self.max_size {
-            let resource = Resource::new()?;
-            Ok(ResourceGuard::new(resource, self.pool.clone()))
+impl MemoryPool {
+    pub fn new(max_size: usize) -> Self {
+        Self {
+            pool: Vec::new(),
+            max_size,
+        }
+    }
+    
+    pub fn get_buffer(&mut self, size: usize) -> Vec<u8> {
+        if let Some(mut buffer) = self.pool.pop() {
+            buffer.resize(size, 0);
+            buffer
         } else {
-            Err(ResourceError::PoolExhausted)
+            vec![0; size]
         }
     }
-}
-
-pub struct ResourceGuard {
-    resource: Option<Resource>,
-    pool: Arc<Mutex<Vec<Resource>>>,
-}
-
-impl Drop for ResourceGuard {
-    fn drop(&mut self) {
-        if let Some(resource) = self.resource.take() {
-            if let Ok(mut pool) = self.pool.lock() {
-                pool.push(resource);
-            }
+    
+    pub fn return_buffer(&mut self, mut buffer: Vec<u8>) {
+        if self.pool.len() < self.max_size {
+            buffer.clear();
+            self.pool.push(buffer);
         }
     }
 }
 ```
 
-### 5.2 异步处理
+### 2. 异步处理
 
 ```rust
-pub struct AsyncComponent {
-    executor: Arc<ThreadPool>,
+pub struct AsyncDataProcessor {
+    runtime: tokio::runtime::Runtime,
+    task_handle: Option<tokio::task::JoinHandle<()>>,
 }
 
-impl AsyncComponent {
-    pub async fn process_async(&self, data: Data) -> Result<ProcessedData, ComponentError> {
-        let executor = self.executor.clone();
-        
+impl AsyncDataProcessor {
+    pub fn new() -> Self {
+        Self {
+            runtime: tokio::runtime::Runtime::new().unwrap(),
+            task_handle: None,
+        }
+    }
+    
+    pub async fn process_data_async(&self, data: &[u8]) -> Result<Vec<u8>, Error> {
+        let data = data.to_vec();
         tokio::task::spawn_blocking(move || {
-            // CPU密集型任务
-            heavy_computation(data)
-        }).await.map_err(|_| ComponentError::Runtime("Task failed".to_string()))?
+            // CPU密集型处理
+            process_data_cpu_intensive(&data)
+        }).await.map_err(|_| Error::ProcessingError("Task failed".to_string()))
+    }
+}
+```
+
+## 测试策略
+
+### 1. 单元测试
+
+```rust
+#[cfg(test)]
+mod tests {
+    use super::*;
+    
+    #[test]
+    fn test_device_manager_add_device() {
+        let mut manager = DeviceManager::new();
+        let device = Device::new("test_device".to_string());
+        
+        assert!(manager.add_device(device).is_ok());
+        assert_eq!(manager.device_count(), 1);
     }
     
-    pub async fn process_stream(&self, mut stream: impl Stream<Item = Data>) -> impl Stream<Item = Result<ProcessedData, ComponentError>> {
-        stream.map(|data| {
-            // 流处理逻辑
-            self.process_sync(data)
-        })
+    #[test]
+    fn test_data_processor_json() {
+        let processor = JsonProcessor::new();
+        let data = b"{\"key\": \"value\"}";
+        
+        let result = processor.process(data);
+        assert!(result.is_ok());
     }
 }
 ```
 
-## 6. 测试友好设计
-
-### 6.1 依赖注入
+### 2. 集成测试
 
 ```rust
-pub struct TestableComponent {
-    dependencies: ComponentDependencies,
-}
-
-pub struct ComponentDependencies {
-    pub storage: Box<dyn Storage>,
-    pub network: Box<dyn Network>,
-    pub logger: Box<dyn Logger>,
-}
-
-impl TestableComponent {
-    pub fn new(dependencies: ComponentDependencies) -> Self {
-        Self { dependencies }
-    }
+#[cfg(test)]
+mod integration_tests {
+    use super::*;
     
-    // 生产环境
-    pub fn new_production() -> Self {
-        Self::new(ComponentDependencies {
-            storage: Box::new(DatabaseStorage::new()),
-            network: Box::new(TcpNetwork::new()),
-            logger: Box::new(FileLogger::new()),
-        })
-    }
-    
-    // 测试环境
-    pub fn new_test() -> Self {
-        Self::new(ComponentDependencies {
-            storage: Box::new(MockStorage::new()),
-            network: Box::new(MockNetwork::new()),
-            logger: Box::new(MockLogger::new()),
-        })
+    #[tokio::test]
+    async fn test_data_service_integration() {
+        let database = Box::new(MockDatabase::new());
+        let logger = Box::new(MockLogger::new());
+        let service = DataService::new(database, logger);
+        
+        let result = service.store_data("test_key", b"test_data").await;
+        assert!(result.is_ok());
     }
 }
 ```
 
-### 6.2 可测试的接口
+## 总结
 
-```rust
-pub trait ComponentInterface {
-    fn process(&self, input: &Input) -> Result<Output, ComponentError>;
-    fn get_state(&self) -> ComponentState;
-    fn reset(&mut self) -> Result<(), ComponentError>;
-}
+组件设计原则是构建高质量IoT系统的基础。通过遵循SOLID原则、使用适当的设计模式、实施有效的生命周期管理和错误处理策略，可以创建出可维护、可扩展、高性能的组件系统。
 
-// 便于测试的状态查询
-impl ComponentInterface for MyComponent {
-    fn get_state(&self) -> ComponentState {
-        ComponentState {
-            is_initialized: self.is_initialized,
-            active_connections: self.connections.len(),
-            last_error: self.last_error.clone(),
-        }
-    }
-}
-```
+关键要点：
 
-## 7. 文档与注释规范
-
-### 7.1 组件文档
-
-```rust
-/// IoT设备连接管理器
-/// 
-/// 负责管理设备连接的生命周期，包括连接建立、维护和断开。
-/// 支持多种连接类型和自动重连机制。
-/// 
-/// # 特性
-/// - 自动重连机制
-/// - 连接池管理
-/// - 健康检查
-/// - 事件通知
-/// 
-/// # 示例
-/// ```rust
-/// let mut manager = DeviceConnectionManager::new(config);
-/// let device_id = manager.connect(device_info)?;
-/// manager.send_message(device_id, message)?;
-/// ```
-pub struct DeviceConnectionManager {
-    // ...
-}
-```
-
-### 7.2 方法文档
-
-```rust
-impl DeviceConnectionManager {
-    /// 建立设备连接
-    /// 
-    /// 根据设备信息建立连接，返回设备ID用于后续操作。
-    /// 
-    /// # 参数
-    /// - `device_info`: 设备连接信息
-    /// 
-    /// # 返回值
-    /// - `Ok(DeviceId)`: 成功返回设备ID
-    /// - `Err(ConnectionError)`: 连接失败
-    /// 
-    /// # 示例
-    /// ```rust
-    /// let device_info = DeviceInfo {
-    ///     address: "192.168.1.100:8080".parse()?,
-    ///     protocol: Protocol::Tcp,
-    /// };
-    /// let device_id = manager.connect(device_info)?;
-    /// ```
-    pub fn connect(&mut self, device_info: DeviceInfo) -> Result<DeviceId, ConnectionError> {
-        // 实现
-    }
-}
-```
-
-## 8. 总结
-
-组件设计原则是构建高质量IoT系统的基础：
-
-1. **高内聚低耦合**：确保组件职责清晰，依赖关系简单
-2. **单一职责**：每个组件专注一个功能领域
-3. **开闭原则**：支持扩展，避免修改
-4. **依赖倒置**：依赖抽象，提高灵活性
-5. **接口隔离**：提供最小化、专用的接口
-6. **错误处理**：明确的错误类型和恢复策略
-7. **性能优化**：合理的资源管理和异步处理
-8. **测试友好**：支持依赖注入和状态查询
-9. **文档规范**：完整的文档和注释
-
-遵循这些原则能够构建出可维护、可扩展、高性能的IoT组件系统。
+1. **单一职责**：每个组件只负责一个功能
+2. **开闭原则**：对扩展开放，对修改关闭
+3. **依赖倒置**：依赖抽象而非具体实现
+4. **错误处理**：完善的错误处理和恢复机制
+5. **性能优化**：内存管理和异步处理
+6. **测试覆盖**：全面的单元测试和集成测试
