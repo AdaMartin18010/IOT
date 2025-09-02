@@ -2,7 +2,7 @@
 
 ## 1. 形式化定义
 
-物联网公钥基础设施 (IoT Public Key Infrastructure, PKI) 是一个综合性的安全框架，旨在为物联网生态系统中的设备、用户及服务提供强有力的身份认证、安全通信和数据完整性保护。它通过融合密码学原语、标准化协议和管理策略，建立了一个可信的数字身份管理体系。
+物联网公钥基础设施 (IoT Public Key Infrastructure, PKI) 是一个综合性的安全框架，旨在为物联网生态系统中的设备、用户及服务提供强有力的身份认证、安全通信和数据完整性保护。它通过融合密码学原理、标准化协议和管理策略，建立了一个可信的数字身份管理体系。
 
 我们可将IoT-PKI系统形式化地定义为一个七元组：
 
@@ -101,91 +101,514 @@ graph TD
 
 ```toml
 [dependencies]
-rcgen = "0.13.1"
-x509-parser = "0.16.0"
-time = "0.3.36"
+rcgen = "0.11"
+x509-parser = "0.15"
+ring = "0.17"
+serde = { version = "1.0", features = ["derive"] }
+tokio = { version = "1.0", features = ["full"] }
 ```
 
-**main.rs**:
+### 4.1 证书颁发机构 (CA) 实现
 
 ```rust
-use rcgen::{Certificate, CertificateParams, KeyPair, DistinguishedName, IsCa, BasicConstraints, SanType};
-use x509_parser::prelude::*;
-use time::{OffsetDateTime, Duration};
+use rcgen::{Certificate, KeyPair, BasicConstraints, IsCa, KeyUsagePurpose};
+use std::collections::HashMap;
+use std::sync::{Arc, Mutex};
+use serde::{Serialize, Deserialize};
 
-fn main() -> Result<(), Box<dyn std::error::Error>> {
-    // 1. 创建一个自签名的根CA证书 (Root CA)
-    let mut ca_params = CertificateParams::default();
-    let mut distinguished_name = DistinguishedName::new();
-    distinguished_name.push(rcgen::DnType::CommonName, "IoT Root CA");
-    ca_params.distinguished_name = distinguished_name;
-    ca_params.is_ca = IsCa::Ca(BasicConstraints::Constrained(0)); // Path length constraint
-    ca_params.not_before = OffsetDateTime::now_utc();
-    ca_params.not_after = OffsetDateTime::now_utc() + Duration::days(3650); // 10 years
-    let ca_cert = Certificate::from_params(ca_params)?;
-    let ca_cert_pem = ca_cert.serialize_pem()?;
-    println!("--- Root CA Certificate ---\n{}", ca_cert_pem);
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct CAConfig {
+    pub common_name: String,
+    pub organization: String,
+    pub country: String,
+    pub validity_years: u32,
+    pub key_size: u32,
+}
 
-    // 2. 使用根CA创建一个设备证书 (Device Certificate)
-    let mut device_params = CertificateParams::default();
-    let mut device_dn = DistinguishedName::new();
-    device_dn.push(rcgen::DnType::CommonName, "IoT Device #12345");
-    device_dn.push(rcgen::DnType::SerialNumber, "SN:ABC-DEF-123");
-    device_params.distinguished_name = device_dn;
-    device_params.subject_alt_names = vec![
-        SanType::DnsName("device-12345.iot.local".to_string()),
-    ];
-    device_params.not_before = OffsetDateTime::now_utc();
-    device_params.not_after = OffsetDateTime::now_utc() + Duration::days(365); // 1 year
-    let device_cert = Certificate::from_params(device_params)?;
-    
-    // 使用CA证书和密钥对设备证书进行签名
-    let device_cert_pem = device_cert.serialize_pem_with_signer(&ca_cert)?;
-    println!("\n--- Device Certificate (signed by Root CA) ---\n{}", device_cert_pem);
+#[derive(Debug, Clone)]
+pub struct CertificationAuthority {
+    pub config: CAConfig,
+    pub key_pair: KeyPair,
+    pub certificate: Certificate,
+    pub issued_certificates: Arc<Mutex<HashMap<String, IssuedCertificate>>>,
+    pub certificate_chain: Vec<Certificate>,
+}
 
-    // 3. 验证设备证书
-    println!("\n--- Verification ---");
-    let (_, ca_cert_x509) = X509Certificate::from_pem(ca_cert_pem.as_bytes())?.unwrap();
-    let (_, device_cert_x509) = X509Certificate::from_pem(device_cert_pem.as_bytes())?.unwrap();
-
-    // 检查签名
-    let verification_result = device_cert_x509.verify_signature(Some(ca_cert_x509.public_key()));
-
-    if verification_result.is_ok() {
-        println!("✅ Signature verification successful: The device certificate is trusted by the Root CA.");
-    } else {
-        println!("❌ Signature verification failed!");
-    }
-
-    // 检查有效期
-    let now = OffsetDateTime::now_utc();
-    let is_valid_time = device_cert_x509.validity().is_valid_at(
-        X509Time::from_datetime(now)
-    );
-    if is_valid_time {
-         println!("✅ Certificate is currently valid (time-wise).");
-    } else {
-         println!("❌ Certificate is expired or not yet valid.");
+impl CertificationAuthority {
+    pub fn new(config: CAConfig) -> Result<Self, Box<dyn std::error::Error>> {
+        // 生成根CA密钥对
+        let key_pair = KeyPair::generate(config.key_size)?;
+        
+        // 创建根CA证书
+        let mut ca_params = rcgen::CertificateParams::new(vec![config.common_name.clone()]);
+        ca_params.is_ca = IsCa::Ca(BasicConstraints::Unconstrained);
+        ca_params.key_usages = vec![
+            KeyUsagePurpose::KeyCertSign,
+            KeyUsagePurpose::CrlSign,
+        ];
+        ca_params.validity_years = config.validity_years;
+        
+        let certificate = Certificate::from_params(ca_params)?;
+        
+        Ok(Self {
+            config,
+            key_pair,
+            certificate,
+            issued_certificates: Arc::new(Mutex::new(HashMap::new())),
+            certificate_chain: vec![],
+        })
     }
     
-    Ok(())
+    pub fn issue_certificate(&self, csr: &CertificateSigningRequest) -> Result<IssuedCertificate, Box<dyn std::error::Error>> {
+        // 验证CSR
+        self.validate_csr(csr)?;
+        
+        // 创建证书参数
+        let mut cert_params = rcgen::CertificateParams::new(csr.subject_alt_names.clone());
+        cert_params.is_ca = IsCa::NoCa;
+        cert_params.key_usages = csr.key_usages.clone();
+        cert_params.extended_key_usages = csr.extended_key_usages.clone();
+        cert_params.validity_years = csr.validity_years;
+        
+        // 使用CA私钥签名
+        let certificate = Certificate::from_params(cert_params)?;
+        let signed_cert = certificate.serialize_der_with_signer(&self.certificate, &self.key_pair)?;
+        
+        let issued_cert = IssuedCertificate {
+            serial_number: self.generate_serial_number(),
+            certificate: signed_cert,
+            issued_at: chrono::Utc::now(),
+            expires_at: chrono::Utc::now() + chrono::Duration::days(csr.validity_years as i64 * 365),
+            status: CertificateStatus::Valid,
+        };
+        
+        // 记录已签发证书
+        {
+            let mut certs = self.issued_certificates.lock().unwrap();
+            certs.insert(issued_cert.serial_number.clone(), issued_cert.clone());
+        }
+        
+        Ok(issued_cert)
+    }
+    
+    pub fn revoke_certificate(&self, serial_number: &str) -> Result<(), Box<dyn std::error::Error>> {
+        let mut certs = self.issued_certificates.lock().unwrap();
+        
+        if let Some(cert) = certs.get_mut(serial_number) {
+            cert.status = CertificateStatus::Revoked;
+            cert.revoked_at = Some(chrono::Utc::now());
+            Ok(())
+        } else {
+            Err("Certificate not found".into())
+        }
+    }
+    
+    pub fn generate_crl(&self) -> Result<CertificateRevocationList, Box<dyn std::error::Error>> {
+        let certs = self.issued_certificates.lock().unwrap();
+        let revoked_certs: Vec<_> = certs
+            .values()
+            .filter(|cert| cert.status == CertificateStatus::Revoked)
+            .collect();
+        
+        let crl = CertificateRevocationList {
+            issuer: self.config.common_name.clone(),
+            this_update: chrono::Utc::now(),
+            next_update: chrono::Utc::now() + chrono::Duration::days(7),
+            revoked_certificates: revoked_certs,
+        };
+        
+        Ok(crl)
+    }
+    
+    fn validate_csr(&self, csr: &CertificateSigningRequest) -> Result<(), Box<dyn std::error::Error>> {
+        // 验证CSR签名
+        if !csr.verify_signature()? {
+            return Err("Invalid CSR signature".into());
+        }
+        
+        // 验证主题信息
+        if csr.subject_alt_names.is_empty() {
+            return Err("CSR must contain at least one subject alternative name".into());
+        }
+        
+        // 验证密钥用途
+        if csr.key_usages.is_empty() {
+            return Err("CSR must specify key usage".into());
+        }
+        
+        Ok(())
+    }
+    
+    fn generate_serial_number(&self) -> String {
+        use rand::Rng;
+        let mut rng = rand::thread_rng();
+        let random_bytes: [u8; 16] = rng.gen();
+        hex::encode(random_bytes)
+    }
 }
 ```
 
-**代码解释**:
+### 4.2 证书签名请求 (CSR) 实现
 
-1. **创建根CA**: 我们首先生成一个自签名的根证书 `ca_cert`。`is_ca` 字段被设置为`Ca`，表明它是一个证书颁发机构。
-2. **创建设备证书**: 然后，我们定义一个设备证书的参数，并使用`Certificate::from_params`创建它。
-3. **签发**: `serialize_pem_with_signer` 方法是关键。它接收一个`signer`（在这里是我们的根CA证书，它隐式地使用了其私钥）来对设备证书进行签名，从而建立了信任链。
-4. **验证**: 我们使用`x509-parser`库来解析PEM格式的证书。`verify_signature`方法用于验证设备证书的签名是否由根CA的公钥正确签发。同时，我们还检查了证书的有效期。
+```rust
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct CertificateSigningRequest {
+    pub subject_alt_names: Vec<String>,
+    pub key_usages: Vec<KeyUsagePurpose>,
+    pub extended_key_usages: Vec<rcgen::ExtendedKeyUsagePurpose>,
+    pub validity_years: u32,
+    pub public_key: Vec<u8>,
+    pub signature: Vec<u8>,
+    pub signature_algorithm: String,
+}
 
-## 5. 总结与挑战
+impl CertificateSigningRequest {
+    pub fn new(
+        subject_alt_names: Vec<String>,
+        key_usages: Vec<KeyUsagePurpose>,
+        validity_years: u32,
+        key_pair: &KeyPair,
+    ) -> Result<Self, Box<dyn std::error::Error>> {
+        let public_key = key_pair.public_key_der()?;
+        
+        // 创建CSR内容
+        let csr_content = Self::create_csr_content(&subject_alt_names, &key_usages, &public_key);
+        
+        // 使用私钥签名
+        let signature = key_pair.sign(&csr_content)?;
+        
+        Ok(Self {
+            subject_alt_names,
+            key_usages,
+            extended_key_usages: vec![],
+            validity_years,
+            public_key,
+            signature,
+            signature_algorithm: "sha256WithRSAEncryption".to_string(),
+        })
+    }
+    
+    pub fn verify_signature(&self) -> Result<bool, Box<dyn std::error::Error>> {
+        // 重建CSR内容
+        let csr_content = Self::create_csr_content(
+            &self.subject_alt_names,
+            &self.key_usages,
+            &self.public_key,
+        );
+        
+        // 验证签名
+        let public_key = ring::signature::UnparsedPublicKey::new(
+            &ring::signature::RSA_PKCS1_2048_8192_SHA256,
+            &self.public_key,
+        )?;
+        
+        public_key.verify(&csr_content, &self.signature)?;
+        Ok(true)
+    }
+    
+    fn create_csr_content(
+        subject_alt_names: &[String],
+        key_usages: &[KeyUsagePurpose],
+        public_key: &[u8],
+    ) -> Vec<u8> {
+        use std::collections::HashMap;
+        
+        let mut content = HashMap::new();
+        content.insert("subject_alt_names", serde_json::to_string(subject_alt_names).unwrap());
+        content.insert("key_usages", serde_json::to_string(key_usages).unwrap());
+        content.insert("public_key", hex::encode(public_key));
+        
+        serde_json::to_vec(&content).unwrap()
+    }
+}
+```
 
-物联网PKI是确保端到端安全的核心技术，但其实施面临诸多挑战：
+### 4.3 证书验证机构 (VA) 实现
 
-- **可扩展性**: 如何为数十亿设备高效地管理证书。
-- **资源限制**: 物联网设备计算和存储能力有限，难以执行复杂的密码学操作。
-- **生命周期管理自动化**: 需要高度自动化的流程来处理证书的注册、续订和吊销，以降低运营成本。
-- **密钥安全**: 如何在不安全的物理环境中保护设备私钥是最大的挑战之一，通常需要硬件安全模块(HSM)的辅助。
+```rust
+#[derive(Debug, Clone)]
+pub struct ValidationAuthority {
+    pub ca_certificate: Certificate,
+    pub crl_cache: Arc<Mutex<HashMap<String, CertificateRevocationList>>>,
+    pub ocsp_responder: Arc<Mutex<OcspResponder>>,
+}
 
-解决这些挑战需要一个精心设计的、与业务流程紧密集成的PKI系统。
+impl ValidationAuthority {
+    pub fn new(ca_certificate: Certificate) -> Self {
+        Self {
+            ca_certificate,
+            crl_cache: Arc::new(Mutex::new(HashMap::new())),
+            ocsp_responder: Arc::new(Mutex::new(OcspResponder::new())),
+        }
+    }
+    
+    pub fn validate_certificate(&self, certificate_der: &[u8]) -> ValidationResult {
+        // 解析证书
+        let certificate = match x509_parser::parse_x509_certificate(certificate_der) {
+            Ok((_, cert)) => cert,
+            Err(_) => return ValidationResult::InvalidFormat,
+        };
+        
+        // 验证证书链
+        if !self.verify_certificate_chain(&certificate) {
+            return ValidationResult::ChainValidationFailed;
+        }
+        
+        // 检查证书是否过期
+        if self.is_certificate_expired(&certificate) {
+            return ValidationResult::Expired;
+        }
+        
+        // 检查证书是否被吊销
+        if self.is_certificate_revoked(&certificate) {
+            return ValidationResult::Revoked;
+        }
+        
+        ValidationResult::Valid
+    }
+    
+    pub fn check_ocsp_status(&self, certificate_der: &[u8]) -> Result<OcspResponse, Box<dyn std::error::Error>> {
+        let mut responder = self.ocsp_responder.lock().unwrap();
+        responder.respond_to_request(certificate_der)
+    }
+    
+    pub fn update_crl(&self, ca_name: &str, crl: CertificateRevocationList) {
+        let mut cache = self.crl_cache.lock().unwrap();
+        cache.insert(ca_name.to_string(), crl);
+    }
+    
+    fn verify_certificate_chain(&self, certificate: &x509_parser::certificate::X509Certificate) -> bool {
+        // 验证证书签名
+        let issuer_public_key = self.ca_certificate.get_key_usage();
+        
+        // 这里应该实现完整的证书链验证逻辑
+        // 包括签名验证、密钥用途检查等
+        true // 简化实现
+    }
+    
+    fn is_certificate_expired(&self, certificate: &x509_parser::certificate::X509Certificate) -> bool {
+        let now = chrono::Utc::now();
+        let not_after = certificate.validity().not_after;
+        
+        now > chrono::DateTime::from(not_after.to_chrono())
+    }
+    
+    fn is_certificate_revoked(&self, certificate: &x509_parser::certificate::X509Certificate) -> bool {
+        let serial_number = certificate.serial().to_string();
+        
+        // 检查CRL缓存
+        let cache = self.crl_cache.lock().unwrap();
+        for crl in cache.values() {
+            if crl.revoked_certificates.iter().any(|cert| cert.serial_number == serial_number) {
+                return true;
+            }
+        }
+        
+        false
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct OcspResponder {
+    pub response_cache: HashMap<String, OcspResponse>,
+}
+
+impl OcspResponder {
+    pub fn new() -> Self {
+        Self {
+            response_cache: HashMap::new(),
+        }
+    }
+    
+    pub fn respond_to_request(&mut self, certificate_der: &[u8]) -> Result<OcspResponse, Box<dyn std::error::Error>> {
+        let certificate_hash = sha2::Sha256::digest(certificate_der);
+        let hash_hex = hex::encode(certificate_hash);
+        
+        // 检查缓存
+        if let Some(response) = self.response_cache.get(&hash_hex) {
+            return Ok(response.clone());
+        }
+        
+        // 生成新的OCSP响应
+        let response = OcspResponse {
+            status: OcspResponseStatus::Successful,
+            certificate_status: CertificateStatus::Valid,
+            this_update: chrono::Utc::now(),
+            next_update: chrono::Utc::now() + chrono::Duration::hours(1),
+            signature: vec![], // 实际实现中应该包含数字签名
+        };
+        
+        // 缓存响应
+        self.response_cache.insert(hash_hex, response.clone());
+        
+        Ok(response)
+    }
+}
+```
+
+### 4.4 数据结构和枚举
+
+```rust
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct IssuedCertificate {
+    pub serial_number: String,
+    pub certificate: Vec<u8>,
+    pub issued_at: chrono::DateTime<chrono::Utc>,
+    pub expires_at: chrono::DateTime<chrono::Utc>,
+    pub status: CertificateStatus,
+    pub revoked_at: Option<chrono::DateTime<chrono::Utc>>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct CertificateRevocationList {
+    pub issuer: String,
+    pub this_update: chrono::DateTime<chrono::Utc>,
+    pub next_update: chrono::DateTime<chrono::Utc>,
+    pub revoked_certificates: Vec<IssuedCertificate>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct OcspResponse {
+    pub status: OcspResponseStatus,
+    pub certificate_status: CertificateStatus,
+    pub this_update: chrono::DateTime<chrono::Utc>,
+    pub next_update: chrono::DateTime<chrono::Utc>,
+    pub signature: Vec<u8>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub enum CertificateStatus {
+    Valid,
+    Revoked,
+    Expired,
+    Unknown,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub enum OcspResponseStatus {
+    Successful,
+    MalformedRequest,
+    InternalError,
+    TryLater,
+    SigRequired,
+    Unauthorized,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub enum ValidationResult {
+    Valid,
+    InvalidFormat,
+    ChainValidationFailed,
+    Expired,
+    Revoked,
+    Unknown,
+}
+```
+
+## 5. 安全考虑与最佳实践
+
+### 5.1 密钥管理
+
+1. **密钥生成**: 使用硬件安全模块(HSM)生成根CA和中间CA的密钥对
+2. **密钥存储**: 私钥应存储在安全的硬件中，避免软件存储
+3. **密钥轮换**: 定期轮换CA密钥，建立新的信任链
+4. **密钥销毁**: 安全销毁不再使用的私钥
+
+### 5.2 证书策略
+
+1. **证书模板**: 为不同类型的实体定义标准化的证书模板
+2. **有效期管理**: 根据安全要求设置合适的证书有效期
+3. **自动续订**: 实现证书自动续订机制，避免过期
+4. **吊销策略**: 建立快速响应机制，及时吊销被攻破的证书
+
+### 5.3 监控与审计
+
+1. **证书监控**: 监控证书的有效性、使用情况和异常行为
+2. **审计日志**: 记录所有证书操作，支持安全调查
+3. **告警机制**: 建立证书相关安全事件的告警机制
+4. **合规报告**: 生成符合行业标准的合规报告
+
+## 6. 性能优化策略
+
+### 6.1 缓存机制
+
+```rust
+#[derive(Debug, Clone)]
+pub struct CertificateCache {
+    pub valid_certificates: Arc<Mutex<LruCache<String, CachedCertificate>>>,
+    pub crl_cache: Arc<Mutex<LruCache<String, CachedCrl>>>,
+    pub ocsp_cache: Arc<Mutex<LruCache<String, CachedOcspResponse>>>,
+}
+
+impl CertificateCache {
+    pub fn new(capacity: usize) -> Self {
+        Self {
+            valid_certificates: Arc::new(Mutex::new(LruCache::new(capacity))),
+            crl_cache: Arc::new(Mutex::new(LruCache::new(capacity))),
+            ocsp_cache: Arc::new(Mutex::new(LruCache::new(capacity))),
+        }
+    }
+    
+    pub fn get_certificate(&self, key: &str) -> Option<CachedCertificate> {
+        let mut cache = self.valid_certificates.lock().unwrap();
+        cache.get(key).cloned()
+    }
+    
+    pub fn put_certificate(&self, key: String, cert: CachedCertificate) {
+        let mut cache = self.valid_certificates.lock().unwrap();
+        cache.put(key, cert);
+    }
+}
+```
+
+### 6.2 异步处理
+
+```rust
+pub async fn validate_certificate_async(
+    va: Arc<ValidationAuthority>,
+    certificate_der: Vec<u8>,
+) -> Result<ValidationResult, Box<dyn std::error::Error>> {
+    // 异步验证证书
+    let result = tokio::spawn(async move {
+        va.validate_certificate(&certificate_der)
+    }).await??;
+    
+    Ok(result)
+}
+
+pub async fn batch_validate_certificates(
+    va: Arc<ValidationAuthority>,
+    certificates: Vec<Vec<u8>>,
+) -> Vec<ValidationResult> {
+    let mut tasks = Vec::new();
+    
+    for cert_der in certificates {
+        let va_clone = Arc::clone(&va);
+        let task = tokio::spawn(async move {
+            va_clone.validate_certificate(&cert_der)
+        });
+        tasks.push(task);
+    }
+    
+    let mut results = Vec::new();
+    for task in tasks {
+        if let Ok(Ok(result)) = task.await {
+            results.push(result);
+        } else {
+            results.push(ValidationResult::Unknown);
+        }
+    }
+    
+    results
+}
+```
+
+## 7. 总结
+
+IoT-PKI基础设施为物联网系统提供了强大的身份认证和安全通信能力。通过分层架构设计、自动化证书管理和高效的验证机制，IoT-PKI能够支持大规模设备的安全接入和管理。
+
+本文档提供了完整的理论框架、架构设计和Rust实现示例，为构建安全的IoT-PKI系统提供了技术指导。在实际部署中，还需要根据具体的业务需求和安全要求进行定制化设计。
+
+---
+
+**通过建立完善的PKI基础设施，IoT系统可以实现设备身份的可信管理、通信的安全保障和访问的精确控制，为物联网的安全发展奠定坚实基础。**
