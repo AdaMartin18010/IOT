@@ -51,6 +51,46 @@
   - 语义注解兼容
   - 安全机制集成
 
+### 6. LoRaWAN + OPC-UA 互操作性
+
+- 应用场景: 远程低功耗传感数据进入工业OPC-UA平台
+- 测试重点:
+  - 频段/占空比合规映射
+  - 上行数据结构的OPC-UA节点映射
+  - 加入与会话安全性
+- 适配器: `adapters/lorawan_opcua_bridge.py`
+
+```yaml
+test_case:
+  name: "LoRaWAN uplink → OPC-UA Node"
+  steps:
+    - 模拟LoRaWAN上行
+    - 执行payload解码与语义映射
+    - 写入OPC-UA节点
+    - 校验值范围/单位
+  expected_result: "OPC-UA节点值与源值一致，单位正确"
+```
+
+### 7. Zigbee + Matter 互操作性
+
+- 应用场景: 家居场景由Zigbee设备与Matter生态互通
+- 测试重点: on/off/level 控制映射、状态同步、群组/场景
+- 适配器: `adapters/zigbee_matter_bridge.ts`
+
+### 8. Thread + 5G-IoT 互操作性
+
+- 应用场景: Thread IPv6域接入5G切片，保障QoS
+- 测试重点: 前缀与路由策略、切片QoS映射、安全集成
+- 适配器: `adapters/thread_5giot_bridge.go`
+
+### 9. NB-IoT + OPC-UA 互操作性
+
+- 应用场景: 蜂窝窄带设备接入工业平台
+- 测试重点: APN/PLMN策略、QoS到数据刷新策略的映射
+- 适配器: `adapters/nbiot_opcua_bridge.py`
+
+> 新增组合均纳入脚本 `scripts/run-interoperability-tests.sh --pair <PAIR>` 执行矩阵。
+
 ## 测试架构
 
 ```mermaid
