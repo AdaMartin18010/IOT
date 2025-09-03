@@ -1,0 +1,301 @@
+version: '3.8'
+
+services:
+  # PostgreSQL测试数据库
+  postgres:
+    image: postgres:14-alpine
+    container_name: iot-test-postgres
+    environment:
+      POSTGRES_DB: iot_interoperability_test
+      POSTGRES_USER: test_user
+      POSTGRES_PASSWORD: test_password
+    volumes:
+      - postgres_test_data:/var/lib/postgresql/data
+      - ./init-scripts:/docker-entrypoint-initdb.d
+    ports:
+      - "5433:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U test_user -d iot_interoperability_test"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - iot-test-network
+
+  # Redis测试缓存
+  redis:
+    image: redis:6-alpine
+    container_name: iot-test-redis
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_test_data:/data
+    ports:
+      - "6380:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - iot-test-network
+
+  # TSN服务模拟器
+  tsn-service:
+    build:
+      context: ./services/tsn
+      dockerfile: Dockerfile
+    container_name: iot-test-tsn
+    environment:
+      TSN_NODE_ID: tsn-test-001
+      TSN_CYCLE_TIME: 1000000
+      TSN_SYNC_INTERVAL: 1000000
+      LOG_LEVEL: debug
+    ports:
+      - "8081:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - iot-test-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  # OPC-UA服务模拟器
+  opcua-service:
+    build:
+      context: ./services/opcua
+      dockerfile: Dockerfile
+    container_name: iot-test-opcua
+    environment:
+      OPCUA_SERVER_PORT: 4840
+      OPCUA_SERVER_NAME: OPC-UA-Test-Server
+      OPCUA_NAMESPACE: http://iot-test.com/opcua
+      LOG_LEVEL: debug
+    ports:
+      - "4841:4840"
+      - "8082:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - iot-test-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  # oneM2M服务模拟器
+  onem2m-service:
+    build:
+      context: ./services/onem2m
+      dockerfile: Dockerfile
+    container_name: iot-test-onem2m
+    environment:
+      ONEM2M_CSE_ID: onem2m-test-cse
+      ONEM2M_CSE_NAME: onem2m-test-cse
+      ONEM2M_CSE_TYPE: IN-CSE
+      ONEM2M_PORT: 8282
+      LOG_LEVEL: debug
+    ports:
+      - "8283:8282"
+      - "8083:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - iot-test-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  # WoT服务模拟器
+  wot-service:
+    build:
+      context: ./services/wot
+      dockerfile: Dockerfile
+    container_name: iot-test-wot
+    environment:
+      WOT_SERVER_PORT: 8080
+      WOT_THING_DIRECTORY_URL: http://localhost:8080/things
+      WOT_DEFAULT_PROTOCOL: http
+      LOG_LEVEL: debug
+    ports:
+      - "8084:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - iot-test-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  # Matter服务模拟器
+  matter-service:
+    build:
+      context: ./services/matter
+      dockerfile: Dockerfile
+    container_name: iot-test-matter
+    environment:
+      MATTER_FABRIC_ID: matter-test-fabric
+      MATTER_NODE_ID: matter-test-node
+      MATTER_COMMISSIONING_PORT: 5540
+      MATTER_OPERATIONAL_PORT: 5541
+      LOG_LEVEL: debug
+    ports:
+      - "5542:5540"
+      - "5543:5541"
+      - "8085:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - iot-test-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  # 测试负载生成器
+  load-generator:
+    build:
+      context: ./services/load-generator
+      dockerfile: Dockerfile
+    container_name: iot-test-load-generator
+    environment:
+      LOAD_TEST_DURATION: 300
+      LOAD_TEST_USERS: 100
+      LOAD_TEST_RAMP_UP: 60
+      LOG_LEVEL: info
+    volumes:
+      - ./test-data:/app/test-data
+      - ./test-results:/app/results
+    depends_on:
+      - tsn-service
+      - opcua-service
+      - onem2m-service
+      - wot-service
+      - matter-service
+    networks:
+      - iot-test-network
+    profiles:
+      - performance-test
+
+  # 测试监控服务
+  test-monitor:
+    build:
+      context: ./services/monitor
+      dockerfile: Dockerfile
+    container_name: iot-test-monitor
+    environment:
+      MONITOR_INTERVAL: 5
+      MONITOR_METRICS: cpu,memory,network,disk
+      MONITOR_ALERT_THRESHOLD: 80
+      LOG_LEVEL: info
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./monitoring:/app/monitoring
+    ports:
+      - "8086:8080"
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - iot-test-network
+
+  # 测试结果收集器
+  result-collector:
+    build:
+      context: ./services/collector
+      dockerfile: Dockerfile
+    container_name: iot-test-collector
+    environment:
+      COLLECTION_INTERVAL: 10
+      COLLECTION_TIMEOUT: 30
+      COLLECTION_RETRY_COUNT: 3
+      LOG_LEVEL: info
+    volumes:
+      - ./test-results:/app/results
+      - ./logs:/app/logs
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - iot-test-network
+
+  # 测试报告生成器
+  report-generator:
+    build:
+      context: ./services/reporter
+      dockerfile: Dockerfile
+    container_name: iot-test-reporter
+    environment:
+      REPORT_TEMPLATE: comprehensive
+      REPORT_FORMAT: html,pdf,markdown
+      REPORT_OUTPUT_DIR: /app/reports
+      LOG_LEVEL: info
+    volumes:
+      - ./test-results:/app/input
+      - ./reports:/app/reports
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - iot-test-network
+    profiles:
+      - report-generation
+
+  # 网络模拟器
+  network-simulator:
+    image: ubuntu:20.04
+    container_name: iot-test-network-sim
+    command: >
+      bash -c "
+        apt-get update && apt-get install -y iperf3 netcat-openbsd iputils-ping
+        echo 'Network simulator started'
+        tail -f /dev/null
+      "
+    environment:
+      NETWORK_LATENCY: 10
+      NETWORK_JITTER: 2
+      NETWORK_BANDWIDTH: 1000
+    ports:
+      - "8087:8080"
+    networks:
+      - iot-test-network
+    profiles:
+      - network-test
+
+volumes:
+  postgres_test_data:
+    driver: local
+  redis_test_data:
+    driver: local
+
+networks:
+  iot-test-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.21.0.0/16
+    driver_opts:
+      com.docker.network.bridge.name: iot-test-br0

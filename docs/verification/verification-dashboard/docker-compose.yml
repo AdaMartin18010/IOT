@@ -1,0 +1,237 @@
+version: '3.8'
+
+services:
+  # PostgreSQL数据库
+  postgres:
+    image: postgres:14-alpine
+    container_name: iot-verification-postgres
+    environment:
+      POSTGRES_DB: iot_verification
+      POSTGRES_USER: iot_user
+      POSTGRES_PASSWORD: iot_password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init-scripts:/docker-entrypoint-initdb.d
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U iot_user -d iot_verification"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - iot-verification-network
+
+  # Redis缓存
+  redis:
+    image: redis:6-alpine
+    container_name: iot-verification-redis
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_data:/data
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - iot-verification-network
+
+  # 后端API服务
+  api:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: iot-verification-api
+    environment:
+      DATABASE_URL: postgresql://iot_user:iot_password@postgres:5432/iot_verification
+      REDIS_URL: redis://redis:6379
+      NODE_ENV: production
+      PORT: 3001
+      JWT_SECRET: your-jwt-secret-key
+      LOG_LEVEL: info
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+    ports:
+      - "3001:3001"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3001/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - iot-verification-network
+
+  # 前端仪表板
+  dashboard:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: iot-verification-dashboard
+    environment:
+      REACT_APP_API_URL: http://localhost:3001
+      REACT_APP_WS_URL: ws://localhost:3001
+      NODE_ENV: production
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    ports:
+      - "3000:3000"
+    depends_on:
+      api:
+        condition: service_healthy
+    networks:
+      - iot-verification-network
+
+  # 数据收集器服务
+  collector:
+    build:
+      context: ./collector
+      dockerfile: Dockerfile
+    container_name: iot-verification-collector
+    environment:
+      DATABASE_URL: postgresql://iot_user:iot_password@postgres:5432/iot_verification
+      REDIS_URL: redis://redis:6379
+      COLLECTION_INTERVAL: 30
+      LOG_LEVEL: info
+    volumes:
+      - ./collector:/app
+      - /app/node_modules
+      - /var/run/docker.sock:/var/run/docker.sock
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - iot-verification-network
+
+  # 告警服务
+  alerting:
+    build:
+      context: ./alerting
+      dockerfile: Dockerfile
+    container_name: iot-verification-alerting
+    environment:
+      DATABASE_URL: postgresql://iot_user:iot_password@postgres:5432/iot_verification
+      REDIS_URL: redis://redis:6379
+      SMTP_HOST: smtp.gmail.com
+      SMTP_PORT: 587
+      SMTP_USER: your-email@gmail.com
+      SMTP_PASS: your-app-password
+      SLACK_WEBHOOK_URL: your-slack-webhook-url
+      DINGTALK_WEBHOOK_URL: your-dingtalk-webhook-url
+      LOG_LEVEL: info
+    volumes:
+      - ./alerting:/app
+      - /app/node_modules
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - iot-verification-network
+
+  # 报告生成服务
+  reporter:
+    build:
+      context: ./reporter
+      dockerfile: Dockerfile
+    container_name: iot-verification-reporter
+    environment:
+      DATABASE_URL: postgresql://iot_user:iot_password@postgres:5432/iot_verification
+      REDIS_URL: redis://redis:6379
+      REPORT_OUTPUT_DIR: /app/reports
+      LOG_LEVEL: info
+    volumes:
+      - ./reporter:/app
+      - /app/node_modules
+      - report_data:/app/reports
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - iot-verification-network
+
+  # Nginx反向代理
+  nginx:
+    image: nginx:alpine
+    container_name: iot-verification-nginx
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx/conf.d:/etc/nginx/conf.d
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - dashboard
+      - api
+    networks:
+      - iot-verification-network
+
+  # Prometheus监控
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: iot-verification-prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--storage.tsdb.retention.time=200h'
+      - '--web.enable-lifecycle'
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    ports:
+      - "9090:9090"
+    networks:
+      - iot-verification-network
+
+  # Grafana可视化
+  grafana:
+    image: grafana/grafana:latest
+    container_name: iot-verification-grafana
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: admin
+      GF_USERS_ALLOW_SIGN_UP: false
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning
+      - ./monitoring/grafana/dashboards:/var/lib/grafana/dashboards
+    ports:
+      - "3002:3000"
+    depends_on:
+      - prometheus
+    networks:
+      - iot-verification-network
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+  report_data:
+    driver: local
+  prometheus_data:
+    driver: local
+  grafana_data:
+    driver: local
+
+networks:
+  iot-verification-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
