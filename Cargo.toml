@@ -1,0 +1,81 @@
+[package]
+name = "iot-proof-system"
+version = "0.1.0"
+edition = "2021"
+authors = ["IoT项目团队"]
+description = "IoT项目形式化证明系统"
+license = "MIT"
+repository = "https://github.com/iot-project/proof-system"
+keywords = ["iot", "formal-verification", "proof-system", "rust"]
+categories = ["science", "development-tools"]
+
+[dependencies]
+# 核心依赖
+thiserror = "1.0"
+chrono = { version = "0.4", features = ["serde"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+
+# 异步运行时
+tokio = { version = "1.0", features = ["full"] }
+
+# Web框架
+actix-web = "4.0"
+actix-rt = "2.0"
+
+# 数据库
+sqlx = { version = "0.7", features = ["runtime-tokio-rustls", "postgres", "chrono"] }
+redis = { version = "0.23", features = ["tokio-comp"] }
+
+# 消息队列
+lapin = "2.0"
+
+# 日志
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+
+# 配置管理
+config = "0.13"
+dotenv = "0.15"
+
+# 测试
+criterion = { version = "0.5", features = ["html_reports"] }
+
+[dev-dependencies]
+# 测试工具
+mockall = "0.11"
+proptest = "1.0"
+test-case = "3.0"
+
+# 基准测试
+criterion = { version = "0.5", features = ["html_reports"] }
+
+[features]
+default = ["full"]
+full = ["web", "database", "redis", "message-queue"]
+web = ["actix-web", "actix-rt"]
+database = ["sqlx"]
+redis = ["redis"]
+message-queue = ["lapin"]
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
+panic = "abort"
+
+[profile.dev]
+opt-level = 0
+debug = true
+
+[[bench]]
+name = "proof_verification"
+harness = false
+
+[[bench]]
+name = "strategy_application"
+harness = false
+
+[[bench]]
+name = "rule_application"
+harness = false
