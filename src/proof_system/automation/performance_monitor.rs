@@ -617,6 +617,16 @@ impl PerformanceMonitor {
         self.stats.clone()
     }
 
+    /// 启动性能监控器
+    pub fn start(&mut self) -> Result<(), ProofError> {
+        Ok(())
+    }
+
+    /// 停止性能监控器
+    pub fn stop(&mut self) -> Result<(), ProofError> {
+        Ok(())
+    }
+
     /// 添加事件监听器
     pub fn add_event_listener(&mut self, listener: Box<dyn EventListener + Send + Sync>) {
         self.event_listeners.push(listener);

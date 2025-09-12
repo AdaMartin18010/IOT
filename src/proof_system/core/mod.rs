@@ -31,6 +31,9 @@ pub trait ProofFramework {
     
     /// 获取证明状态
     fn get_proof_status(&self, proof_id: ProofId) -> Result<ProofStatus, ProofError>;
+
+    /// 获取证明实体
+    fn get_proof(&self, proof_id: ProofId) -> Result<Proof, ProofError>;
 }
 
 /// 证明策略特征
@@ -89,6 +92,31 @@ pub enum ProofError {
     
     #[error("内部错误: {0}")]
     InternalError(String),
+    
+    #[error("依赖未满足: 任务 {task_id} 缺少依赖 {missing_dependency}")]
+    DependencyNotMet { task_id: String, missing_dependency: String },
+    
+    #[cfg(feature = "automation")]
+    #[error("资源不足: 任务 {task_id} 需要资源 {required:?} 但只有 {available:?}")]
+    InsufficientResources { task_id: String, required: crate::proof_system::automation::ResourceUsage, available: crate::proof_system::automation::ResourceUsage },
+    
+    #[error("资源不可用: {0}")]
+    ResourceUnavailable(String),
+    
+    #[error("资源未找到: {resource_type}")]
+    ResourceNotFound { resource_type: String },
+    
+    #[error("无可用资源")]
+    NoAvailableResources,
+    
+    #[error("策略未找到")]
+    StrategyNotFound,
+    
+    #[error("无合适策略")]
+    NoSuitableStrategy,
+    
+    #[error("引擎未就绪")]
+    EngineNotReady,
 }
 
 /// 证明ID类型
@@ -113,6 +141,12 @@ pub enum ProofStatus {
     Failed,
     /// 已撤销
     Revoked,
+    /// 卡住
+    Stuck,
+    /// 达到最大步数
+    MaxStepsReached,
+    /// 超时
+    Timeout,
 }
 
 /// 验证结果
@@ -126,6 +160,29 @@ pub struct VerificationResult {
     pub warnings: Vec<String>,
     /// 验证时间
     pub verification_time: std::time::Duration,
+}
+
+impl VerificationResult {
+    /// 合并另一个验证结果
+    pub fn merge(&mut self, other: VerificationResult) {
+        if !other.success {
+            self.success = false;
+        }
+        self.errors.extend(other.errors);
+        self.warnings.extend(other.warnings);
+        // 聚合时间：取两者之和更直观（非关键）
+        self.verification_time += other.verification_time;
+    }
+
+    /// 错误数量
+    pub fn error_count(&self) -> usize {
+        self.errors.len()
+    }
+
+    /// 警告数量
+    pub fn warning_count(&self) -> usize {
+        self.warnings.len()
+    }
 }
 
 /// 验证报告

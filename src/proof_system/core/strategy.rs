@@ -91,7 +91,7 @@ impl AutomatedProofStrategy {
         state.goal = proof.goal.clone();
         
         // 分析当前步骤
-        state.current_steps = proof.get_all_steps();
+        state.current_steps = proof.get_all_steps().into_iter().cloned().collect();
         
         // 分析可用规则
         state.available_rules = self.identify_available_rules(proof)?;
@@ -211,7 +211,7 @@ impl AutomatedProofStrategy {
     fn can_apply_rule(
         &self,
         _rule: &super::super::rule::InferenceRule,
-        _steps: &[&ProofStep],
+        _steps: &[ProofStep],
     ) -> Result<bool, ProofError> {
         // 实现规则应用检查逻辑
         Ok(true)
@@ -233,7 +233,7 @@ impl AutomatedProofStrategy {
     fn can_apply_rewrite(
         &self,
         _rule: &super::super::rule::InferenceRule,
-        _steps: &[&ProofStep],
+        _steps: &[ProofStep],
     ) -> Result<bool, ProofError> {
         // 实现重写应用检查逻辑
         Ok(true)
@@ -285,7 +285,7 @@ impl ProofStrategy for InteractiveProofStrategy {
         &self.description
     }
     
-    fn apply(&self, proof: &mut Proof) -> Result<Vec<ProofStep>, ProofError> {
+    fn apply(&self, _proof: &mut Proof) -> Result<Vec<ProofStep>, ProofError> {
         // 交互式策略通常不自动生成步骤，而是提供建议
         // 这里返回空向量表示需要用户交互
         Ok(Vec::new())
@@ -430,7 +430,7 @@ impl ProofStrategy for HybridProofStrategy {
 /// 策略选择器
 pub struct StrategySelector {
     /// 选择规则
-    selection_rules: Vec<SelectionRule>,
+    selection_rules: Vec<Box<dyn SelectionRule>>,
 }
 
 impl StrategySelector {
@@ -462,7 +462,7 @@ impl StrategySelector {
         let mut state = ProofState::new();
         state.premises = proof.premises.clone();
         state.goal = proof.goal.clone();
-        state.current_steps = proof.get_all_steps();
+        state.current_steps = proof.get_all_steps().into_iter().cloned().collect();
         Ok(state)
     }
 }
@@ -517,7 +517,7 @@ pub struct ProofState {
     /// 目标
     pub goal: Proposition,
     /// 当前步骤
-    pub current_steps: Vec<&ProofStep>,
+    pub current_steps: Vec<ProofStep>,
     /// 可用规则
     pub available_rules: Vec<super::super::rule::InferenceRule>,
 }
@@ -568,7 +568,7 @@ pub struct UserSuggestion {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use super::super::super::{Proof, ProofStep, ProofStepType, Proposition, PropositionType};
+    use super::super::super::{Proof, Proposition, PropositionType};
     use std::collections::HashMap;
     
     fn create_test_proposition(id: &str, content: &str) -> Proposition {

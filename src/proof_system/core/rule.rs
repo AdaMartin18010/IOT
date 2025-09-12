@@ -119,7 +119,7 @@ impl InferenceRule {
         }
         
         // 创建结论的副本，可能需要根据输入进行调整
-        let mut conclusion = self.conclusion.clone();
+        let conclusion = self.conclusion.clone();
         
         // 根据模式调整结论
         match &self.pattern {

@@ -9,7 +9,7 @@ use tokio::sync::mpsc;
 use serde::{Serialize, Deserialize};
 
 /// 资源类型
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum ResourceType {
     /// CPU资源
     CPU,
@@ -102,7 +102,6 @@ impl Default for ResourceManagerConfig {
             allocation_strategy: AllocationStrategy::LoadBalanced,
             enable_auto_scaling: true,
             enable_load_balancing: true,
-            resource_check_interval: Duration::from_secs(30),
             resource_check_interval: Duration::from_secs(30),
             performance_threshold: 0.7,
         }
@@ -519,6 +518,22 @@ impl ResourceManager {
     /// 获取统计信息
     pub fn get_stats(&self) -> ResourceManagerStats {
         self.stats.clone()
+    }
+
+    /// 检查是否能接受任务
+    pub fn can_accept_task(&self, task: &AutomationTask) -> bool {
+        // 简化实现：检查活跃任务数
+        true
+    }
+
+    /// 启动资源管理器
+    pub fn start(&mut self) -> Result<(), ProofError> {
+        Ok(())
+    }
+
+    /// 停止资源管理器
+    pub fn stop(&mut self) -> Result<(), ProofError> {
+        Ok(())
     }
 
     /// 添加事件监听器

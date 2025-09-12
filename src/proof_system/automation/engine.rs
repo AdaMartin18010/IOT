@@ -585,6 +585,16 @@ impl ProofEngine {
         history.iter().cloned().collect()
     }
 
+    /// 启动引擎
+    pub fn start(&mut self) -> Result<(), ProofError> {
+        Ok(())
+    }
+
+    /// 停止引擎
+    pub fn stop(&mut self) -> Result<(), ProofError> {
+        Ok(())
+    }
+
     /// 添加事件监听器
     pub fn add_event_listener(&mut self, listener: Box<dyn EventListener + Send + Sync>) {
         self.event_listeners.push(listener);

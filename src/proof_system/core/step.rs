@@ -2,13 +2,13 @@
 //! 
 //! 本模块定义了证明步骤的扩展功能，包括步骤验证、步骤转换等。
 
-use super::{ProofStep, ProofStepType, StepId, ProofError, Proposition};
+use super::{ProofStep, ProofStepType, StepId, ProofError};
 use std::collections::HashMap;
 
 /// 步骤验证器
 pub struct StepValidator {
     /// 验证规则
-    validation_rules: Vec<ValidationRule>,
+    validation_rules: Vec<Box<dyn ValidationRule>>,
 }
 
 impl StepValidator {
@@ -20,8 +20,8 @@ impl StepValidator {
     }
     
     /// 添加验证规则
-    pub fn add_validation_rule(&mut self, rule: ValidationRule) {
-        self.validation_rules.push(rule);
+    pub fn add_validation_rule<T: ValidationRule + 'static>(&mut self, rule: T) {
+        self.validation_rules.push(Box::new(rule));
     }
     
     /// 验证证明步骤
@@ -209,7 +209,7 @@ impl ValidationResult {
 /// 步骤转换器
 pub struct StepTransformer {
     /// 转换规则
-    transformation_rules: Vec<TransformationRule>,
+    transformation_rules: Vec<Box<dyn TransformationRule>>,
 }
 
 impl StepTransformer {
@@ -221,8 +221,8 @@ impl StepTransformer {
     }
     
     /// 添加转换规则
-    pub fn add_transformation_rule(&mut self, rule: TransformationRule) {
-        self.transformation_rules.push(rule);
+    pub fn add_transformation_rule<T: TransformationRule + 'static>(&mut self, rule: T) {
+        self.transformation_rules.push(Box::new(rule));
     }
     
     /// 转换证明步骤
@@ -267,7 +267,7 @@ impl TransformationRule for StepNormalizationRule {
         "标准化步骤的格式和结构"
     }
     
-    fn is_applicable(&self, step: &ProofStep) -> bool {
+    fn is_applicable(&self, _step: &ProofStep) -> bool {
         // 总是适用
         true
     }
@@ -295,7 +295,7 @@ impl TransformationRule for StepNormalizationRule {
 /// 步骤分析器
 pub struct StepAnalyzer {
     /// 分析规则
-    analysis_rules: Vec<AnalysisRule>,
+    analysis_rules: Vec<Box<dyn AnalysisRule>>,
 }
 
 impl StepAnalyzer {
@@ -307,8 +307,8 @@ impl StepAnalyzer {
     }
     
     /// 添加分析规则
-    pub fn add_analysis_rule(&mut self, rule: AnalysisRule) {
-        self.analysis_rules.push(rule);
+    pub fn add_analysis_rule<T: AnalysisRule + 'static>(&mut self, rule: T) {
+        self.analysis_rules.push(Box::new(rule));
     }
     
     /// 分析证明步骤
@@ -365,10 +365,10 @@ impl AnalysisRule for ComplexityAnalysisRule {
         
         // 计算依赖复杂度
         let dependency_complexity = step.dependencies.len() as f64;
-        if dependency_complexity > 3 {
+        if dependency_complexity > 3.0 {
             result.add_metric("依赖复杂度".to_string(), "高".to_string());
             result.add_suggestion("考虑减少步骤依赖".to_string());
-        } else if dependency_complexity > 1 {
+        } else if dependency_complexity > 1.0 {
             result.add_metric("依赖复杂度".to_string(), "中".to_string());
         } else {
             result.add_metric("依赖复杂度".to_string(), "低".to_string());
@@ -431,7 +431,7 @@ mod tests {
     fn create_test_step(id: StepId, description: &str) -> ProofStep {
         ProofStep::new(
             id,
-            id,
+            id as u32,
             description.to_string(),
             ProofStepType::RuleApplication,
         )
@@ -441,7 +441,7 @@ mod tests {
     #[test]
     fn test_step_validator() {
         let mut validator = StepValidator::new();
-        validator.add_validation_rule(Box::new(BasicValidationRule));
+        validator.add_validation_rule(BasicValidationRule);
         
         let step = create_test_step(1, "测试步骤");
         let result = validator.validate_step(&step);
@@ -453,7 +453,7 @@ mod tests {
     #[test]
     fn test_step_transformer() {
         let mut transformer = StepTransformer::new();
-        transformer.add_transformation_rule(Box::new(StepNormalizationRule));
+        transformer.add_transformation_rule(StepNormalizationRule);
         
         let step = create_test_step(1, "  测试步骤  ");
         let transformed = transformer.transform_step(&step).unwrap();
@@ -464,9 +464,9 @@ mod tests {
     #[test]
     fn test_step_analyzer() {
         let mut analyzer = StepAnalyzer::new();
-        analyzer.add_analysis_rule(Box::new(ComplexityAnalysisRule));
+        analyzer.add_analysis_rule(ComplexityAnalysisRule);
         
-        let step = create_test_step(1, "这是一个非常长的步骤描述，用来测试复杂度分析规则的功能和效果");
+        let step = create_test_step(1, "这是一个非常长的步骤描述，用来测试复杂度分析规则的功能和效果，这个描述应该足够长以触发复杂度分析规则的建议生成机制，确保测试能够正确验证分析器的功能");
         let result = analyzer.analyze_step(&step);
         
         assert!(!result.metrics.is_empty());

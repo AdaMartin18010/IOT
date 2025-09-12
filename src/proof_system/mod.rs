@@ -8,8 +8,13 @@
 //! - 证明案例库
 
 pub mod core;
+#[cfg(feature = "automation")]
+pub mod automation;
+pub mod strategies;
+pub mod verification;
 
 pub use core::*;
+pub use strategies::ProofStrategy;
 
 /// 形式化证明系统主结构
 pub struct FormalProofSystem {
@@ -102,11 +107,9 @@ impl FormalProofSystem {
         self.verifier.generate_report(&proof)
     }
     
-    /// 获取证明
+    /// 获取证明（转发到框架）
     fn get_proof(&self, proof_id: ProofId) -> Result<Proof, ProofError> {
-        // 这里应该从存储中获取证明
-        // 暂时返回错误
-        Err(ProofError::ProofNotFound(proof_id))
+        self.framework.get_proof(proof_id)
     }
 }
 
@@ -143,8 +146,9 @@ impl ProofFramework for DefaultProofFramework {
         let proof = self.proofs.get_mut(&proof_id)
             .ok_or_else(|| ProofError::ProofNotFound(proof_id))?;
         
+        let step_id = step.id;
         proof.add_step(step)?;
-        Ok(step.id)
+        Ok(step_id)
     }
     
     fn verify_step(&mut self, proof_id: ProofId, step_id: StepId) -> Result<bool, ProofError> {
@@ -172,6 +176,12 @@ impl ProofFramework for DefaultProofFramework {
         
         Ok(proof.status.clone())
     }
+
+    fn get_proof(&self, proof_id: ProofId) -> Result<Proof, ProofError> {
+        self.proofs.get(&proof_id)
+            .cloned()
+            .ok_or_else(|| ProofError::ProofNotFound(proof_id))
+    }
 }
 
 /// 证明系统构建器
@@ -189,9 +199,8 @@ impl ProofSystemBuilder {
     
     /// 添加自动证明策略
     pub fn with_automated_strategy(mut self) -> Self {
-        let strategy = Box::new(super::core::strategy::AutomatedProofStrategy::new(
-            "自动证明策略".to_string(),
-            "自动生成证明步骤的策略".to_string(),
+        let strategy = Box::new(super::strategies::AutomatedProofStrategy::new(
+            super::strategies::StrategyConfig::default(),
         ));
         self.system.add_strategy(strategy);
         self
@@ -199,9 +208,8 @@ impl ProofSystemBuilder {
     
     /// 添加交互式证明策略
     pub fn with_interactive_strategy(mut self) -> Self {
-        let strategy = Box::new(super::core::strategy::InteractiveProofStrategy::new(
-            "交互式证明策略".to_string(),
-            "用户引导的证明策略".to_string(),
+        let strategy = Box::new(super::strategies::InteractiveProofStrategy::new(
+            super::strategies::StrategyConfig::default(),
         ));
         self.system.add_strategy(strategy);
         self
@@ -209,7 +217,9 @@ impl ProofSystemBuilder {
     
     /// 添加混合证明策略
     pub fn with_hybrid_strategy(mut self) -> Self {
-        let strategy = Box::new(super::core::strategy::HybridProofStrategy::new());
+        let strategy = Box::new(super::strategies::HybridProofStrategy::new(
+            super::strategies::StrategyConfig::default(),
+        ));
         self.system.add_strategy(strategy);
         self
     }
@@ -229,7 +239,7 @@ impl ProofSystemBuilder {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use super::core::{Proposition, PropositionType, ProofStep, ProofStepType};
+    use super::core::{Proposition, PropositionType};
     use std::collections::HashMap;
     
     fn create_test_proposition(id: &str, content: &str) -> Proposition {

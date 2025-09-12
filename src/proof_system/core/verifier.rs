@@ -2,8 +2,7 @@
 //! 
 //! 本模块定义了证明验证的核心功能，包括结构验证、逻辑验证等。
 
-use super::{ProofVerifier, Proof, ProofError, VerificationResult, VerificationReport, ProofStep};
-use std::collections::HashMap;
+use super::{ProofVerifier, Proof, ProofError, VerificationResult, VerificationReport};
 use chrono::Utc;
 
 /// 证明验证器实现
@@ -55,13 +54,13 @@ impl ProofVerifier for ProofVerifierImpl {
         let mut all_errors = Vec::new();
         let mut all_warnings = Vec::new();
         
-        all_errors.extend(structure_result.errors);
-        all_errors.extend(logic_result.errors);
-        all_errors.extend(completeness_result.errors);
+        all_errors.extend(structure_result.errors.clone());
+        all_errors.extend(logic_result.errors.clone());
+        all_errors.extend(completeness_result.errors.clone());
         
-        all_warnings.extend(structure_result.warnings);
-        all_warnings.extend(logic_result.warnings);
-        all_warnings.extend(completeness_result.warnings);
+        all_warnings.extend(structure_result.warnings.clone());
+        all_warnings.extend(logic_result.warnings.clone());
+        all_warnings.extend(completeness_result.warnings.clone());
         
         let overall_result = VerificationResult {
             success: overall_success,
@@ -640,7 +639,7 @@ impl CompletenessValidationRule for StepSequenceRule {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use super::super::super::{Proof, ProofStep, ProofStepType, Proposition, PropositionType, ProofStatus};
+    use super::super::super::{Proof, Proposition, PropositionType};
     use std::collections::HashMap;
     
     fn create_test_proposition(id: &str, content: &str) -> Proposition {

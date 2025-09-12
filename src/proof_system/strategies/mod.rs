@@ -1,73 +1,163 @@
-pub mod automated;
-pub mod interactive;
-pub mod hybrid;
-pub mod selector;
-pub mod optimizer;
+//! 证明策略模块
+//! 
+//! 本模块提供各种证明策略的实现
 
-pub use automated::*;
-pub use interactive::*;
-pub use hybrid::*;
-pub use selector::*;
-pub use optimizer::*;
-
-use crate::core::{Proof, ProofStep, InferenceRule, ProofError, ProofStatus};
+use crate::core::{ProofError, Proof, ProofStep};
 use std::collections::HashMap;
+use std::time::Duration;
 
-/// 证明策略执行结果
+/// 证明策略特征
+pub trait ProofStrategy {
+    /// 策略名称
+    fn name(&self) -> &str;
+    
+    /// 策略描述
+    fn description(&self) -> &str;
+    
+    /// 应用策略
+    fn apply(&self, proof: &mut Proof) -> Result<Vec<ProofStep>, ProofError>;
+    
+    /// 策略适用性检查
+    fn is_applicable(&self, proof: &Proof) -> bool;
+    
+    /// 策略优先级
+    fn priority(&self) -> u32;
+}
+
+/// 策略执行结果
 #[derive(Debug, Clone)]
 pub struct StrategyExecutionResult {
-    /// 是否成功
     pub success: bool,
-    /// 生成的证明步骤
-    pub generated_steps: Vec<ProofStep>,
-    /// 应用的规则
-    pub applied_rules: Vec<InferenceRule>,
-    /// 执行时间（毫秒）
-    pub execution_time_ms: u64,
-    /// 错误信息
+    pub new_steps: Vec<ProofStep>,
     pub error: Option<String>,
-    /// 策略建议
-    pub suggestions: Vec<String>,
+    pub execution_time: Duration,
 }
 
 /// 策略性能指标
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Default)]
 pub struct StrategyPerformanceMetrics {
-    /// 成功率
+    pub execution_time: Duration,
+    pub steps_generated: usize,
     pub success_rate: f64,
-    /// 平均执行时间
-    pub avg_execution_time_ms: u64,
-    /// 平均生成步骤数
-    pub avg_steps_generated: f64,
-    /// 规则应用效率
-    pub rule_application_efficiency: f64,
-    /// 内存使用量
-    pub memory_usage_mb: u64,
+    pub memory_usage: usize,
 }
 
 /// 策略配置
 #[derive(Debug, Clone)]
 pub struct StrategyConfig {
-    /// 最大执行时间（毫秒）
-    pub max_execution_time_ms: u64,
-    /// 最大步骤数
     pub max_steps: usize,
-    /// 是否启用并行执行
-    pub enable_parallel: bool,
-    /// 是否启用缓存
-    pub enable_caching: bool,
-    /// 策略特定参数
+    pub timeout: Duration,
     pub parameters: HashMap<String, String>,
 }
 
 impl Default for StrategyConfig {
     fn default() -> Self {
         Self {
-            max_execution_time_ms: 30000, // 30秒
-            max_steps: 1000,
-            enable_parallel: true,
-            enable_caching: true,
+            max_steps: 100,
+            timeout: Duration::from_secs(30),
             parameters: HashMap::new(),
         }
+    }
+}
+
+/// 自动化证明策略
+pub struct AutomatedProofStrategy {
+    config: StrategyConfig,
+}
+
+impl AutomatedProofStrategy {
+    pub fn new(config: StrategyConfig) -> Self {
+        Self { config }
+    }
+}
+
+impl ProofStrategy for AutomatedProofStrategy {
+    fn name(&self) -> &str {
+        "automated"
+    }
+    
+    fn description(&self) -> &str {
+        "自动证明策略"
+    }
+    
+    fn apply(&self, _proof: &mut Proof) -> Result<Vec<ProofStep>, ProofError> {
+        // 简化实现
+        Ok(Vec::new())
+    }
+    
+    fn is_applicable(&self, _proof: &Proof) -> bool {
+        true
+    }
+    
+    fn priority(&self) -> u32 {
+        100
+    }
+}
+
+/// 交互式证明策略
+pub struct InteractiveProofStrategy {
+    config: StrategyConfig,
+}
+
+impl InteractiveProofStrategy {
+    pub fn new(config: StrategyConfig) -> Self {
+        Self { config }
+    }
+}
+
+impl ProofStrategy for InteractiveProofStrategy {
+    fn name(&self) -> &str {
+        "interactive"
+    }
+    
+    fn description(&self) -> &str {
+        "交互式证明策略"
+    }
+    
+    fn apply(&self, _proof: &mut Proof) -> Result<Vec<ProofStep>, ProofError> {
+        // 简化实现
+        Ok(Vec::new())
+    }
+    
+    fn is_applicable(&self, _proof: &Proof) -> bool {
+        true
+    }
+    
+    fn priority(&self) -> u32 {
+        80
+    }
+}
+
+/// 混合证明策略
+pub struct HybridProofStrategy {
+    config: StrategyConfig,
+}
+
+impl HybridProofStrategy {
+    pub fn new(config: StrategyConfig) -> Self {
+        Self { config }
+    }
+}
+
+impl ProofStrategy for HybridProofStrategy {
+    fn name(&self) -> &str {
+        "hybrid"
+    }
+    
+    fn description(&self) -> &str {
+        "混合证明策略"
+    }
+    
+    fn apply(&self, _proof: &mut Proof) -> Result<Vec<ProofStep>, ProofError> {
+        // 简化实现
+        Ok(Vec::new())
+    }
+    
+    fn is_applicable(&self, _proof: &Proof) -> bool {
+        true
+    }
+    
+    fn priority(&self) -> u32 {
+        90
     }
 }

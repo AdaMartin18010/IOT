@@ -52,7 +52,7 @@ impl TaskQueue {
 
     pub fn push(&mut self, task: AutomationTask) {
         match task.priority {
-            TaskPriority::High => self.high_priority.push_back(task),
+            TaskPriority::High | TaskPriority::Urgent => self.high_priority.push_back(task),
             TaskPriority::Normal => self.normal_priority.push_back(task),
             TaskPriority::Low => self.low_priority.push_back(task),
         }
@@ -129,12 +129,14 @@ impl TaskScheduler {
 
     /// 添加任务到调度队列
     pub fn submit_task(&mut self, task: AutomationTask) -> Result<(), ProofError> {
+        let task_id = task.id.clone();
+        
         // 检查依赖关系
         if let Some(dependency) = &self.dependencies.get(&task.id) {
             for dep_id in &dependency.depends_on {
                 if !self.completed_tasks.contains_key(dep_id) {
                     return Err(ProofError::DependencyNotMet {
-                        task_id: task.id.clone(),
+                        task_id: task_id.clone(),
                         missing_dependency: dep_id.clone(),
                     });
                 }
@@ -144,7 +146,7 @@ impl TaskScheduler {
         // 检查资源可用性
         if !self.check_resource_availability(&task) {
             return Err(ProofError::InsufficientResources {
-                task_id: task.id.clone(),
+                task_id: task_id.clone(),
                 required: task.estimated_resources.clone(),
                 available: self.resource_usage.clone(),
             });
@@ -154,7 +156,7 @@ impl TaskScheduler {
         self.stats.total_tasks_processed += 1;
         
         let _ = self.event_sender.try_send(AutomationEvent::TaskSubmitted {
-            task_id: task.id.clone(),
+            task_id,
             timestamp: Instant::now(),
         });
 
@@ -198,20 +200,100 @@ impl TaskScheduler {
     async fn execute_task(task: AutomationTask) -> TaskResult {
         let start_time = Instant::now();
         
-        // 这里应该调用实际的证明策略执行逻辑
-        // 目前使用模拟实现
-        tokio::time::sleep(Duration::from_millis(100)).await;
+        // 创建证明系统
+        let mut proof_system = crate::proof_system::FormalProofSystem::new();
+        
+        // 从任务参数中提取证明目标
+        let goal_content = task.parameters.get("goal")
+            .cloned()
+            .unwrap_or_else(|| "A ∧ B → B ∧ A".to_string());
+        
+        let goal = crate::core::Proposition {
+            id: format!("goal_{}", task.id),
+            content: goal_content,
+            proposition_type: crate::core::PropositionType::Theorem,
+            metadata: HashMap::new(),
+        };
+        
+        // 创建证明
+        let proof_id = match proof_system.create_proof(goal) {
+            Ok(id) => id,
+            Err(e) => {
+                return TaskResult {
+                    task_id: task.id,
+                    status: AutomationTaskStatus::Failed,
+                    result: None,
+                    error: Some(format!("创建证明失败: {}", e)),
+                    execution_time: start_time.elapsed(),
+                    resource_usage: ResourceUsage::default(),
+                    metadata: HashMap::new(),
+                };
+            }
+        };
+        
+        // 应用证明策略
+        let strategy_name = task.parameters.get("strategy")
+            .cloned()
+            .unwrap_or_else(|| "automated".to_string());
+        
+        let new_steps = match proof_system.apply_strategy(proof_id, &strategy_name) {
+            Ok(steps) => steps,
+            Err(e) => {
+                return TaskResult {
+                    task_id: task.id,
+                    status: AutomationTaskStatus::Failed,
+                    result: None,
+                    error: Some(format!("应用策略失败: {}", e)),
+                    execution_time: start_time.elapsed(),
+                    resource_usage: ResourceUsage::default(),
+                    metadata: HashMap::new(),
+                };
+            }
+        };
+        
+        // 验证证明
+        let verification_result = match proof_system.verify_proof(proof_id) {
+            Ok(report) => report,
+            Err(e) => {
+                return TaskResult {
+                    task_id: task.id,
+                    status: AutomationTaskStatus::Failed,
+                    result: None,
+                    error: Some(format!("验证证明失败: {}", e)),
+                    execution_time: start_time.elapsed(),
+                    resource_usage: ResourceUsage::default(),
+                    metadata: HashMap::new(),
+                };
+            }
+        };
         
         let duration = start_time.elapsed();
         
+        // 构建结果
+        let mut metadata = HashMap::new();
+        metadata.insert("strategy_used".to_string(), strategy_name);
+        metadata.insert("steps_generated".to_string(), new_steps.len().to_string());
+        metadata.insert("verification_passed".to_string(), verification_result.result.success.to_string());
+        
         TaskResult {
             task_id: task.id,
-            status: AutomationTaskStatus::Completed,
-            result: Some("任务执行成功".to_string()),
-            error: None,
+            status: if verification_result.result.success {
+                AutomationTaskStatus::Completed
+            } else {
+                AutomationTaskStatus::Failed
+            },
+            result: Some(format!("生成了 {} 个证明步骤，验证{}", 
+                new_steps.len(), 
+                if verification_result.result.success { "通过" } else { "失败" }
+            )),
+            error: if verification_result.result.success {
+                None
+            } else {
+                Some(format!("验证失败: {:?}", verification_result.result.errors))
+            },
             execution_time: duration,
             resource_usage: ResourceUsage::default(),
-            metadata: HashMap::new(),
+            metadata,
         }
     }
 
@@ -302,6 +384,16 @@ impl TaskScheduler {
         }
     }
 
+    /// 启动调度器
+    pub fn start(&mut self) -> Result<(), ProofError> {
+        Ok(())
+    }
+
+    /// 停止调度器
+    pub fn stop(&mut self) -> Result<(), ProofError> {
+        Ok(())
+    }
+
     /// 添加事件监听器
     pub fn add_event_listener(&mut self, listener: Box<dyn EventListener + Send + Sync>) {
         self.event_listeners.push(listener);
@@ -372,13 +464,19 @@ mod tests {
             id: id.to_string(),
             name: format!("测试任务{}", id),
             description: "测试任务描述".to_string(),
-            priority,
             status: AutomationTaskStatus::Pending,
+            priority,
+            proof_id: None,
+            created_at: Instant::now(),
+            started_at: None,
+            completed_at: None,
+            parameters: HashMap::new(),
+            result: None,
+            error: None,
             estimated_duration: Duration::from_secs(1),
             estimated_resources: ResourceUsage::default(),
             dependencies: Vec::new(),
             metadata: HashMap::new(),
-            created_at: Instant::now(),
         }
     }
 
